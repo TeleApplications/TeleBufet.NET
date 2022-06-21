@@ -5,6 +5,7 @@ namespace TeleBufet.NET;
 public partial class MainPage : ContentPage
 {
 	private ExtendedClient client;
+
 	public MainPage()
 	{
 		InitializeComponent();

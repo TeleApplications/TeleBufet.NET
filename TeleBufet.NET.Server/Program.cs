@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatagramsNet.Datagrams.NET.Logger.Reader;
+using System;
 using System.Net;
 
 namespace TeleBufet.NET.Server
@@ -7,12 +8,16 @@ namespace TeleBufet.NET.Server
     {
         private static Server server;
 
+        private static ReaderManager reader;
+
         public static void Main() 
         {
-            Console.WriteLine("Please enter valid ip address");
             server = new(nameof(Server), IPAddress.Parse(Console.ReadLine()));
+            reader = new();
+
+            Console.WriteLine("Please enter valid ip address");
             Task.Run(() => server.StartServer());
-            Console.ReadLine();
+            reader.StartReading();
         }
     }
 }
