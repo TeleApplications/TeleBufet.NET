@@ -55,9 +55,25 @@
 	  </Reference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\TeleBufet.NET.API\TeleBufet.NET.API.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
+	  <PackageReference Include="Plugin.CurrentActivity">
+	    <Version>2.1.0.4</Version>
+	  </PackageReference>
+	</ItemGroup>
+
 	<PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">
 		<OutputType>WinExe</OutputType>
 		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 	</PropertyGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionTeleBufetNETHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 	
 </Project>

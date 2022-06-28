@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleBufet.NET", "TeleBufet.NET\TeleBufet.NET.csproj", "{4FD1AE36-B34F-495A-83B5-C77E21124201}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleBufet.NET.Server", "TeleBufet.NET.Server\TeleBufet.NET.Server.csproj", "{2A327C0C-9808-408B-9E65-404DD0B85999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleBufet.NET.Server", "TeleBufet.NET.Server\TeleBufet.NET.Server.csproj", "{2A327C0C-9808-408B-9E65-404DD0B85999}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeleBufet.NET.API", "TeleBufet.NET.API\TeleBufet.NET.API.csproj", "{15331925-3A90-4F45-8773-BCDC720EA12F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{2A327C0C-9808-408B-9E65-404DD0B85999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A327C0C-9808-408B-9E65-404DD0B85999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A327C0C-9808-408B-9E65-404DD0B85999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15331925-3A90-4F45-8773-BCDC720EA12F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15331925-3A90-4F45-8773-BCDC720EA12F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15331925-3A90-4F45-8773-BCDC720EA12F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15331925-3A90-4F45-8773-BCDC720EA12F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

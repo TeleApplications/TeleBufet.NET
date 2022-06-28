@@ -15,7 +15,7 @@ namespace TeleBufet.NET
             ClientAddress = serverAddress;
             this.serverSocket.Connect((EndPoint)new IPEndPoint(clientAddress, PortNumber));
             this.UdpReciever = new UdpReciever(serverSocket);
-            var handShakePacket = new HandShakePacket(new ShakeMessage() {IdMessage = 17, Message = "Client Message with id 17".ToCharArray() });
+            var handShakePacket = new HandShakePacket(new ShakeMessage() {IdMessage = 17, Message = "Client Message with id 17" });
             DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.serverSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(handShakePacket));
         }
 
@@ -25,7 +25,6 @@ namespace TeleBufet.NET
             {
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
                 throw new Exception("Packet was recieved from server");
-
             }
         }
 

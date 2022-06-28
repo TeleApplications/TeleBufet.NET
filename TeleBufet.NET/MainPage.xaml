@@ -14,6 +14,13 @@
                 Padding="5"
                 TranslationY="100"
                 />
+            <Button
+                x:Name="LoginButton"
+                Text="Login"
+                Clicked="OnLogin"
+                Padding="5"
+                TranslationY="200"
+                />
         <StackLayout>
             <Entry
                 x:Name="ServerAddress"

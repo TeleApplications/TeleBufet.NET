@@ -1,5 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
+using Plugin.CurrentActivity;
+using TeleBufet.NET.ClientAuthentication;
 
 namespace TeleBufet.NET;
 
@@ -11,5 +13,10 @@ public class MainApplication : MauiApplication
 	{
 	}
 
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+	protected override MauiApp CreateMauiApp()
+	{
+		CrossCurrentActivity.Current.Init(this);
+		AuthenticateHolder.Platform = this;
+		return MauiProgram.CreateMauiApp();
+	}
 }
