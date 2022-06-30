@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using DatagramsNet;
+using System.Net;
+using System.Net.Sockets;
 using TeleBufet.NET.ClientAuthentication;
 
 namespace TeleBufet.NET;
@@ -26,9 +28,15 @@ public partial class MainPage : ContentPage
 		Task.Run(async () => await client.StartServer());
 	}
 
-	private void OnLogin(object sender, EventArgs e) 
+	private async void OnLogin(object sender, EventArgs e) 
 	{
-		var authentificateResult = Task.Run(async() => await authenticateHolder.LoginAsync());
+		var authentificateResult = await authenticateHolder.LoginAsync();
+		if (authentificateResult is not null || authentificateResult.IdToken != String.Empty) 
+		{
+			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
+			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
+            await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.ClientSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(authenticatePacket));
+		}
 	}
 }
 

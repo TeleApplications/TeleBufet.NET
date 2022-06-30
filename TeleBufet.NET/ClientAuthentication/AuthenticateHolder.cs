@@ -21,11 +21,27 @@ namespace TeleBufet.NET.ClientAuthentication
 
         public async Task<AuthenticationResult> LoginAsync() 
         {
-            //var accounts = await ClientApplication.GetAccountsAsync();
+            var accounts = await ClientApplication.GetAccountsAsync();
             var authenticationResult = await ClientApplication.AcquireTokenInteractive(Scopes)
                 .WithParentActivityOrWindow(AuthenticateHolder.Platform)
                 .ExecuteAsync().ConfigureAwait(false);
             return authenticationResult;
+        }
+
+        private async Task<AuthenticationResult> CacheLoginAsync() 
+        {
+            var accounts = await ClientApplication.GetAccountsAsync();
+            AuthenticationResult result;
+            try
+            {
+                var firstAccount = accounts.FirstOrDefault();
+                result = await ClientApplication.AcquireTokenSilent(Scopes, firstAccount).ExecuteAsync().ConfigureAwait(false);
+            }
+            catch(MsalThrottledUiRequiredException ex) 
+            {
+                result = null;
+            }
+            return result;
         }
     }
 }
