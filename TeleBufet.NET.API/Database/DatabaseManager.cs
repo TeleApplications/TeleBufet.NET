@@ -29,11 +29,11 @@ namespace TeleBufet.NET.API.Database
         {
             connectionString = new MySqlConnectionStringBuilder() //TODO: This is termorary and of course not secure enough
             {
-                Server = "localhost",//"185.66.36.136",
+                Server = "localhost",
                 Port = 3306,
-                UserID = "admin",//"33241_bufetak",
-                Password = "mates",//"rrB8axXJ",
-                Database ="programmers",//"cenekdurian_cz_telebufet",
+                UserID = "admin",
+                Password = "mates",
+                Database ="programmers",
                 SslMode = MySqlSslMode.Preferred
             };
             mySqlConnection = new(connectionString.ToString());
