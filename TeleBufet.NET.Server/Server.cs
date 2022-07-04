@@ -1,7 +1,7 @@
 ﻿using DatagramsNet;
+using DatagramsNet.Datagram;
 using DatagramsNet.Datagrams.NET.Logger;
 using DatagramsNet.Datagrams.NET.Prefixes;
-using Microsoft.Identity.Client;
 using System.Net;
 using System.Net.Sockets;
 
