@@ -7,14 +7,14 @@ using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database
 {
-    internal struct UnknownData 
+    public struct UnknownData 
     {
         public string Name { get; set; }
 
         public object Value { get; set; }
     }
 
-    internal sealed class DatabaseManager<T> : IDisposable where T : ITable, new()
+    public sealed class DatabaseManager<T> : IDisposable where T : ITable, new()
     {
 
         private MySqlConnection mySqlConnection;
@@ -31,9 +31,9 @@ namespace TeleBufet.NET.API.Database
             {
                 Server = "localhost",
                 Port = 3306,
-                UserID = "admin",
-                Password = "mates",
-                Database ="programmers",
+                UserID = "root",
+                Password = "",
+                Database ="telebufettestdatabase",
                 SslMode = MySqlSslMode.Preferred
             };
             mySqlConnection = new(connectionString.ToString());

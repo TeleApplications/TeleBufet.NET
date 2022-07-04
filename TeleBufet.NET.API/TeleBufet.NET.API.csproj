@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Packets\ClientSide\" />
-    <Folder Include="Packets\ServerSide\" />
   </ItemGroup>
 
   <ItemGroup>

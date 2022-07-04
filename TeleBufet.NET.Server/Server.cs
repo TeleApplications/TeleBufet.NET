@@ -4,6 +4,8 @@ using DatagramsNet.Datagrams.NET.Logger;
 using DatagramsNet.Datagrams.NET.Prefixes;
 using System.Net;
 using System.Net.Sockets;
+using TeleBufet.NET.API.Database;
+using TeleBufet.NET.API.Database.Tables;
 
 namespace TeleBufet.NET.Server
 {
@@ -29,6 +31,25 @@ namespace TeleBufet.NET.Server
             if (datagram is AuthentificateAccountPacket newAuthenticationDatagram) 
             {
                 await ServerLogger.Log<NormalPrefix>($"Auth packet: from {newAuthenticationDatagram.Account.Username} with token {newAuthenticationDatagram.Account.Token}", TimeFormat.HALF);
+                using (var databaseManager = new DatabaseManager<UserTable>()) 
+                {
+                    var users = await databaseManager.GetTable();
+                    var currentUser = users.FirstOrDefault(n => n.Token == newAuthenticationDatagram.Account.Token);
+                    if (currentUser is null) 
+                    {
+                        currentUser = new UserTable()
+                        {
+                            Email = newAuthenticationDatagram.Account.Username,
+                            Token = newAuthenticationDatagram.Account.Token,
+                            Karma = 0
+                        };
+                        await databaseManager.SetTable(currentUser);
+                        await ServerLogger.Log<NormalPrefix>($"Welcome {currentUser.Email} in TeleBufet", TimeFormat.HALF);
+                    }
+                    else
+                        await ServerLogger.Log<NormalPrefix>($"Welcome back {currentUser.Email} in TeleBufet", TimeFormat.HALF);
+                    //TODO: Send AccountInformationPacket
+                }
             }
         }
     }
