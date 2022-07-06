@@ -3,7 +3,7 @@ using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database.Tables
 {
-	[Table("programming_language")]
+    [Table("programming_language")]
 	public sealed class ProgrammingLanguageTable : ITable
 	{
 		[DataColumn("Id_ProgrammingLanguage")]
