@@ -14,10 +14,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
         public CacheFile() 
         {
             var path = $"{SystemCacheDirectory}{FileName}";
-            if (!(File.Exists(path)))
-                CacheFileStream = File.Create(path);
-            else
-                CacheFileStream = File.Open(path, FileMode.Open);
+            CacheFileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
     }
 }

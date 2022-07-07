@@ -8,7 +8,7 @@
         UNIQUE_KEY = 3
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class DataColumnAttribute : Attribute
     {
         public string Name { get; set; }

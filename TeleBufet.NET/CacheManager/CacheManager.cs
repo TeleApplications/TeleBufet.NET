@@ -11,6 +11,10 @@ namespace TeleBufet.NET.CacheManager
 
         private TDirectory directory = new TDirectory();
 
+        private readonly int ValueSize = Marshal.SizeOf<T>();
+
+        public CacheHelper() { }
+
         public CacheHelper(T value) 
         {
             cacheValue = value;
@@ -18,6 +22,7 @@ namespace TeleBufet.NET.CacheManager
 
         public void Serialize() 
         {
+            directory.CacheFileStream.Seek(0, SeekOrigin.End);
             using (var binaryWriter = new BinaryWriter(directory.CacheFileStream)) 
             {
                 byte[] bytes = GetBytes(cacheValue);
@@ -25,43 +30,47 @@ namespace TeleBufet.NET.CacheManager
             }
         }
 
-        public IEnumerable<T> Deserialize() 
+        public T[] Deserialize() 
         {
-            int size = Marshal.SizeOf<T>(cacheValue);
-            using (var binaryReader = new BinaryReader(directory.CacheFileStream))
+            directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
+
+            int size = ValueSize;
+            using var binaryReader = new BinaryReader(directory.CacheFileStream);
+
+            int count = (int)binaryReader.BaseStream.Length / size;
+            var values = new T[count];
+            Span<byte> spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length).AsSpan();
+            for (int i = 0; i < count; i++)
             {
-                int count = (int)binaryReader.BaseStream.Length / size;
-                for (int i = 0; i < size; i++)
-                {
-                    int byteCount = ((i + 1) * size);
-                    var bytes = binaryReader.ReadBytes(byteCount).AsSpan();
-                    T @object = GetT(bytes.Slice((i * size), byteCount).ToArray());
-                    yield return @object;
-                }
+                int byteCount = ((i + 1) * size);
+                byte[] newBytes = spanBytes.Slice((i * size), size).ToArray();
+                T @object = GetT(newBytes);
+                values[i] = @object;
             }
+            return values;
         }
 
         private byte[] GetBytes(T value)
         {
-            int size = Marshal.SizeOf<T>(cacheValue);
-            byte[] structureBytes = new byte[size];
-            IntPtr valuePointer = Marshal.AllocHGlobal(size);
+            byte[] structureBytes = new byte[ValueSize];
+            IntPtr valuePointer = Marshal.AllocHGlobal(ValueSize);
 
             Marshal.StructureToPtr(value, valuePointer, false);
-            Marshal.Copy(valuePointer, structureBytes, 0, size);
+            Marshal.Copy(valuePointer, structureBytes, 0, ValueSize);
             return structureBytes;
         }
 
         private T GetT(byte[] bytes) 
         {
-            ReadOnlySpan<byte> spanBytes = new ReadOnlySpan<byte>(bytes);
-            return MemoryMarshal.Read<T>(spanBytes);
+            IntPtr objectPointer = Marshal.AllocHGlobal(ValueSize);
+            Marshal.Copy(bytes, 0, objectPointer, ValueSize);
+
+            return (T)Marshal.PtrToStructure<T>(objectPointer);
         }
 
         public void Dispose() 
         {
             directory.CacheFileStream.Dispose();
-            this.Dispose();
         }
     }
 }

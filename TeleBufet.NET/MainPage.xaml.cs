@@ -29,13 +29,7 @@ public partial class MainPage : ContentPage
 		var ipAddress = IPAddress.Any;
 		client = new ExtendedClient("TestClient", IPAddress.Parse(this.ServerAddress.Text), ipAddress);
 		this.PhoneAddress.Text = ipAddress.ToString();
-		var productTable = new ProductTable() { Name = "Test", Amount = 1, CategoryId = 1, Id = 0, ImageId = 0, Key = TimeSpan.Zero, Price = 20 };
-		using (var cacheManager = new CacheHelper<ProductTable, TimeSpan, ProductCache>(productTable)) 
-		{
-			cacheManager.Serialize();
-			//var deserializedData = cacheManager.Deserialize().ToArray();
-		}
-			Task.Run(async () => await client.StartServer());
+		Task.Run(async () => await client.StartServer());
 	}
 
 	private async void OnLogin(object sender, EventArgs e) 
