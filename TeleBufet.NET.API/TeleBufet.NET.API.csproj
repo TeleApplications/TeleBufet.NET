@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Reference Include="Datagrams.NET">
-      <HintPath>..\..\..\..\Desktop\Datagrams.NET\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Datagrams.NET\source\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 

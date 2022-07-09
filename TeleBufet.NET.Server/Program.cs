@@ -1,4 +1,4 @@
-﻿using DatagramsNet.Datagrams.NET.Logger.Reader;
+﻿using DatagramsNet.Logging.Reading;
 using System;
 using System.Net;
 

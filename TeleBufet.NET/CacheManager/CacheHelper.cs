@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.CacheManager.Interfaces;
+using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.CacheManager
 {

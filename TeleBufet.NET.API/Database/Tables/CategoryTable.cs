@@ -5,28 +5,18 @@ using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Database.Tables
 {
-
-    [Table("Products")]
+    [Table("Category")]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ProductTable : ITable, ICache<TimeSpan> 
+    public struct CategoryTable : ITable, ICache<TimeSpan> 
     {
-		[DataColumn("ProductId")]
+		[DataColumn("CategoryId")]
         public int Id { get; set; }
 
         [DataColumn("Name")]
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Name;
 
-		[DataColumn("CategoryID")]
-        public int CategoryId { get; set; }
-
-		[DataColumn("Price")]
-        public double Price { get; set; }
-
-		[DataColumn("Amount")]
-        public int Amount { get; set; }
-
-		[DataColumn("ImagesID")]
+        [DataColumn("ImagesId")]
         public int ImageId { get; set; }
 
 		[DataColumn("Timestamp")]

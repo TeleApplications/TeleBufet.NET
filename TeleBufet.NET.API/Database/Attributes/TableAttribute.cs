@@ -1,6 +1,6 @@
 ﻿namespace TeleBufet.NET.API.Database.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class TableAttribute : Attribute
     {
         public string TableName { get; set; }
