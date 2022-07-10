@@ -7,8 +7,10 @@
 		<RootNamespace>TeleBufet.NET</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
+		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+		<LangVersion>preview</LangVersion>
     
 		<!-- Display name -->
 		<ApplicationTitle>TeleBufet.NET</ApplicationTitle>
@@ -50,12 +52,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="Datagrams.NET">
-	    <HintPath>..\..\..\..\Desktop\Datagrams.NET\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
 	</ItemGroup>
 
@@ -67,6 +63,12 @@
 	  <PackageReference Include="Plugin.CurrentActivity">
 	    <Version>2.1.0.4</Version>
 	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Datagrams.NET">
+	    <HintPath>..\..\Datagrams.NET\source\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">

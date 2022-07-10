@@ -1,11 +1,11 @@
 ﻿using System.Runtime.InteropServices;
-using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.CacheManager.Interfaces;
+using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.CacheManager
 {
     //TODO: This implementation is not complete 
-    internal sealed class CacheHelper<T, TKey, TDirectory> : IDisposable where T : struct, ICache<TKey> where TDirectory : ICacheDirectory, new()
+    internal sealed class CacheHelper<T, TKey, TDirectory> : IDisposable where T : ICache<TKey> where TDirectory : ICacheDirectory, new()
     {
         private T cacheValue;
 

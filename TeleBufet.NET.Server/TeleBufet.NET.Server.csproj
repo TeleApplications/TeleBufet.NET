@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Datagrams.NET">
-      <HintPath>..\..\..\..\Desktop\Datagrams.NET\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\TeleBufet.NET.API\TeleBufet.NET.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TeleBufet.NET.API\TeleBufet.NET.API.csproj" />
+    <Reference Include="Datagrams.NET">
+      <HintPath>..\..\Datagrams.NET\source\Datagrams.NET\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

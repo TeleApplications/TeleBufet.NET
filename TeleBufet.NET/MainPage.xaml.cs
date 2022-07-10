@@ -3,6 +3,7 @@ using DatagramsNet.Datagram;
 using System.Net;
 using System.Net.Sockets;
 using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.ClientAuthentication;
