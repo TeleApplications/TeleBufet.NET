@@ -2,6 +2,14 @@
 using DatagramsNet.Datagram;
 using System.Net;
 using System.Net.Sockets;
+using TeleBufet.NET.API.Database.Interfaces;
+using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.API.Interfaces;
+using TeleBufet.NET.API.Packets.ClientSide;
+using TeleBufet.NET.API.Packets.ServerSide;
+using TeleBufet.NET.CacheManager;
+using TeleBufet.NET.CacheManager.CacheDirectories;
+using TeleBufet.NET.CacheManager.Interfaces;
 
 namespace TeleBufet.NET
 {
@@ -27,7 +35,30 @@ namespace TeleBufet.NET
             if (datagram is HandShakePacket newDatagram) 
             {
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
-                throw new Exception("Packet was recieved from server");
+            }
+
+            if (datagram is AccountInformationPacket newAccountPacket) 
+            {
+                var cacheTable = new CacheTablesPacket() { ConnectioHolder = new() };
+                cacheTable.ConnectioHolder.CacheProducts = GetCacheConnectionKeys<ProductTable, ProductCache>().ToArray();
+                cacheTable.ConnectioHolder.CacheCategories = GetCacheConnectionKeys<CategoryTable, CategoryCache>().ToArray();
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.serverSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(cacheTable));
+            }
+            if (datagram is UncachedTablesPacket newUncachedTablesPacket) 
+            {
+                //TODO: Do a serialization into cache directory with CacheHelper.cs
+                //Then create into CacheHelper.cs new method that allow you to replace old serailization to new one with same id
+            }
+        }
+
+        private IEnumerable<CacheConnection<T>> GetCacheConnectionKeys<T, TDirectory>() where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new()
+        {
+            using var cacheManager = new CacheHelper<T, TimeSpan, TDirectory>();
+            var tables = cacheManager.Deserialize();
+            for (int i = 0; i < tables.Length; i++)
+            {
+                var connectionKey = new CacheConnection<T>(tables[i]);
+                yield return connectionKey;
             }
         }
 
