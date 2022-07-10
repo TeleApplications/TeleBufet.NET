@@ -85,6 +85,8 @@ namespace TeleBufet.NET.Server
                     if (databaseProduct.Key != cacheTables[i].Key)
                         newTables.Add(products[i]);
                 }
+                else
+                    newTables.Add(products[i]);
             }
             return newTables.ToArray();
         }
