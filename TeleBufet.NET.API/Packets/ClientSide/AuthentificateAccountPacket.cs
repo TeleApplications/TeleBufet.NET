@@ -3,7 +3,7 @@ using DatagramsNet.Attributes;
 using DatagramsNet.Interfaces;
 using System.Runtime.InteropServices;
 
-namespace DatagramsNet
+namespace TeleBufet.NET.API.Packets.ClientSide
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Packet]
