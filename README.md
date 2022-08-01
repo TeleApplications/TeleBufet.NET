@@ -12,6 +12,6 @@
 - [x] Connect to Datagrams.NET
 - [ ] All packets implementation
 - [ ] Exceptional front-end
-- [ ] Caching categories and products
+- [ ] Caching categories and products -> 50% done
 - [ ] Publish on Google Play
 - [ ] Publish on App Store
