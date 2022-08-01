@@ -111,13 +111,13 @@ namespace TeleBufet.NET.API.Database
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
-                var newTable = new T();
+                var newTable = (object)new T();
                 unknownData.Add(GetUnknownData(table.Rows, table.Columns, i, table.Columns.Count - offsetSize).ToArray());
                 for (int j = 0; j < properties.Length; j++)
                 {
                     properties[j].SetValue(newTable, table.Rows[i][table.Columns[j]]);
                 }
-                yield return newTable;
+                yield return (T)newTable;
             }
             UnknownData = unknownData;
         }

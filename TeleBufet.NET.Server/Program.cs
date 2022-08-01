@@ -1,23 +1,18 @@
 ﻿using DatagramsNet.Logging.Reading;
-using System;
 using System.Net;
 
 namespace TeleBufet.NET.Server
 {
     internal class Program 
     {
-        private static Server server;
-
-        private static ReaderManager reader;
+        private static Server? server;
 
         public static void Main() 
         {
+            Console.WriteLine("Please enter valid ip address: ");
             server = new(nameof(Server), IPAddress.Parse(Console.ReadLine()));
-            reader = new();
-
-            Console.WriteLine("Please enter valid ip address");
-            Task.Run(() => server.StartServer());
-            reader.StartReading();
+            Task.Run(() => server.StartServerAsync());
+            ReaderManager.StartReading();
         }
     }
 }

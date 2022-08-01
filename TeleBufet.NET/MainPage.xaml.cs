@@ -30,7 +30,7 @@ public partial class MainPage : ContentPage
 		var ipAddress = IPAddress.Any;
 		client = new ExtendedClient("TestClient", IPAddress.Parse(this.ServerAddress.Text), ipAddress);
 		this.PhoneAddress.Text = ipAddress.ToString();
-		Task.Run(async () => await client.StartServer());
+		Task.Run(() => client.StartServerAsync());
 	}
 
 	private async void OnLogin(object sender, EventArgs e) 

@@ -1,4 +1,5 @@
-﻿namespace TeleBufet.NET.API.Database.Interfaces
+﻿
+namespace TeleBufet.NET.API.Database.Interfaces
 {
     public interface ITable
     {

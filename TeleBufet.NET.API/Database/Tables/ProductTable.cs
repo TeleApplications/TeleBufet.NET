@@ -8,14 +8,13 @@ namespace TeleBufet.NET.API.Database.Tables
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("Products")]
-    public class ProductTable : ITable, ICache<TimeSpan> 
+    public sealed class ProductTable : ITable, ICache<TimeSpan> 
     {
 		[DataColumn("ProductID")]
         public int Id { get; set; }
 
         [DataColumn("Name")]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-        public string Name;
+        public string Name { get; set; }
 
 		[DataColumn("CategoryID")]
         public int CategoryId { get; set; }

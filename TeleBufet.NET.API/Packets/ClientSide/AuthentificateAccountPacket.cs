@@ -7,15 +7,12 @@ namespace TeleBufet.NET.API.Packets.ClientSide
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Packet]
-    public sealed class AuthentificateAccountPacket : IDatagram
+    public sealed class AuthentificateAccountPacket
     {
-        public int ProperId { get; }
-
         [Field(0)]
-        public int Id = 18;
+        public int Id { get; set; } = 18;
 
-        [MarshalAs(UnmanagedType.LPStruct)]
         [Field(1)]
-        public NormalAccount Account;
+        public NormalAccount Account { get; set; }
     }
 }

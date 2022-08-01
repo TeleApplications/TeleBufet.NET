@@ -17,24 +17,21 @@ namespace TeleBufet.NET.Server
     {
         public override int PortNumber => 1111;
 
-        public static Socket ?ServerSocket { get; private set; }
-
         public Server(string name, IPAddress address) : base(name, address)
         {
-            ServerSocket = serverSocket;
         }
 
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
         {
-            if (datagram is HandShakePacket newDatagram) 
+            if (datagram is TwoWayHandshake newDatagram) 
             {
-                await ServerLogger.Log<NormalPrefix>($"Packet recieved from {ipAddress.AddressFamily}... sending packet to client", TimeFormat.HALF);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.serverSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(newDatagram));
+                await ServerLogger.LogAsync<NormalPrefix>($"Packet recieved from {ipAddress.AddressFamily}... sending packet to client", TimeFormat.Half);
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(newDatagram));
             }
 
             if (datagram is AuthentificateAccountPacket newAuthenticationDatagram) 
             {
-                await ServerLogger.Log<NormalPrefix>($"Auth packet: from {newAuthenticationDatagram.Account.Username} with token {newAuthenticationDatagram.Account.Token}", TimeFormat.HALF);
+                await ServerLogger.LogAsync<NormalPrefix>($"Auth packet: from {newAuthenticationDatagram.Account.Username} with token {newAuthenticationDatagram.Account.Token}", TimeFormat.Half);
                 using (var databaseManager = new DatabaseManager<UserTable>()) 
                 {
                     var users = await databaseManager.GetTable();
@@ -48,15 +45,15 @@ namespace TeleBufet.NET.Server
                             Karma = 0
                         };
                         await databaseManager.SetTable(currentUser);
-                        await ServerLogger.Log<NormalPrefix>($"Welcome {currentUser.Email} in TeleBufet", TimeFormat.HALF);
+                        await ServerLogger.LogAsync<NormalPrefix>($"Welcome {currentUser.Email} in TeleBufet", TimeFormat.Half);
                     }
                     else
-                        await ServerLogger.Log<NormalPrefix>($"Welcome back {currentUser.Email} in TeleBufet", TimeFormat.HALF);
+                        await ServerLogger.LogAsync<NormalPrefix>($"Welcome back {currentUser.Email} in TeleBufet", TimeFormat.Half);
                     var accountInformationPacket = new AccountInformationPacket()
                     {
                         Karma = currentUser.Karma
                     };
-                    await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.serverSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(accountInformationPacket));
+                    await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(accountInformationPacket));
                 }
             }
             
@@ -64,15 +61,15 @@ namespace TeleBufet.NET.Server
             if (datagram is CacheTablesPacket newCacheDatagram)
             {
                 UncachedTablesPacket uncachedTables = new();
-                uncachedTables.Tables.Products = await GetNewTables<ProductTable>(newCacheDatagram.ConnectioHolder.CacheProducts.ToArray());
-                uncachedTables.Tables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.ConnectioHolder.CacheCategories.ToArray());
+                uncachedTables.Products = await GetNewTables<ProductTable>(newCacheDatagram.CacheProducts.ToArray());
+                uncachedTables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.CacheCategories.ToArray());
 
-                await ServerLogger.Log<NormalPrefix>($"In caching process was found {uncachedTables.Tables.Products.Length + uncachedTables.Tables.Categories.Length} old datas", TimeFormat.HALF);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.serverSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(uncachedTables));
+                await ServerLogger.LogAsync<NormalPrefix>($"In caching process was found {uncachedTables.Products.Length + uncachedTables.Categories.Length} old datas", TimeFormat.Half);
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(uncachedTables));
             }
         }
 
-        private async Task<T[]> GetNewTables<T>(CacheConnection<T>[] cacheTables) where T : ITable, ICache<TimeSpan>, new()
+        private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ITable, ICache<TimeSpan>, new()
         {
             var newTables = new List<T>();
             using var databaseManager = new DatabaseManager<T>();
@@ -80,7 +77,7 @@ namespace TeleBufet.NET.Server
             for (int i = 0; i < products.Length; i++)
             {
                 var databaseProduct = cacheTables.FirstOrDefault(n => n.Id == products[i].Id);
-                if (!databaseProduct.Equals(default(CacheConnection<T>)))
+                if (databaseProduct is not null)
                 {
                     if (databaseProduct.Key != cacheTables[i].Key)
                         newTables.Add(products[i]);

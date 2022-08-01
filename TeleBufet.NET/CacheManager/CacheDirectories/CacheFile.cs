@@ -10,7 +10,6 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
 
         public Stream CacheFileStream { get; set; } 
 
-        // I know that File has a FileOrCreate, but this makes it a little bit clear
         public CacheFile() 
         {
             var path = $"{SystemCacheDirectory}{FileName}";

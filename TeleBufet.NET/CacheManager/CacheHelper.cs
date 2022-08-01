@@ -1,31 +1,34 @@
 ﻿using System.Runtime.InteropServices;
 using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.API.Interfaces;
+using DatagramsNet;
 
 namespace TeleBufet.NET.CacheManager
 {
     //TODO: This implementation is not complete 
-    internal sealed class CacheHelper<T, TKey, TDirectory> : IDisposable where T : ICache<TKey> where TDirectory : ICacheDirectory, new()
+    internal class CacheHelper<T, TKey, TDirectory> : IDisposable where T : ICache<TKey> where TDirectory : ICacheDirectory, new()
     {
-        private T cacheValue;
+        public T CacheValue { get; set; }
 
-        private TDirectory directory = new TDirectory();
+        protected TDirectory directory = new TDirectory();
 
-        private readonly int ValueSize = Marshal.SizeOf<T>();
+        protected readonly int ValueSize = Marshal.SizeOf<T>();
 
         public CacheHelper() { }
 
         public CacheHelper(T value) 
         {
-            cacheValue = value;
+            CacheValue = value;
         }
+
+        protected virtual void SetBinarySeek() => directory.CacheFileStream.Seek(0, SeekOrigin.End);
 
         public void Serialize() 
         {
-            directory.CacheFileStream.Seek(0, SeekOrigin.End);
+            SetBinarySeek();
             using (var binaryWriter = new BinaryWriter(directory.CacheFileStream)) 
             {
-                byte[] bytes = GetBytes(cacheValue);
+                byte[] bytes = BinaryHelper.Write(CacheValue);
                 binaryWriter.Write(bytes);
             }
         }
@@ -44,28 +47,10 @@ namespace TeleBufet.NET.CacheManager
             {
                 int byteCount = ((i + 1) * size);
                 byte[] newBytes = spanBytes.Slice((i * size), size).ToArray();
-                T @object = GetT(newBytes);
+                T @object = BinaryHelper.Read<T>(newBytes);
                 values[i] = @object;
             }
             return values;
-        }
-
-        private byte[] GetBytes(T value)
-        {
-            byte[] structureBytes = new byte[ValueSize];
-            IntPtr valuePointer = Marshal.AllocHGlobal(ValueSize);
-
-            Marshal.StructureToPtr(value, valuePointer, false);
-            Marshal.Copy(valuePointer, structureBytes, 0, ValueSize);
-            return structureBytes;
-        }
-
-        private T GetT(byte[] bytes) 
-        {
-            IntPtr objectPointer = Marshal.AllocHGlobal(ValueSize);
-            Marshal.Copy(bytes, 0, objectPointer, ValueSize);
-
-            return (T)Marshal.PtrToStructure<T>(objectPointer);
         }
 
         public void Dispose() 
