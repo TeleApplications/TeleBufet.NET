@@ -40,8 +40,8 @@ namespace TeleBufet.NET
             if (datagram is AccountInformationPacket newAccountPacket) 
             {
                 var cacheTable = new CacheTablesPacket();
-                cacheTable.CacheProducts = GetCacheConnectionKeys<ProductTable, ProductCache>().ToArray();
-                cacheTable.CacheCategories = GetCacheConnectionKeys<CategoryTable, CategoryCache>().ToArray();
+                cacheTable.CacheProducts = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> productsConnection) ? productsConnection.ToArray() : cacheTable.CacheProducts;
+                cacheTable.CacheCategories = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> categoryConnection) ? categoryConnection.ToArray() : cacheTable.CacheCategories;
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(cacheTable));
             }
             if (datagram is UncachedTablesPacket newUncachedTablesPacket) 
@@ -61,6 +61,12 @@ namespace TeleBufet.NET
                 tableSerialization.CacheValue = (T)newTables[i];
                 tableSerialization.Serialize();
             }
+        }
+
+        private bool TryGetCacheConnectionKeys<T, TDirectory>(out IEnumerable<CacheConnection> connections) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 
+        {
+            connections = GetCacheConnectionKeys<T, TDirectory>();
+            return connections.Count() > 0;
         }
 
         private IEnumerable<CacheConnection> GetCacheConnectionKeys<T, TDirectory>() where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new()

@@ -52,7 +52,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Datagrams.NET" Version="1.0.2" />
+	  <PackageReference Include="Datagrams.NET" Version="1.0.3" />
 	  <PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
 	</ItemGroup>
 

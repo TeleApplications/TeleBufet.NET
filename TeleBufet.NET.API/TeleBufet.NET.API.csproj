@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Datagrams.NET" Version="1.0.2" />
+    <PackageReference Include="Datagrams.NET" Version="1.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
   </ItemGroup>
 

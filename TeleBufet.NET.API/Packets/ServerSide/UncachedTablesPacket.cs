@@ -10,12 +10,12 @@ namespace TeleBufet.NET.API.Packets.ServerSide
     {
 
         [Field(0)]
-        public int Id { get; set; } = 16;
+        public int Id { get; set; } = 28;
 
         [Field(1)]
-        public ProductTable[] Products { get; set; }
+        public ProductTable[] Products { get; set; } = new ProductTable[] { new ProductTable() };
 
         [Field(2)]
-        public CategoryTable[] Categories { get; set; }
+        public CategoryTable[] Categories { get; set; } = new CategoryTable[] { new CategoryTable() };
     }
 }

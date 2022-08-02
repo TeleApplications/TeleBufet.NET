@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.6.0" />
-    <PackageReference Include="Datagrams.NET" Version="1.0.2" />
+    <PackageReference Include="Datagrams.NET" Version="1.0.3" />
     <PackageReference Include="Microsoft.Graph" Version="4.32.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.44.0" />
   </ItemGroup>
