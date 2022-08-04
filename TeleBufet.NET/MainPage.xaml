@@ -1,40 +1,32 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.MainPage"
-             BackgroundColor="{DynamicResource SecondaryColor}">
-    <ScrollView>
-        <Grid RowSpacing="25" RowDefinitions="Auto,Auto,Auto,Auto,*"
-              Padding="{OnPlatform iOS='30,60,30,30', Default='30'}">
-            <Button
-                x:Name="ConnectButton"
-                Text="Connect"
-                Clicked="OnClientConnect"
-                Padding="5"
-                TranslationY="100"
+             BackgroundColor="{DynamicResource PrimaryColor}">
+    <StackLayout Margin="0,0,0,0">
+        <Image Source="datagrams_powered_logo.png" WidthRequest="296" HeightRequest="196" VerticalOptions="StartAndExpand" HorizontalOptions="EndAndExpand" Rotation="30" Margin="0,-50,-70, 0"/>
+        <Image Source="school_logo.png" WidthRequest="254" HeightRequest="254" VerticalOptions="Center"/>
+        <Label Text="TeleBufet"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               TextColor="White"
+               FontSize="64"
+               FontAutoScalingEnabled="True"
+               FontAttributes="Bold"
+               Margin="0,-40,0,0"
+               ></Label>
+        <Label Text="A bufet reservation system in .NET"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               TextColor="#c7dd89"
+               FontSize="16"
+               FontAutoScalingEnabled="True"
+               FontAttributes="Bold"
+               Margin="0,-15,0,0"
+               ></Label>
+        <BoxView
+                x:Name="SlideOut"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="EndAndExpand"
                 />
-            <Button
-                x:Name="LoginButton"
-                Text="Login"
-                Clicked="OnLogin"
-                Padding="5"
-                TranslationY="200"
-                />
-        <StackLayout>
-            <Entry
-                x:Name="ServerAddress"
-                Placeholder="Type server address"
-                />
-            <Entry
-                x:Name="ClientAddress"
-                Placeholder="Type client address"
-                />
-            <Entry
-                x:Name="PhoneAddress"
-                IsReadOnly="True"
-                TranslationY="150"
-                />
-            </StackLayout>
-        </Grid>
-
-    </ScrollView>
+    </StackLayout>
 </ContentPage>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TeleBufet.NET.Pages.LoginPage.LoginPage"
+             Title="LoginPage"
+             BackgroundColor="Transparent">
+    <ContentPage.Content>
+    <Grid Margin="0,550,0,-20">
+        <Frame BackgroundColor="White" CornerRadius="35" HasShadow="True" />
+        <Frame
+            BackgroundColor="White"
+            VerticalOptions="Start"
+            MaximumWidthRequest="500"
+            Margin="0, 25, 0, 0"
+            HasShadow="True">
+            <StackLayout Orientation="Vertical" HorizontalOptions="Start">
+                <Label Text="Getting started" FontSize="Large" Padding="0,0,0,5"></Label>
+                <Label Text="Login with Teleinformatika account" FontSize="Small" Padding="0,0,0,2" TextColor="Gray"></Label>
+                    <HorizontalStackLayout Padding="10,20,0,0">
+                        <Image Source="microsoft_logo.png" WidthRequest="50" HeightRequest="50"/>
+                        <Button BackgroundColor="White"
+                            x:Name="LoginButton"
+                            Text="Sign in with Microsoft"
+                            FontAttributes="Bold"
+                            Clicked="OnLogin">
+                        </Button>
+                    </HorizontalStackLayout>
+            </StackLayout>
+        </Frame>
+    </Grid>
+</ContentPage.Content>
+</ContentPage>
