@@ -65,7 +65,6 @@ namespace TeleBufet.NET.Server
                 uncachedTables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.CacheCategories.ToArray());
 
                 await ServerLogger.LogAsync<NormalPrefix>($"In caching process was found {uncachedTables.Products.Length + uncachedTables.Categories.Length} old datas", TimeFormat.Half);
-                var subdata = BinaryHelper.Write(uncachedTables);
                 var data = DatagramHelper.WriteDatagram(uncachedTables);
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), data);
             }

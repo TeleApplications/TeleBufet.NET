@@ -1,8 +1,6 @@
 ﻿using DatagramsNet.Attributes;
 using TeleBufet.NET.API.Database.Interfaces;
-using TeleBufet.NET.API.Interfaces;
 using System.Runtime.InteropServices;
-using TeleBufet.NET.API.Database.Tables;
 
 namespace TeleBufet.NET.API.Packets.ClientSide
 {
@@ -30,9 +28,9 @@ namespace TeleBufet.NET.API.Packets.ClientSide
         public int Id { get; set; } = 23;
 
         [Field(1)]
-        public CacheConnection[] CacheProducts { get; set; } = new CacheConnection[] { new CacheConnection() { } };
+        public CacheConnection[] CacheProducts { get; set; }
 
         [Field(2)]
-        public CacheConnection[] CacheCategories { get; set; } = new CacheConnection[] { new CacheConnection() { } };
+        public CacheConnection[] CacheCategories { get; set; }
     }
 }

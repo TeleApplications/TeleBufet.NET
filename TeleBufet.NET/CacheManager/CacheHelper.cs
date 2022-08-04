@@ -12,8 +12,6 @@ namespace TeleBufet.NET.CacheManager
 
         protected TDirectory directory = new TDirectory();
 
-        protected readonly int ValueSize = Marshal.SizeOf<T>();
-
         public CacheHelper() { }
 
         public CacheHelper(T value) 
@@ -26,31 +24,18 @@ namespace TeleBufet.NET.CacheManager
         public void Serialize() 
         {
             SetBinarySeek();
-            using (var binaryWriter = new BinaryWriter(directory.CacheFileStream)) 
-            {
-                byte[] bytes = BinaryHelper.Write(CacheValue);
-                binaryWriter.Write(bytes);
-            }
+            var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+            byte[] bytes = BinaryHelper.Write(CacheValue);
+            binaryWriter.Write(bytes);
         }
 
         public T[] Deserialize() 
         {
             directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
 
-            int size = ValueSize;
-            using var binaryReader = new BinaryReader(directory.CacheFileStream);
-
-            int count = (int)binaryReader.BaseStream.Length / size;
-            var values = new T[count];
+            var binaryReader = new BinaryReader(directory.CacheFileStream);
             Span<byte> spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length).AsSpan();
-            for (int i = 0; i < count; i++)
-            {
-                int byteCount = ((i + 1) * size);
-                byte[] newBytes = spanBytes.Slice((i * size), size).ToArray();
-                T @object = BinaryHelper.Read<T>(newBytes);
-                values[i] = @object;
-            }
-            return values;
+            return BinaryHelper.Read<T[]>(spanBytes.ToArray());
         }
 
         public void Dispose() 

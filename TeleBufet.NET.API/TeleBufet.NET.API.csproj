@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Datagrams.NET" Version="1.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Datagrams.NET">
+      <HintPath>..\..\Datagrams.NET\source\Datagrams.NET.Examples.Client\bin\Debug\net6.0\Datagrams.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

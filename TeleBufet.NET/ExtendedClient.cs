@@ -16,7 +16,6 @@ namespace TeleBufet.NET
     internal sealed class ExtendedClient : ServerManager
     {
         public override int PortNumber => 1111;
-
         public IPAddress ClientAddress { get; set; }
         public static Socket ?ClientSocket { get; private set; }
 
