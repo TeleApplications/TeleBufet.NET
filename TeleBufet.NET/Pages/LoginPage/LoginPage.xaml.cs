@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.ClientAuthentication;
+using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET.Pages.LoginPage;
 
@@ -37,6 +38,8 @@ public partial class LoginPage : ContentPage
 			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
 			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.ClientSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(authenticatePacket));
+			Navigation.PopAsync();
+			await Navigation.PushModalAsync(new MainProductPage());
 		}
 	}
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TeleBufet.NET.Pages.ProductPage.MainProductPage"
+             Title="MainProductPage">
+    <ScrollView>
+        <FlexLayout
+            Wrap="Wrap"
+            Direction="Row"
+            JustifyContent="Start"
+            AlignContent="Center"
+            AlignItems="Center"
+            x:Name="collection"
+            >
+            <StackLayout>
+                
+            </StackLayout>
+        </FlexLayout>
+    </ScrollView>
+</ContentPage>
