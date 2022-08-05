@@ -40,6 +40,7 @@ namespace TeleBufet.NET.CacheManager
 
         public void Dispose() 
         {
+            directory.CacheFileStream.Flush();
             directory.CacheFileStream.Dispose();
         }
     }
