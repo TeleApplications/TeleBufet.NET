@@ -18,7 +18,7 @@
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="Black" />
                 <Setter Property="FontFamily" Value="OpenSansRegular" />
-                <Setter Property="BackgroundColor" Value="#feb74d" />
+                <Setter Property="BackgroundColor" Value="#4cb86b" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>
 

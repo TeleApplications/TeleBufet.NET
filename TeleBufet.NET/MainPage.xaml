@@ -4,15 +4,15 @@
              BackgroundColor="{DynamicResource PrimaryColor}">
     <StackLayout Margin="0,0,0,0">
         <Image Source="datagrams_powered_logo.png" WidthRequest="296" HeightRequest="196" VerticalOptions="StartAndExpand" HorizontalOptions="EndAndExpand" Rotation="30" Margin="0,-50,-70, 0"/>
-        <Image Source="school_logo.png" WidthRequest="254" HeightRequest="254" VerticalOptions="Center"/>
+        <Grid Margin="0,-40,0,0" TranslationY="-80">
+        <Image Source="school_logo.png" WidthRequest="254" HeightRequest="254" VerticalOptions="FillAndExpand" Margin="0,-196,0,0"/>
         <Label Text="TeleBufet"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
+               HorizontalOptions="CenterAndExpand"
+               VerticalOptions="CenterAndExpand"
                TextColor="White"
                FontSize="64"
                FontAutoScalingEnabled="True"
                FontAttributes="Bold"
-               Margin="0,-40,0,0"
                ></Label>
         <Label Text="A bufet reservation system in .NET"
                HorizontalOptions="Center"
@@ -21,12 +21,28 @@
                FontSize="16"
                FontAutoScalingEnabled="True"
                FontAttributes="Bold"
-               Margin="0,-15,0,0"
+               Margin="0,80,0,0"
                ></Label>
-        <BoxView
+        </Grid>
+        <Grid>
+        <Ellipse
                 x:Name="SlideOut"
-                HorizontalOptions="FillAndExpand"
+                Fill="White"
                 VerticalOptions="EndAndExpand"
+                HorizontalOptions="Center"
+                WidthRequest="960"
+                HeightRequest="360"
+               Margin="0,0,0,-200"
                 />
+        <Image Source="up_arrow.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Margin="0,0,0,35"/>
+        <Label Text="Swipe up to login"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand"
+               TextColor="Black"
+               FontSize="18"
+               FontAutoScalingEnabled="True"
+               FontAttributes="Bold"
+               ></Label>
+        </Grid>
     </StackLayout>
 </ContentPage>

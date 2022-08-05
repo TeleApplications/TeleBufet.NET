@@ -13,7 +13,6 @@
     {
         public string Name { get; set; }
 
-
         public DataColumnAttribute(string name) 
         {
             Name = name;
@@ -24,7 +23,6 @@
     public class KeyAttribute : Attribute 
     {
         public Type ConnectionTableType { get; set; }
-
         public string[] ColumnNames { get; set; }
 
         public KeyAttribute(Type tableType, string[] columnNames) 
