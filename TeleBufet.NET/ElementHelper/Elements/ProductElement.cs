@@ -1,22 +1,47 @@
-﻿using System.Collections.Immutable;
-using TeleBufet.NET.API.Database.Tables;
+﻿using TeleBufet.NET.API.Database.Tables;
 
 namespace TeleBufet.NET.ElementHelper.Elements
 {
-    public sealed class ProductElement : ImmutableElement<ProductTable, StackLayout>
+    public readonly struct ProductInformationHolder 
     {
-        public override StackLayout LayoutHandler { get; } = new StackLayout()
+        public ProductTable Product { get; }
+        public ProductInformationTable Information { get; }
+
+        public ProductInformationHolder(ProductTable product, ProductInformationTable information) 
         {
+            Product = product;
+            Information = information;
+        }
+    }
+
+    public static class ProductElementFactory 
+    {
+        public static IEnumerable<ProductInformationHolder> GetProductInformationTable(ProductTable[] table, ProductInformationTable[] information) 
+        {
+            for (int i = 0; i < table.Length; i++)
+            {
+                yield return new ProductInformationHolder(table[i], information[i]);
+            }
+        }
+    }
+
+    public sealed class ProductElement : ImmutableElement<ProductInformationHolder, StackLayout>
+    {
+        public int Category { get; private set; }
+        public override StackLayout LayoutHandler { get; set; } = new StackLayout()
+        {
+            WidthRequest = 110,
+            HeightRequest = 160,
         };
 
-        public int Category { get; private set; }
-
-        public override ImmutableArray<View> Controls { get; protected set; }= ImmutableArray.Create<View>
-        (
+        public override Memory<View> Controls { get; protected set; } = new View[]
+        {
             new Image()
             {
-                WidthRequest = 80,
-                HeightRequest = 80,
+                WidthRequest = 100,
+                HeightRequest = 100,
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.Center
             },
             new Label()
             {
@@ -27,7 +52,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
             new Label()
             {
                 FontSize = 18,
-                TextColor = Color.FromArgb("#d08563")
+                TextColor = Color.FromArgb("#4cb86b")
             },
             new Label()
             {
@@ -35,23 +60,16 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 TextColor = Colors.Black,
                 HorizontalTextAlignment = TextAlignment.End
             },
-            new Button()
-            {
-                ImageSource = "add_icon.png",
-                WidthRequest = 25,
-                HeightRequest = 25,
-                BackgroundColor = Color.FromArgb("#4cb86b"),
-            }
-        );
+        };
 
-        public override void Inicialize(ProductTable data)
+        public override void Inicialize(ProductInformationHolder data)
         {
-            (Controls[0] as Image).Source = "microsoft_logo.png";
-            (Controls[1] as Label).Text = data.Name;
-            (Controls[2] as Label).Text = data.Price.ToString();
-            (Controls[3] as Label).Text = data.Amount.ToString();
+            (Controls.Span[0] as Image).Source = "microsoft_logo.png";
+            (Controls.Span[1] as Label).Text = data.Product.Name;
+            (Controls.Span[2] as Label).Text = data.Information.Price.ToString();
+            (Controls.Span[3] as Label).Text = data.Information.Amount.ToString();
 
-            Category = data.CategoryId;
+            Category = data.Product.CategoryId;
             base.Inicialize(data);
         }
     }

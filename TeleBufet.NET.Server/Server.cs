@@ -68,6 +68,18 @@ namespace TeleBufet.NET.Server
                 var data = DatagramHelper.WriteDatagram(uncachedTables);
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), data);
             }
+
+            if (datagram is RequestProductInformationPacket newAmountDatagram) 
+            {
+                using var databaseManager = new DatabaseManager<ProductInformationTable>();
+                var products = await databaseManager.GetTable();
+                var informationPacket = new ProductsInformationPacket()
+                {
+                    ProductsInfromations = products
+                };
+
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(informationPacket));
+            }
         }
 
         private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ITable, ICache<TimeSpan>, new()

@@ -37,7 +37,7 @@ public partial class LoginPage : ContentPage
 		{
 			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
 			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
-            await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.ClientSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(authenticatePacket));
+            await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
 			Navigation.PopAsync();
 			await Navigation.PushModalAsync(new MainProductPage());
 		}

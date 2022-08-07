@@ -17,14 +17,18 @@ namespace TeleBufet.NET
     {
         public override int PortNumber => 1111;
         public IPAddress ClientAddress { get; set; }
+
         public static Socket ?ClientSocket { get; private set; }
+
+        private static ExtendedClient staticHolder;
 
         public ExtendedClient(string name, IPAddress clientAddress, IPAddress serverAddress) : base(name, serverAddress) //TODO: constructor only socket of server
         {
             ClientAddress = serverAddress;
             this.ServerSocket.Connect((EndPoint)new IPEndPoint(clientAddress, PortNumber));
             this.UdpReciever = new UdpReciever(ServerSocket);
-            ClientSocket = ServerSocket;
+            staticHolder = this;
+
             var handShakePacket = new TwoWayHandshake() {Message = "Test message"};
             DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(handShakePacket));
         }
@@ -43,13 +47,23 @@ namespace TeleBufet.NET
                 cacheTable.CacheCategories = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> categoryConnection) ? categoryConnection.ToArray() : cacheTable.CacheCategories;
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(cacheTable));
             }
+
+            //TODO: Create pure generics solution for this type of packets
+            //We hope that this will be possible in the next update of Datagrams.NET
             if (datagram is UncachedTablesPacket newUncachedTablesPacket) 
             {
-                //TODO: Do a serialization into cache directory with CacheHelper.cs
-                //Then create into CacheHelper.cs new method that allow you to replace old serailization to new one with same id
                 CacheTables<ProductTable, ProductCache>(newUncachedTablesPacket.Products);
                 CacheTables<CategoryTable, CategoryCache>(newUncachedTablesPacket.Categories);
             }
+            if (datagram is ProductsInformationPacket newProductsInformationPacket) 
+            {
+                CacheTables<ProductInformationTable, ProductInformationCache>(newProductsInformationPacket.ProductsInfromations);
+            }
+        }
+
+        public static async Task SendDataAsync(byte[] data) 
+        {
+            await staticHolder.ServerSocket.SendAsync(data, SocketFlags.None);
         }
 
         private void CacheTables<T, TDirectory>(T[] newTables) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 

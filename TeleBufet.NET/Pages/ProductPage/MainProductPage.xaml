@@ -2,19 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ProductPage.MainProductPage"
-             Title="MainProductPage">
+             Title="MainProductPage"
+             BackgroundColor="#fdfdfd">
     <ScrollView>
-        <FlexLayout
-            Wrap="Wrap"
-            Direction="Row"
-            JustifyContent="Start"
-            AlignContent="Center"
-            AlignItems="Center"
-            x:Name="collection"
-            >
-            <StackLayout>
-                
-            </StackLayout>
-        </FlexLayout>
+        <Frame BorderColor="LightGrey" CornerRadius="20" Padding="0,0,0,0">
+            <FlexLayout
+                Wrap="Wrap"
+                Direction="Row"
+                JustifyContent="SpaceEvenly"
+                AlignContent="Center"
+                AlignItems="Center"
+                x:Name="collection">
+            </FlexLayout>
+        </Frame>
     </ScrollView>
 </ContentPage>
