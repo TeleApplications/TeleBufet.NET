@@ -6,7 +6,7 @@ using TeleBufet.NET.API.Interfaces;
 namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    [Table("ProductInformation")]
+    [Table("ProductsInformation")]
     public sealed class ProductInformationTable : ITable, ICache<TimeSpan>
     {
         [DataColumn("Id")]

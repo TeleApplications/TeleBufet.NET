@@ -22,7 +22,7 @@ public partial class MainProductPage : ContentPage
 	{
 		InitializeComponent();
 		productLayout = collection;
-		UpdateElements();
+		Task.Run(async() => await UpdateElements());
 	}
 
 	private async Task UpdateElements() 
@@ -37,14 +37,19 @@ public partial class MainProductPage : ContentPage
 			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(ProductElementFactory.GetProductInformationTable(products.Span.ToArray(), elementInformations).ToArray()).ToArray();
             for (int i = 0; i < elements.Length; i++)
             {
+				var baseFrame = new Frame() {CornerRadius = 15, Margin = 5, BackgroundColor = Colors.White };
 				var baseHorizontalLayout = new HorizontalStackLayout();
-				var addButton = new Button() { BackgroundColor = Color.FromArgb("#4cb86b"), VerticalOptions = LayoutOptions.End, WidthRequest = 50, HeightRequest = 50, CornerRadius = 15 };
-				addButton.IsEnabled = await TryProductAmountAsync(products.Span[i]);
 
-				baseHorizontalLayout.Children.Add(new Frame() { Content = elements[i], CornerRadius = 15, Margin = 5, BackgroundColor = Colors.White });
+				var addButton = new Button() { BackgroundColor = Color.FromArgb("#4cb86b"), Padding = 5, VerticalOptions = LayoutOptions.End, HorizontalOptions = LayoutOptions.End, WidthRequest = 35, HeightRequest = 35, CornerRadius = 10 };
+				addButton.IsEnabled = elementInformations[i].Amount > 0;
+
+                baseHorizontalLayout.Children.Add(elements[i]);
 				baseHorizontalLayout.Children.Add(addButton);
-				productLayout.Children.Add(baseHorizontalLayout);
+				baseFrame.Content = baseHorizontalLayout;
+
+				Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(baseFrame));
             }
+			(collection as IView).InvalidateArrange();
 		}
 	}
 

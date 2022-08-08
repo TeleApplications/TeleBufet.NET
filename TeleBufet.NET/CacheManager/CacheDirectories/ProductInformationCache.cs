@@ -2,7 +2,7 @@
 {
     internal sealed class ProductInformationCache : CacheFile
     {
-        public override string FileName => "ProductInformationCacheSeven";
+        public override string FileName => "ProductInformationCacheEighth";
 
         public ProductInformationCache() : base() { }
     }

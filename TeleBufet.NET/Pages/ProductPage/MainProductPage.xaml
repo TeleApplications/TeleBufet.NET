@@ -4,8 +4,10 @@
              x:Class="TeleBufet.NET.Pages.ProductPage.MainProductPage"
              Title="MainProductPage"
              BackgroundColor="#fdfdfd">
-    <ScrollView>
-        <Frame BorderColor="LightGrey" CornerRadius="20" Padding="0,0,0,0">
+        <Frame BorderColor="LightGrey" CornerRadius="20"
+               x:Name="defaultFrame">
+     <ScrollView
+        x:Name="scrollView">
             <FlexLayout
                 Wrap="Wrap"
                 Direction="Row"
@@ -14,6 +16,6 @@
                 AlignItems="Center"
                 x:Name="collection">
             </FlexLayout>
+     </ScrollView>
         </Frame>
-    </ScrollView>
 </ContentPage>

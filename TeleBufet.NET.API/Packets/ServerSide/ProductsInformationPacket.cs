@@ -12,6 +12,6 @@ namespace TeleBufet.NET.API.Packets.ServerSide
         public int Id { get; set; } = 30;
 
         [Field(1)]
-        public ProductInformationTable[] ProductsInfromations { get; set; }
+        public ProductInformationTable[] ProductsInfromations { get; set; } = new ProductInformationTable[1];
     }
 }
