@@ -20,5 +20,15 @@ namespace TeleBufet.NET.API.Database.Tables
 
         [DataColumn("Timestamp")]
         public TimeSpan Key { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not ProductInformationTable newTable)
+                return false;
+            int newValidationNumber = (this.Amount + (int)this.Price);
+            int originalValidationNumber = (newTable.Amount + (int)newTable.Price);
+
+            return (newValidationNumber == originalValidationNumber);
+        }
     }
 }

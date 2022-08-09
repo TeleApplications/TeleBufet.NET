@@ -26,7 +26,7 @@ public partial class LoginPage : ContentPage
 	{
 		var ipAddress = IPAddress.Any;
 		//TODO: This hard coded ip address needs to be written by probably main school website
-		client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.10"), ipAddress);
+		client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.13"), ipAddress);
 		Task.Run(() => client.StartServerAsync());
 	}
 

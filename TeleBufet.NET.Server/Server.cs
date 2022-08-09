@@ -73,13 +73,33 @@ namespace TeleBufet.NET.Server
             {
                 using var databaseManager = new DatabaseManager<ProductInformationTable>();
                 var products = await databaseManager.GetTable();
+
+                var properTables = GetNewProductTables(newAmountDatagram.ProductInformationTables, products);
                 var informationPacket = new ProductsInformationPacket()
                 {
-                    ProductsInfromations = products
+                    ProductsInfromations = properTables
                 };
 
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(informationPacket));
             }
+        }
+
+        private ProductInformationTable[] GetNewProductTables(ProductInformationTable[] orignalTables, ProductInformationTable[] newTables) 
+        {
+            if (orignalTables.Length == 0)
+                return newTables;
+
+            Memory<ProductInformationTable> spanTables = new ProductInformationTable[newTables.Length];
+            int totalChanges = 0;
+            for (int i = 0; i < newTables.Length; i++)
+            {
+                if (i > (orignalTables.Length - 1) || !(newTables[i].Equals(orignalTables[i]))) 
+                {
+                    spanTables.Span[i] = newTables[i];
+                    totalChanges++;
+                }
+            }
+            return spanTables[0..totalChanges].ToArray();
         }
 
         private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ITable, ICache<TimeSpan>, new()

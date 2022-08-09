@@ -1,4 +1,5 @@
 using DatagramsNet.Datagram;
+using System.Windows.Input;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
@@ -25,23 +26,35 @@ public partial class MainProductPage : ContentPage
 		Task.Run(async() => await UpdateElements());
 	}
 
+	private Command ExecuteUpdateCommand(RefreshView refreshView)
+	{
+		var asyncAction = (Action)(async() => await UpdateElements());
+		var command = new Command(asyncAction);
+		refreshView.IsRefreshing = false;
+
+		return command;
+	}
+
 	private async Task UpdateElements() 
 	{
 		if (TryUpdateCacheTables<ProductTable, ProductCache>(ref products))
 		{
-			//TODO: Create better dynamically adding products
-			_ = await TryProductAmountAsync(new ProductTable());
 			var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+			var oldProductData = cacheTable.Deserialize().ToArray();
 
-			var elementInformations = cacheTable.Deserialize().ToArray();
-			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(ProductElementFactory.GetProductInformationTable(products.Span.ToArray(), elementInformations).ToArray()).ToArray();
+			var requestProductInfromatios = new RequestProductInformationPacket() {ProductInformationTables = oldProductData};
+			await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(requestProductInfromatios));
+			var newProductData = cacheTable.Deserialize().ToArray();
+
+
+			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(ProductElementFactory.GetProductInformationTable(products.Span.ToArray(), newProductData).ToArray()).ToArray();
             for (int i = 0; i < elements.Length; i++)
             {
-				var baseFrame = new Frame() {CornerRadius = 15, Margin = 5, BackgroundColor = Colors.White };
-				var baseHorizontalLayout = new HorizontalStackLayout();
+				var baseFrame = new Frame() {CornerRadius = 15, Margin = 4, BackgroundColor = Colors.White };
+				var baseHorizontalLayout = new StackLayout();
 
-				var addButton = new Button() { BackgroundColor = Color.FromArgb("#4cb86b"), Padding = 5, VerticalOptions = LayoutOptions.End, HorizontalOptions = LayoutOptions.End, WidthRequest = 35, HeightRequest = 35, CornerRadius = 10 };
-				addButton.IsEnabled = elementInformations[i].Amount > 0;
+				var addButton = new Button() { BackgroundColor = Color.FromArgb("#4cb86b"), Padding = new Thickness(0, 0, 50, 45), VerticalOptions = LayoutOptions.End, HorizontalOptions = LayoutOptions.End, WidthRequest = 45, HeightRequest = 45, CornerRadius = 10 };
+				addButton.IsEnabled = newProductData[i].Amount > 0;
 
                 baseHorizontalLayout.Children.Add(elements[i]);
 				baseHorizontalLayout.Children.Add(addButton);
@@ -49,7 +62,6 @@ public partial class MainProductPage : ContentPage
 
 				Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(baseFrame));
             }
-			(collection as IView).InvalidateArrange();
 		}
 	}
 
