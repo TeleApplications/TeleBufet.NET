@@ -36,17 +36,9 @@ namespace TeleBufet.NET
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
         {
             if (datagram is TwoWayHandshake newDatagram) 
-            {
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
-            }
-
-            if (datagram is AccountInformationPacket newAccountPacket) 
-            {
-                var cacheTable = new CacheTablesPacket();
-                cacheTable.CacheProducts = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> productsConnection) ? productsConnection.ToArray() : cacheTable.CacheProducts;
-                cacheTable.CacheCategories = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> categoryConnection) ? categoryConnection.ToArray() : cacheTable.CacheCategories;
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(cacheTable));
-            }
+            if (datagram is AccountInformationPacket newAccountPacket)
+                await RequestCacheTablesPacketAsync();
 
             //TODO: Create pure generics solution for this type of packets
             //We hope that this will be possible in the next update of Datagrams.NET
@@ -59,6 +51,14 @@ namespace TeleBufet.NET
             {
                 CacheTables<ProductInformationTable, ProductInformationCache>(newProductsInformationPacket.ProductsInfromations);
             }
+        }
+
+        public static async Task RequestCacheTablesPacketAsync()
+        {
+            var cacheTable = new CacheTablesPacket();
+            cacheTable.CacheProducts = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> productsConnection) ? productsConnection.ToArray() : cacheTable.CacheProducts;
+            cacheTable.CacheCategories = TryGetCacheConnectionKeys<CategoryTable, CategoryCache>(out IEnumerable<CacheConnection> categoryConnection) ? categoryConnection.ToArray() : cacheTable.CacheCategories;
+            await DatagramHelper.SendDatagramAsync(async (byte[] data) => await SendDataAsync(data), DatagramHelper.WriteDatagram(cacheTable));
         }
 
         public static async Task SendDataAsync(byte[] data) 
@@ -76,13 +76,13 @@ namespace TeleBufet.NET
             }
         }
 
-        private bool TryGetCacheConnectionKeys<T, TDirectory>(out IEnumerable<CacheConnection> connections) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 
+        private static bool TryGetCacheConnectionKeys<T, TDirectory>(out IEnumerable<CacheConnection> connections) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 
         {
             connections = GetCacheConnectionKeys<T, TDirectory>();
             return connections.Count() > 0;
         }
 
-        private IEnumerable<CacheConnection> GetCacheConnectionKeys<T, TDirectory>() where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new()
+        private static IEnumerable<CacheConnection> GetCacheConnectionKeys<T, TDirectory>() where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new()
         {
             using var cacheManager = new CacheHelper<T, TimeSpan, TDirectory>();
             var tables = cacheManager.Deserialize();

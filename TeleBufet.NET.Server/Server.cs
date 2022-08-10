@@ -89,13 +89,13 @@ namespace TeleBufet.NET.Server
             if (orignalTables.Length == 0)
                 return newTables;
 
-            Memory<ProductInformationTable> spanTables = new ProductInformationTable[newTables.Length];
+            Span<ProductInformationTable> spanTables = new ProductInformationTable[newTables.Length];
             int totalChanges = 0;
             for (int i = 0; i < newTables.Length; i++)
             {
                 if (i > (orignalTables.Length - 1) || !(newTables[i].Equals(orignalTables[i]))) 
                 {
-                    spanTables.Span[i] = newTables[i];
+                    spanTables[totalChanges] = newTables[i];
                     totalChanges++;
                 }
             }
@@ -112,7 +112,7 @@ namespace TeleBufet.NET.Server
                 var databaseProduct = cacheTables.FirstOrDefault(n => n.Id == products[i].Id);
                 if (databaseProduct is not null)
                 {
-                    if (databaseProduct.Key != cacheTables[i].Key)
+                    if (databaseProduct.Key != products[i].Key)
                         newTables.Add(products[i]);
                 }
                 else

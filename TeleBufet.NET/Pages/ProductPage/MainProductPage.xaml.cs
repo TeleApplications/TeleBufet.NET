@@ -15,7 +15,9 @@ namespace TeleBufet.NET.Pages.ProductPage;
 public partial class MainProductPage : ContentPage
 {
 	private FlexLayout productLayout;
+
 	private Memory<ProductTable> products = new();
+	private Memory<CategoryTable> categories = new();
 
 	public static UserTable User { get; set; }
 
@@ -37,6 +39,8 @@ public partial class MainProductPage : ContentPage
 
 	private async Task UpdateElements() 
 	{
+		await ExtendedClient.RequestCacheTablesPacketAsync();
+
 		if (TryUpdateCacheTables<ProductTable, ProductCache>(ref products))
 		{
 			var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
@@ -61,6 +65,14 @@ public partial class MainProductPage : ContentPage
 				baseFrame.Content = baseHorizontalLayout;
 
 				Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(baseFrame));
+            }
+		}
+		if (TryUpdateCacheTables<CategoryTable, CategoryCache>(ref categories)) 
+		{
+			var categoryElements = GetTableElements<CategoryTable, CategoryElement, Grid>(categories).ToArray();
+            for (int i = 0; i < categoryElements.Length; i++)
+            {
+				//Device.BeginInvokeOnMainThread(() => horizontalCollection.Add(categoryElements[i]));
             }
 		}
 	}
