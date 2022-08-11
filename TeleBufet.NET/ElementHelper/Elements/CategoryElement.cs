@@ -11,16 +11,16 @@ namespace TeleBufet.NET.ElementHelper.Elements
     {
         public override Grid LayoutHandler { get; set; } = new Grid()
         {
-            WidthRequest = 75,
-            HeightRequest = 75,
+            WidthRequest = 35,
+            HeightRequest = 45,
         };
 
         public override Memory<View> Controls { get; protected set; } = new View[]
         {
             new ImageButton()
             {
-                WidthRequest = 50,
-                HeightRequest = 50
+                WidthRequest = 35,
+                HeightRequest = 35 
             }
         };
 

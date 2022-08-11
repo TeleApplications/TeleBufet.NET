@@ -1,5 +1,4 @@
 using DatagramsNet.Datagram;
-using System.Windows.Input;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
@@ -24,8 +23,8 @@ public partial class MainProductPage : ContentPage
 	public MainProductPage()
 	{
 		InitializeComponent();
+		UpdateElements();
 		productLayout = collection;
-		Task.Run(async() => await UpdateElements());
 	}
 
 	private Command ExecuteUpdateCommand(RefreshView refreshView)
@@ -39,7 +38,6 @@ public partial class MainProductPage : ContentPage
 
 	private async Task UpdateElements() 
 	{
-		await ExtendedClient.RequestCacheTablesPacketAsync();
 
 		if (TryUpdateCacheTables<ProductTable, ProductCache>(ref products))
 		{
@@ -72,7 +70,8 @@ public partial class MainProductPage : ContentPage
 			var categoryElements = GetTableElements<CategoryTable, CategoryElement, Grid>(categories).ToArray();
             for (int i = 0; i < categoryElements.Length; i++)
             {
-				//Device.BeginInvokeOnMainThread(() => horizontalCollection.Add(categoryElements[i]));
+				var categoryFrame = new Frame() {CornerRadius = 15, BackgroundColor = Colors.White, Content = categoryElements[i], WidthRequest = 60, HeightRequest = 60, VerticalOptions = LayoutOptions.StartAndExpand,  Margin = new Thickness(55,0,0,0)};
+				Device.BeginInvokeOnMainThread(() => categoryStackLayout.Children.Add(categoryFrame));
             }
 		}
 	}
