@@ -1,4 +1,5 @@
 ﻿using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.ElementHelper.Interfaces;
 
 namespace TeleBufet.NET.ElementHelper.Elements
 {
@@ -14,18 +15,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
         }
     }
 
-    public static class ProductElementFactory 
-    {
-        public static IEnumerable<ProductInformationHolder> GetProductInformationTable(ProductTable[] table, ProductInformationTable[] information) 
-        {
-            for (int i = 0; i < table.Length; i++)
-            {
-                yield return new ProductInformationHolder(table[i], information[i]);
-            }
-        }
-    }
-
-    public sealed class ProductElement : ImmutableElement<ProductInformationHolder, StackLayout>
+    public sealed class ProductElement : ImmutableElement<ProductInformationHolder, StackLayout>, IElementTypeFactory<ProductInformationHolder, ProductTable, ProductInformationTable[]>
     {
         public int Category { get; private set; }
         public override StackLayout LayoutHandler { get; set; } = new StackLayout()
@@ -33,6 +23,15 @@ namespace TeleBufet.NET.ElementHelper.Elements
             WidthRequest = 110,
             HeightRequest = 160,
         };
+
+        public static IEnumerable<ProductInformationHolder> CreateElementObjects(ProductTable[] objectOne, ProductInformationTable[] objectTwo) 
+        {
+            for (int i = 0; i < objectOne.Length; i++)
+            {
+                yield return new ProductInformationHolder(objectOne[i], objectTwo[i]);
+            }
+        }
+
 
         public override Memory<View> Controls { get; protected set; } = new View[]
         {

@@ -12,7 +12,11 @@ public partial class LoginPage : ContentPage
 {
 	private static ExtendedClient client;
 	private AuthenticateHolder authenticateHolder;
-	private ConnectionData connectionData = new ConnectionData() { ClientId = "9992351a-ca4c-4f01-ac18-f74865c493ba", TenantId = "ea80bead-34b4-4c9b-9eee-cde4240e98ce" };
+	private readonly ConnectionData connectionData = new ConnectionData() 
+	{
+		ClientId = "9992351a-ca4c-4f01-ac18-f74865c493ba",
+		TenantId = "ea80bead-34b4-4c9b-9eee-cde4240e98ce"
+	};
 
 	public LoginPage()
 	{
@@ -26,7 +30,14 @@ public partial class LoginPage : ContentPage
 	{
 		var ipAddress = IPAddress.Any;
 		//TODO: This hard coded ip address needs to be written by probably main school website
-		client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.13"), ipAddress);
+		try
+		{
+			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.13"), ipAddress);
+		}
+		catch
+		{
+			Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
+		}
 		Task.Run(() => client.StartServerAsync());
 	}
 

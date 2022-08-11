@@ -9,7 +9,12 @@
             <RowDefinition Height="75"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Frame CornerRadius="15" HeightRequest="120" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Grid.Row="0" Padding="0,30,0,0">
+        <Frame CornerRadius="15"
+               HeightRequest="120"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="CenterAndExpand"
+               Grid.Row="0"
+               Padding="0,30,0,0">
             <ScrollView
                 Orientation="Horizontal">
                 <HorizontalStackLayout

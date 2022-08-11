@@ -14,6 +14,7 @@ namespace TeleBufet.NET.Pages.ProductPage;
 public partial class MainProductPage : ContentPage
 {
 	private FlexLayout productLayout;
+	private Frame[] productFrames;
 
 	private Memory<ProductTable> products = new();
 	private Memory<CategoryTable> categories = new();
@@ -23,7 +24,7 @@ public partial class MainProductPage : ContentPage
 	public MainProductPage()
 	{
 		InitializeComponent();
-		UpdateElements();
+		Task.Run(async() => await UpdateElements());
 		productLayout = collection;
 	}
 
@@ -38,7 +39,6 @@ public partial class MainProductPage : ContentPage
 
 	private async Task UpdateElements() 
 	{
-
 		if (TryUpdateCacheTables<ProductTable, ProductCache>(ref products))
 		{
 			var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
@@ -49,7 +49,10 @@ public partial class MainProductPage : ContentPage
 			var newProductData = cacheTable.Deserialize().ToArray();
 
 
-			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(ProductElementFactory.GetProductInformationTable(products.Span.ToArray(), newProductData).ToArray()).ToArray();
+			var productObjects = ProductElement.CreateElementObjects(products.Span.ToArray(), newProductData).ToArray();
+			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(productObjects).ToArray();
+			productFrames = new Frame[elements.Length];
+
             for (int i = 0; i < elements.Length; i++)
             {
 				var baseFrame = new Frame() {CornerRadius = 15, Margin = 4, BackgroundColor = Colors.White };
@@ -62,18 +65,49 @@ public partial class MainProductPage : ContentPage
 				baseHorizontalLayout.Children.Add(addButton);
 				baseFrame.Content = baseHorizontalLayout;
 
-				Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(baseFrame));
+				productFrames[i] = baseFrame;
             }
+			SetCategory(null);
 		}
 		if (TryUpdateCacheTables<CategoryTable, CategoryCache>(ref categories)) 
 		{
-			var categoryElements = GetTableElements<CategoryTable, CategoryElement, Grid>(categories).ToArray();
+			var categoryObject = CategoryElement.CreateElementObjects(categories.Span.ToArray(), SetCategory).ToArray();
+			var categoryElements = GetTableElements<ActionTable<CategoryTable>, CategoryElement, Grid>(categoryObject).ToArray();
             for (int i = 0; i < categoryElements.Length; i++)
             {
 				var categoryFrame = new Frame() {CornerRadius = 15, BackgroundColor = Colors.White, Content = categoryElements[i], WidthRequest = 60, HeightRequest = 60, VerticalOptions = LayoutOptions.StartAndExpand,  Margin = new Thickness(55,0,0,0)};
 				Device.BeginInvokeOnMainThread(() => categoryStackLayout.Children.Add(categoryFrame));
             }
 		}
+	}
+
+	// If table is null, it will show all products
+	private void SetCategory(CategoryTable? table) 
+	{
+		//We know that this type of clearing is not fastest, but still this is a temporary solution
+		productLayout.Children.Clear();
+
+		Span<ProductTable> spanTables = table is null ? products.Span : GetProductsById(products, table.Id).ToArray();
+        for (int i = 0; i < spanTables.Length; i++)
+        {
+			int index = spanTables[i].Id;
+			Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(productFrames[index]));
+        }
+	}
+
+	private static Memory<ProductTable> GetProductsById(Memory<ProductTable> tables, int id) 
+	{
+		Span<ProductTable> currentTables = new ProductTable[tables.Length];
+		int newProductsCount = 0;
+		for (int i = 0; i < tables.Length; i++)
+		{
+			if (tables.Span[i].CategoryId == id) 
+			{
+				currentTables[newProductsCount] = tables.Span[i];
+				newProductsCount++;
+			}
+        }
+		return new Memory<ProductTable>(currentTables[0..newProductsCount].ToArray());
 	}
 
 	private async Task<bool> TryProductAmountAsync(ProductTable product)
