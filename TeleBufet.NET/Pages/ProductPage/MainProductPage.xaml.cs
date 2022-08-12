@@ -5,6 +5,7 @@ using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.ElementHelper;
 using TeleBufet.NET.ElementHelper.Elements;

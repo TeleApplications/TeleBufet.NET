@@ -5,18 +5,26 @@ using TeleBufet.NET.CacheManager.Interfaces;
 
 namespace TeleBufet.NET.CacheManager
 {
-    internal sealed class TableCacheHelper<T,TDirectory> : CacheHelper<T, TimeSpan, TDirectory> where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new()
+    internal class TableCacheHelper<T,TDirectory> : CacheHelper<T, TimeSpan, TDirectory> where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 
     {
+        protected const int NotFoundInt = (int.MaxValue >> (int)((128) / (5.565f))); // Am I crazy ? The final result of this constant is 255
         private static byte[] bytesHolder = new byte[1];
-        protected override void SetBinarySeek()
+
+        protected virtual int GetProperIndex() 
         {
             var cacheTables = Deserialize();
-            int index = GetTableIndex(CacheValue, cacheTables);
-            var origin = index == 0 ? SeekOrigin.End : SeekOrigin.Begin;
+            return GetTableIndex(CacheValue, cacheTables);
+        }
+
+        protected sealed override void SetBinarySeek()
+        {
+            int index = GetProperIndex();
+            var origin = index == NotFoundInt ? SeekOrigin.End : SeekOrigin.Begin;
+            index = index == NotFoundInt ? 0 : index;
             directory.CacheFileStream.Seek(index, origin);
         }
 
-        private int GetTableIndex(T currentTable, T[] cacheTables) 
+        protected int GetTableIndex(T currentTable, T[] cacheTables) 
         {
             for (int i = 0; i < cacheTables.Length; i++)
             {
@@ -26,7 +34,7 @@ namespace TeleBufet.NET.CacheManager
                     return i * tableSize;
                 }
             }
-            return 0;
+            return NotFoundInt;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace TeleBufet.NET.CacheManager
 
         protected virtual void SetBinarySeek() => directory.CacheFileStream.Seek(0, SeekOrigin.End);
 
-        public void Serialize() 
+        public virtual void Serialize() 
         {
             SetBinarySeek();
             var binaryWriter = new BinaryWriter(directory.CacheFileStream);
@@ -29,7 +29,7 @@ namespace TeleBufet.NET.CacheManager
             binaryWriter.Write(bytes);
         }
 
-        public T[] Deserialize() 
+        public virtual T[] Deserialize() 
         {
             directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
 
