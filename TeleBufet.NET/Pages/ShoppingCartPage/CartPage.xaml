@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TeleBufet.NET.Pages.ShoppingCartPage.CartPage"
+             Title="CartPage"
+             BackgroundColor="Transparent">
+    <ContentPage.Content>
+        <Frame 
+            Margin="0,200,0,0"
+            BackgroundColor="White"
+            CornerRadius="35">
+        <StackLayout>
+            <Label 
+                Text="Cart"
+                FontSize="32"
+                TextColor="Black"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="Center">
+            </Label>
+            <Label 
+                Text="More than you really think"
+                FontSize="Small"
+                TextColor="LightGray"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="Center">
+            </Label>
+            <ScrollView
+                WidthRequest="75">
+                <StackLayout
+                    x:Name="orderLayout">
+                </StackLayout>
+            </ScrollView>
+            <Button
+                x:Name="Reservate"
+                BackgroundColor="#4cb86b"
+                Text="Make reservation for ..."
+                TextColor="White"
+                FontSize="Caption"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="EndAndExpand"
+                CornerRadius="30"
+                HeightRequest="45">
+            </Button>
+        </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

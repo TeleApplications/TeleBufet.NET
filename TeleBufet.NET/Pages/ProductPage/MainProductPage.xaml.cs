@@ -10,6 +10,7 @@ using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.ElementHelper;
 using TeleBufet.NET.ElementHelper.Elements;
+using TeleBufet.NET.Pages.ShoppingCartPage;
 
 namespace TeleBufet.NET.Pages.ProductPage;
 
@@ -32,6 +33,7 @@ public partial class MainProductPage : ContentPage
 	public MainProductPage()
 	{
 		InitializeComponent();
+		ShoppingCart.Clicked += async(object sender, EventArgs e) => await Navigation.PushModalAsync(new CartPage());
 		Task.Run(async() => await UpdateElements());
 		productLayout = collection;
 	}
