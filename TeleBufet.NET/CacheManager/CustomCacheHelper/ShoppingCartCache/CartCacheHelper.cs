@@ -31,6 +31,22 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
                 base.Serialize();
         }
 
+        public int GetCurrentAmount()
+        {
+            var properIndex = GetProperIndex();
+            if (properIndex == NotFoundInt)
+                return 0;
+
+            directory.CacheFileStream.Seek(properIndex, SeekOrigin.Begin);
+            var binaryReader = new BinaryReader(directory.CacheFileStream);
+
+            //For now We will leave it on this field size, but in the future it's
+            //going to be a proper generic solution
+            Span<byte> byteAmount = binaryReader.ReadBytes(sizeof(int));
+            return BinaryHelper.Read<int>(byteAmount.ToArray());
+        }
+
+
         protected override int GetProperIndex()
         {
             byte[] byteHolder = new byte[1];
@@ -53,10 +69,6 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             binaryWriter.Write(shiftBytes);
 
             directory.CacheFileStream.SetLength(fileLength - length);
-
-            directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
-            var binaryReader = new BinaryReader(directory.CacheFileStream);
-            var spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length);
         }
 
         private Memory<byte> GetShiftBytes(int startIndex, int length) 

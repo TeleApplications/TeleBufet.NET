@@ -9,7 +9,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
     {
         public int Id { get; set; }
 
-        public readonly int Amount { get; }
+        public int Amount { get; set; }
 
         public TimeSpan Key { get; set; }
 

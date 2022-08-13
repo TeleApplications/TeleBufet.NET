@@ -8,6 +8,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="75"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
         <Frame CornerRadius="15"
                HeightRequest="120"
@@ -35,5 +36,27 @@
                     </FlexLayout>
             </ScrollView>
         </Frame>
+        <Button 
+            Grid.Row="2"
+            x:Name="ShoppingCart"
+            HorizontalOptions="End"
+            TextColor="White"
+            FontSize="12"
+            FontAttributes="Bold"
+            Text="Cart"
+            WidthRequest="45"
+            BackgroundColor="#037ff5">
+        </Button>
+        <Button 
+            Grid.Row="2"
+            x:Name="Tickets"
+            HorizontalOptions="Start"
+            TextColor="White"
+            FontSize="12"
+            FontAttributes="Bold"
+            Text="Reservations"
+            WidthRequest="45"
+            BackgroundColor="#037ff5">
+        </Button>
     </Grid>
 </ContentPage>

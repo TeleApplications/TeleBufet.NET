@@ -32,7 +32,7 @@ public partial class LoginPage : ContentPage
 		//TODO: This hard coded ip address needs to be written by probably main school website
 		try
 		{
-			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.13"), ipAddress);
+			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.11"), ipAddress);
 		}
 		catch
 		{
