@@ -7,33 +7,52 @@
     <ContentPage.Content>
         <Frame 
             Margin="0,200,0,0"
-            BackgroundColor="White"
+            BackgroundColor="#fdfdfd"
             CornerRadius="35">
-        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="150*"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="55"></RowDefinition>
+                </Grid.RowDefinitions>
             <Label 
-                Text="Cart"
-                FontSize="32"
+                Text="Your order"
+                Grid.Row="0"
+                FontSize="28"
                 TextColor="Black"
                 HorizontalTextAlignment="Center"
-                HorizontalOptions="Center">
-            </Label>
-            <Label 
-                Text="More than you really think"
-                FontSize="Small"
-                TextColor="LightGray"
-                HorizontalTextAlignment="Center"
-                HorizontalOptions="Center">
+                HorizontalOptions="Start">
             </Label>
             <ScrollView
-                WidthRequest="75">
-                <StackLayout
-                    x:Name="orderLayout">
+                    Grid.Row="2">
+                    <StackLayout
+                    x:Name="orderLayout"
+                    Grid.Row="2">
                 </StackLayout>
             </ScrollView>
+            <Label 
+                Text="Total:"
+                Grid.Row="3"
+                FontSize="16"
+                TextColor="Black"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="Start">
+            </Label>
+            <Label 
+                x:Name="finalPrice"
+                Grid.Row="3"
+                FontSize="16"
+                TextColor="Black"
+                HorizontalTextAlignment="Center"
+                HorizontalOptions="End">
+            </Label>
             <Button
                 x:Name="Reservate"
+                Grid.Row="4"
                 BackgroundColor="#4cb86b"
-                Text="Make reservation for ..."
+                Text="Reservate"
                 TextColor="White"
                 FontSize="Caption"
                 HorizontalOptions="FillAndExpand"
@@ -41,7 +60,7 @@
                 CornerRadius="30"
                 HeightRequest="45">
             </Button>
-        </StackLayout>
+        </Grid>
         </Frame>
     </ContentPage.Content>
 </ContentPage>

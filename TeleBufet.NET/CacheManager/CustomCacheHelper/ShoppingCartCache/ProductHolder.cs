@@ -8,9 +8,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
     internal struct ProductHolder : ITable, ICache<TimeSpan>
     {
         public int Id { get; set; }
-
         public int Amount { get; set; }
-
         public TimeSpan Key { get; set; }
 
         public ProductHolder(int productId, int amount) 
