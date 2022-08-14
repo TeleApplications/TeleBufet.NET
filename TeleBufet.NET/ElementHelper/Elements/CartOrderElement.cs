@@ -6,12 +6,12 @@ using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 
 namespace TeleBufet.NET.ElementHelper.Elements
 {
-    internal sealed class CartOrder : ImmutableElement<ProductHolder, StackLayout>
+    internal sealed class CartOrderElement : ImmutableElement<ProductHolder, StackLayout>
     {
         private static ReadOnlyMemory<ProductTable> products;
         private static ReadOnlyMemory<ProductInformationTable> productsInformation;
 
-        public CartOrder() 
+        public CartOrderElement() 
         {
             using var productCacheHelper = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
             productsInformation = productCacheHelper.Deserialize();
