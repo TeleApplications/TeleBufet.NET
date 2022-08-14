@@ -68,12 +68,12 @@ public partial class MainProductPage : ContentPage
 				var baseFrame = new Frame() {CornerRadius = 15, Margin = 4, BackgroundColor = Colors.White };
 				var baseHorizontalLayout = new StackLayout();
 
+				//TODO: This needs to go into ProductElement.cs
 				var addButton = new Button() { BackgroundColor = Color.FromArgb("#4cb86b"), Padding = new Thickness(0, 0, 50, 45), VerticalOptions = LayoutOptions.End, HorizontalOptions = LayoutOptions.End, WidthRequest = 45, HeightRequest = 45, CornerRadius = 10};
 				var currentProduct = products.Span[i];
 				addButton.Clicked += async(object sender, EventArgs e) => 
 				{
-					await ProductManipulation(currentProduct, Operator.Plus); 
-					Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Log", $"{LogCurrentCartCahce()}", "Close"));
+					await ProductElement.ProductManipulation(currentProduct, Operator.Plus); 
 				};
 				addButton.IsEnabled = newProductData[i].Amount > 0;
 
@@ -97,31 +97,6 @@ public partial class MainProductPage : ContentPage
 		}
 	}
 
-	private string LogCurrentCartCahce() 
-	{
-		string finalString = String.Empty;
-		using var cartCacheHelper = new CartCacheHelper();
-		var products = cartCacheHelper.Deserialize();
-
-        for (int i = 0; i < products.Length; i++)
-        {
-			finalString += $"\n {products[i].Id}: {products[i].Amount}";
-        }
-		return finalString;
-	}
-
-	private async Task ProductManipulation(ProductTable table, Operator @operator)
-	{
-		using var cartCacheHelper = new CartCacheHelper();
-		var holder = new ProductHolder(table.Id, 0);
-		cartCacheHelper.CacheValue = holder;
-
-		int currentAmount = cartCacheHelper.GetCurrentAmount();
-		holder.Amount = currentAmount + (int)@operator;
-		cartCacheHelper.CacheValue = holder;
-
-		cartCacheHelper.Serialize();
-	}
 
 	// If table is null, it will show all products
 	private void SetCategory(CategoryTable? table) 

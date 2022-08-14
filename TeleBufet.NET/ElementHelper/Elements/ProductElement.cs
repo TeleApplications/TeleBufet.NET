@@ -1,5 +1,7 @@
 ﻿using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Interfaces;
+using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET.ElementHelper.Elements
 {
@@ -71,5 +73,18 @@ namespace TeleBufet.NET.ElementHelper.Elements
             Category = data.Product.CategoryId;
             base.Inicialize(data);
         }
+
+	    public static async Task ProductManipulation(ProductTable table, Operator @operator)
+	    {
+		    using var cartCacheHelper = new CartCacheHelper();
+		    var holder = new ProductHolder(table.Id, 0);
+		    cartCacheHelper.CacheValue = holder;
+
+		    int currentAmount = cartCacheHelper.GetCurrentAmount();
+		    holder.Amount = currentAmount + (int)@operator;
+		    cartCacheHelper.CacheValue = holder;
+
+		    cartCacheHelper.Serialize();
+	    }
     }
 }
