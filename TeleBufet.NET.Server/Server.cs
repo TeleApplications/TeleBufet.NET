@@ -35,7 +35,7 @@ namespace TeleBufet.NET.Server
                 using (var databaseManager = new DatabaseManager<UserTable>()) 
                 {
                     var users = await databaseManager.GetTable();
-                    var currentUser = users.FirstOrDefault(n => n.Token == newAuthenticationDatagram.Account.Token);
+                    var currentUser = users.ToArray().FirstOrDefault(n => n.Token == newAuthenticationDatagram.Account.Token);
                     if (currentUser is null) 
                     {
                         currentUser = new UserTable()
@@ -77,14 +77,14 @@ namespace TeleBufet.NET.Server
                 var properTables = GetNewProductTables(newAmountDatagram.ProductInformationTables, products);
                 var informationPacket = new ProductsInformationPacket()
                 {
-                    ProductsInfromations = properTables
+                    ProductsInfromations = properTables.ToArray()
                 };
 
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(informationPacket));
             }
         }
 
-        private ProductInformationTable[] GetNewProductTables(ProductInformationTable[] orignalTables, ProductInformationTable[] newTables) 
+        private ReadOnlyMemory<ProductInformationTable> GetNewProductTables(ProductInformationTable[] orignalTables, ReadOnlyMemory<ProductInformationTable> newTables) 
         {
             if (orignalTables.Length == 0)
                 return newTables;
@@ -93,9 +93,9 @@ namespace TeleBufet.NET.Server
             int totalChanges = 0;
             for (int i = 0; i < newTables.Length; i++)
             {
-                if (i > (orignalTables.Length - 1) || !(newTables[i].Equals(orignalTables[i]))) 
+                if (i > (orignalTables.Length - 1) || !(newTables.Span[i].Equals(orignalTables[i]))) 
                 {
-                    spanTables[totalChanges] = newTables[i];
+                    spanTables[totalChanges] = newTables.Span[i];
                     totalChanges++;
                 }
             }
@@ -109,14 +109,14 @@ namespace TeleBufet.NET.Server
             var products = await databaseManager.GetTable();
             for (int i = 0; i < products.Length; i++)
             {
-                var databaseProduct = cacheTables.FirstOrDefault(n => n.Id == products[i].Id);
+                var databaseProduct = cacheTables.FirstOrDefault(n => n.Id == products.Span[i].Id);
                 if (databaseProduct is not null)
                 {
-                    if (databaseProduct.Key != products[i].Key)
-                        newTables.Add(products[i]);
+                    if (databaseProduct.Key != products.Span[i].Key)
+                        newTables.Add(products.Span[i]);
                 }
                 else
-                    newTables.Add(products[i]);
+                    newTables.Add(products.Span[i]);
             }
             return newTables.ToArray();
         }

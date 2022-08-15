@@ -1,17 +1,9 @@
 ﻿namespace TeleBufet.NET.API.Database.Attributes
 {
-	[Flags]
-    public enum KeyState 
-    {
-        NONE = 0,
-        FOREIGN_KEY = 1,
-        UNIQUE_KEY = 3
-    }
-
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class DataColumnAttribute : Attribute
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
         public DataColumnAttribute(string name) 
         {
@@ -22,8 +14,8 @@
     [AttributeUsage(AttributeTargets.Property)]
     public class KeyAttribute : Attribute 
     {
-        public Type ConnectionTableType { get; set; }
-        public string[] ColumnNames { get; set; }
+        public Type ConnectionTableType { get; }
+        public string[] ColumnNames { get; }
 
         public KeyAttribute(Type tableType, string[] columnNames) 
         {

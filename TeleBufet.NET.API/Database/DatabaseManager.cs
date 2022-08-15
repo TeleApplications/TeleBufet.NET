@@ -2,70 +2,59 @@
 using System.Data;
 using System.Reflection;
 using TeleBufet.NET.API.Database.QueryBuilder.Queries;
-using TeleBufet.NET.API.Database.Attributes;
 using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database
 {
-    public struct UnknownData 
-    {
-        public string Name { get; set; }
-
-        public object Value { get; set; }
-    }
-
     public sealed class DatabaseManager<T> : IDisposable where T : ITable, new()
     {
-
-        private MySqlConnection mySqlConnection;
-
-        public DataColumnAttribute[] ColumnNames { get; private set; }
-
         private MySqlConnectionStringBuilder connectionString;
-
-        public List<UnknownData[]> UnknownData { get; private set; } 
+        private static MySqlConnection mySqlConnection;
 
         public DatabaseManager() 
         {
-            connectionString = new MySqlConnectionStringBuilder() //TODO: This is termorary and of course not secure enough
+            if (connectionString is null) 
             {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "root",
-                Password = "",
-                Database ="telebufettestdatabase",
-                SslMode = MySqlSslMode.Preferred
-            };
+                //TODO: This is really temporary, but in the future it will database informations
+                //from probably json
+                connectionString = new MySqlConnectionStringBuilder()
+                {
+                    Server = "localhost",
+                    Port = 3306,
+                    UserID = "root",
+                    Password = "",
+                    Database ="telebufettestdatabase",
+                    SslMode = MySqlSslMode.Preferred
+                };
+            }
             mySqlConnection = new(connectionString.ToString());
         }
 
-        public async Task<T[]> GetTable() 
+        public async ValueTask<ReadOnlyMemory<T>> GetTable() 
         {
-            mySqlConnection.Open();
+            await mySqlConnection.OpenAsync();
 
             var dataTable = new DataTable();
             var tableHandler = new T();
             var selectQuery = new SelectQuery<T>(tableHandler);
             string query = selectQuery.CreateQuery();
 
-            ColumnNames = selectQuery.Columns;
             using (var databaseAdapter = new MySqlDataAdapter(query, mySqlConnection)) 
             {
                 databaseAdapter.Fill(dataTable);
                 databaseAdapter.Dispose();
             }
-            var properties = selectQuery.GetTableProperties(tableHandler);
-            var tableData = GetTableData(dataTable, properties).ToArray();
-            mySqlConnection.Close();
-            return tableData; 
+            var tables = CreateTables(dataTable, selectQuery.CurrentTableInformation.Properties);
+            await mySqlConnection.CloseAsync();
+            return tables; 
         }
 
         public async Task SetTable(T table) 
         {
-            mySqlConnection.Open();
+            await mySqlConnection.OpenAsync();
 
             var insertQuery = new InsertQuery<T>(table);
-            object[] tableData = SetTableData(table, insertQuery.GetTableProperties(table)).ToArray();
+            object[] tableData = GetTableData(table, insertQuery.CurrentTableInformation.Properties).ToArray();
             insertQuery.Data = tableData;
             var query = insertQuery.CreateQuery();
             using (var databaseCommand = new MySqlCommand(query, mySqlConnection)) 
@@ -73,12 +62,12 @@ namespace TeleBufet.NET.API.Database
                 await databaseCommand.ExecuteNonQueryAsync();
                 databaseCommand.Dispose();
             }
-                mySqlConnection.Close();
+            await mySqlConnection.CloseAsync();
         }
 
         public async Task UpdateTable(T table, T originalTable) 
         {
-            mySqlConnection.Open();
+            await mySqlConnection.OpenAsync();
 
             var updateQuery = new UpdateQuery<T>(table, originalTable);
             string queryString = updateQuery.CreateQuery();
@@ -87,12 +76,12 @@ namespace TeleBufet.NET.API.Database
                 databaseCommand.ExecuteScalar();
                 databaseCommand.Dispose();
             }
-                mySqlConnection.Close();
+            await mySqlConnection.CloseAsync();
         }
 
         public async Task DeleteTable(T table) 
         {
-            mySqlConnection.Open();
+            await mySqlConnection.OpenAsync();
 
             var deleteQuery = new DeleteQuery<T>(table);
             string queryString = deleteQuery.CreateQuery();
@@ -101,40 +90,30 @@ namespace TeleBufet.NET.API.Database
                 databaseCommand.ExecuteScalar();
                 databaseCommand.Dispose();
             }
-            mySqlConnection.Close();
+            await mySqlConnection.CloseAsync();
         }
 
-        private IEnumerable<T> GetTableData(DataTable table, PropertyInfo[] properties) 
+        private ReadOnlyMemory<T> CreateTables(DataTable table, ReadOnlyMemory<PropertyInfo> properties) 
         {
-            int offsetSize = (table.Columns.Count + 1) - properties.Length;
-            var unknownData = new List<UnknownData[]>();
-
+            Memory<T> tables = new T[table.Rows.Count];
             for (int i = 0; i < table.Rows.Count; i++)
             {
-                var newTable = (object)new T();
-                unknownData.Add(GetUnknownData(table.Rows, table.Columns, i, table.Columns.Count - offsetSize).ToArray());
-                for (int j = 0; j < properties.Length; j++)
+                var currentTable = new T();
+                for (int j = 0; j < table.Columns.Count; j++)
                 {
-                    properties[j].SetValue(newTable, table.Rows[i][table.Columns[j]]);
+                    var tableData = table.Rows[i][table.Columns[j]];
+                    properties.Span[j].SetValue(currentTable, tableData);
                 }
-                yield return (T)newTable;
+                tables.Span[i] = currentTable;
             }
-            UnknownData = unknownData;
+            return tables;
         }
 
-        private IEnumerable<UnknownData> GetUnknownData(DataRowCollection rows, DataColumnCollection columns, int index, int startIndex)
-        {
-            for (int i = startIndex; i < columns.Count; i++)
-            {
-                yield return new UnknownData() { Name = "s", Value = rows[index][columns[i]] };
-            }
-        }
-
-        private IEnumerable<object> SetTableData(T table, PropertyInfo[] properties) 
+        private static IEnumerable<object> GetTableData(T table, ReadOnlyMemory<PropertyInfo> properties) 
         {
             for (int i = 0; i < properties.Length; i++)
             {
-                yield return properties[i].GetValue(table);
+                yield return properties.Span[i].GetValue(table);
             }
         }
 

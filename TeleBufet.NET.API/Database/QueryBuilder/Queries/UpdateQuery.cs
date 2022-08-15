@@ -3,7 +3,7 @@ using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database.QueryBuilder.Queries
 {
-    public sealed class UpdateQuery<T> : QueryBuilder<T> where T : ITable 
+    public sealed class UpdateQuery<T> : QueryBuilder<T> where T : ITable, new()
     {
         private T originalTable;
 
@@ -13,14 +13,13 @@ namespace TeleBufet.NET.API.Database.QueryBuilder.Queries
         {
             int orinalTableId = originalTable.Id;
             var columnNames = GetTablePropertiesAttributes<DataColumnAttribute>().ToArray();
-            var columnData = GetTableProperties(tableHandler).ToArray();
             var originalColumnData = GetTableProperties(originalTable).ToArray();
 
-            string updateQuery = $"UPDATE {GetTableName()} SET";
+            string updateQuery = $"UPDATE {CurrentTableInformation.Name} SET";
 
             for (int i = 0; i < columnNames.Length; i++)
             {
-                var column = columnData[i].GetValue(tableHandler);
+                var column = CurrentTableInformation.Properties.Span[i].GetValue(tableHandler);
                 if (column != originalColumnData[i].GetValue(originalTable)) 
                 {
                     if (column.GetType() == typeof(DateTime))

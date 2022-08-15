@@ -3,17 +3,16 @@ using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database.QueryBuilder.Queries
 {
-    public sealed class DeleteQuery<T> : QueryBuilder<T> where T : ITable
+    public sealed class DeleteQuery<T> : QueryBuilder<T> where T : ITable, new()
     {
         public DeleteQuery(T table) : base(table) { }
 
         public override string CreateQuery()
         {
             int tableId = tableHandler.Id;
-            string tableName = GetTableName();
             var tableNames = GetTablePropertiesAttributes<DataColumnAttribute>().ToArray();
 
-            return $"DELETE FROM {tableName} WHERE {tableNames[0].Name} = {tableId}";
+            return $"DELETE FROM {CurrentTableInformation.Name} WHERE {tableNames[0].Name} = {tableId}";
         }  
     }
 }

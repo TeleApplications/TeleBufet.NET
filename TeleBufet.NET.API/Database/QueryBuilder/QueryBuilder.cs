@@ -5,66 +5,77 @@ using TeleBufet.NET.API.Database.Interfaces;
 
 namespace TeleBufet.NET.API.Database.QueryBuilder
 {
-    internal sealed class TableInfomation 
+    public readonly struct TableInfomation 
     {
-        public ITable Table { get; set; }
+        public ITable Table { get; }
+        public string Name { get; }
+        public ReadOnlyMemory<PropertyInfo> Properties { get; }
 
-        public string Name { get; set; }
-
-        public PropertyInfo[] Properties { get; set; }
-
-        public Attribute[] Attributes { get; set; }
+        public TableInfomation(ITable table, string name, ReadOnlyMemory<PropertyInfo> properties) 
+        {
+            Table = table;
+            Name = name;
+            Properties = properties;
+        }
     }
 
-    public abstract class QueryBuilder<T> where T : ITable
+    public abstract class QueryBuilder<T> where T : ITable, new()
     {
-        protected T tableHandler;
+        public TableInfomation CurrentTableInformation { get; }
 
+        protected T tableHandler;
         private static List<TableInfomation> tableInformations = new();
 
-        private TableInfomation currentTable;
 
         public QueryBuilder(T table) 
         {
             tableHandler = table;
-            currentTable = TryGetTableInformation(table);
+            if (!TryGetTableInformation(out TableInfomation newTable)) 
+            {
+                newTable = new TableInfomation(table, GetTableName(), GetTableProperties(table));
+                tableInformations.Add(newTable);
+            }
+            CurrentTableInformation = newTable;
         }
 
         public abstract string CreateQuery();
 
-        protected virtual string GetTableName() 
+        private string GetTableName() 
         {
-            if(currentTable.Name is null)
-                currentTable.Name = ((tableHandler.GetType().GetCustomAttribute(typeof(TableAttribute))) as TableAttribute).TableName;
-            return currentTable.Name;
+            return ((tableHandler
+                .GetType()
+                .GetCustomAttribute(typeof(TableAttribute))) as TableAttribute).TableName;
         }
 
-        public PropertyInfo[] GetTableProperties(T table) 
+        protected ReadOnlyMemory<PropertyInfo> GetTableProperties(T table) 
         {
-            if(currentTable.Properties is null)
-                currentTable.Properties = table.GetType().GetProperties().Where(n => n.GetCustomAttributes(typeof(DataColumnAttribute), true).Length > 0).ToArray();
-            return currentTable.Properties;
+            return table
+                .GetType()
+                .GetProperties()
+                .Where(n => n
+                .GetCustomAttributes(typeof(DataColumnAttribute), true).Length > 0).ToArray();
         }
 
         protected IEnumerable<TAttribute> GetTablePropertiesAttributes<TAttribute>() where TAttribute : Attribute
         {
-            var proerties = GetTableProperties(tableHandler);
-			for (int i = 0; i < proerties.Length; i++)
+			for (int i = 0; i < CurrentTableInformation.Properties.Length; i++)
 			{
-                yield return (TAttribute)(proerties[i].GetCustomAttribute(typeof(TAttribute)));
+                yield return (TAttribute)(CurrentTableInformation.Properties.Span[i].GetCustomAttribute(typeof(TAttribute)));
 			}
         }
 
-        private TableInfomation TryGetTableInformation(T table) 
+        private bool TryGetTableInformation(out TableInfomation tableInformation) 
         {
-            int index = tableInformations.Count - 1;
-            var cacheTable = tableInformations.FirstOrDefault(n => n.Table.Equals(table))!;
-            if (cacheTable is null) 
+            var tableHolder = new T();
+            tableInformation = default;
+
+            for (int i = 0; i < tableInformations.Count; i++)
             {
-                tableInformations.Add(new TableInfomation() { Table = table });
-                index++;
+                var currentTable = tableInformations[i].Table;
+                if (currentTable.Equals(tableHolder))
+                    tableInformation = tableInformations[i];
             }
-            return tableInformations[index];
+            return tableInformation.Equals(default);
         }
     }
 }
