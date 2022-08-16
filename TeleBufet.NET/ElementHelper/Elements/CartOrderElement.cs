@@ -6,32 +6,19 @@ using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 
 namespace TeleBufet.NET.ElementHelper.Elements
 {
-    internal sealed class CartOrderElement : ImmutableElement<ProductHolder, HorizontalStackLayout>
+    internal sealed class CartOrderElement : UpdateElement<ProductHolder, HorizontalStackLayout>
     {
         private static ReadOnlyMemory<ProductTable> products;
         private static ReadOnlyMemory<ProductInformationTable> productsInformation;
 
-        private Button[] manipulationButtons = new Button[]
-        {
-            new Button()
-            {
-                WidthRequest = 20,
-                HeightRequest = 20,
-                Text = "+",
-                TextColor = Colors.White,
-                HorizontalOptions = LayoutOptions.Start,
-                BackgroundColor = Color.FromArgb("#4cb86b")
-            },
-            new Button()
-            {
-                WidthRequest = 20,
-                HeightRequest = 20,
-                Text = "-",
-                TextColor = Colors.White,
-                HorizontalOptions = LayoutOptions.Start,
-                BackgroundColor = Color.FromArgb("#4cb86b")
-            }
-        };
+        //We do it in that way because the refresh of whole site for just only
+        //updating the amount will cause big performace issue
+        //In next update in MAUI, this will be changed
+        private int lengthHolder;
+        private ProductHolder currentProduct;
+
+        public double ProductPrice { get; private set; }
+
 
         public CartOrderElement() 
         {
@@ -41,66 +28,102 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override HorizontalStackLayout LayoutHandler { get; set; } = new HorizontalStackLayout()
         {
-            HeightRequest = 75,
+            HeightRequest = 55,
             HorizontalOptions = LayoutOptions.Fill,
-            BackgroundColor = Colors.White
+            BackgroundColor = Colors.Transparent
         };
 
         public override Memory<View> Controls { get; protected set; } = new View[]
         {
             new Image()
             {
-                WidthRequest = 50,
-                HeightRequest = 50,
-                VerticalOptions = LayoutOptions.Start
+                WidthRequest = 25,
+                HeightRequest = 25,
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.Start
             },
             new Label()
             {
                 FontSize = 18,
-                TextColor = Colors.Black,
+                TextColor = Colors.White,
+                Margin = new Thickness(15,0,0,0)
             },
-            new HorizontalStackLayout()
+            new Label()
             {
-                HeightRequest = 30,
-                HorizontalOptions = LayoutOptions.Start
-            }
+                FontSize = 12,
+                TextColor = Colors.White,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Start,
+            },
+            new Button()
+            {
+                WidthRequest = 15,
+                HeightRequest = 15,
+                Text = "+",
+                FontSize = 10,
+                TextColor = Color.FromArgb("#4cb86b"),
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                BackgroundColor = Colors.White,
+            },
+            new Button()
+            {
+                WidthRequest = 15,
+                HeightRequest = 15,
+                Text = "-",
+                FontSize = 10,
+                TextColor = Color.FromArgb("#4cb86b"),
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                BackgroundColor = Colors.White,
+            },
+            new Label()
+            {
+                FontSize = 16,
+                VerticalOptions = LayoutOptions.Start,
+                TextColor = Colors.White,
+            },
         };
 
         public override void Inicialize(ProductHolder data)
         {
             var productTable = GetProductByTable(data);
+            currentProduct = data;
+            ProductPrice = productTable.Information.Price;
+
             (Controls.Span[0] as Image).Source = "microsoft_logo.png";
             (Controls.Span[1] as Label).Text = productTable.Product.Name;
+            (Controls.Span[2] as Label).Text = data.Amount.ToString();
 
-            Label priceText = new Label()
+            (Controls.Span[3] as Button).Clicked += (object sender, EventArgs e) => 
             {
-                FontSize = 18,
-                TextColor = Colors.LightGray,
-                HorizontalOptions = LayoutOptions.Start,
-                Text = $"{productTable.Information.Price} Kč"
+                _ = ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Minus);
+                _ = UpdateAsync();
+            };
+            (Controls.Span[4] as Button).Clicked += (object sender, EventArgs e) => 
+            {
+                _ = ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Plus);
+                _ = UpdateAsync();
             };
 
-            Label amountPrice = new Label()
-            {
-                FontSize = 16,
-                Text = data.Amount.ToString(),
-                VerticalOptions = LayoutOptions.Start
-            };
-
-            (manipulationButtons[0]).Clicked += (object sender, EventArgs e) => ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Minus);
-            (manipulationButtons[1]).Clicked += (object sender, EventArgs e) => ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Plus);
-            var baseLayout = (Controls.Span[2] as HorizontalStackLayout);
-            AddChildrens(baseLayout, priceText, manipulationButtons[0], amountPrice, manipulationButtons[1]);
-
+            (Controls.Span[5] as Label).Text = productTable.Information.Price.ToString();
             base.Inicialize(data);
         }
 
-        private void AddChildrens(Microsoft.Maui.ILayout layout, params IView[] views) 
+        protected override async Task UpdateAsync()
         {
-            for (int i = 0; i < views.Length; i++)
+            using var cartCacheHelper = new CartCacheHelper();
+            cartCacheHelper.CacheValue = currentProduct;
+
+            if (cartCacheHelper.CacheLength != lengthHolder) 
             {
-                layout.Add(views[i]);
+                int finalAmount = cartCacheHelper.GetCurrentAmount();
+                double finalPrice = ProductPrice * finalAmount;
+
+                (Controls.Span[2] as Label).Text = finalAmount.ToString();
+                (Controls.Span[5] as Label).Text = finalPrice.ToString();
             }
+
         }
 
         private ProductInformationHolder GetProductByTable<T>(T tables) where T : ITable

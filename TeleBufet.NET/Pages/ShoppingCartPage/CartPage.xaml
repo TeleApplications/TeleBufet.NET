@@ -7,7 +7,7 @@
     <ContentPage.Content>
         <Frame 
             Margin="0,200,0,0"
-            BackgroundColor="#fdfdfd"
+            BackgroundColor="{DynamicResource PrimaryColor}"
             CornerRadius="35">
             <Grid>
                 <Grid.RowDefinitions>
@@ -18,10 +18,10 @@
                     <RowDefinition Height="55"></RowDefinition>
                 </Grid.RowDefinitions>
             <Label 
-                Text="Your order"
+                Text="Cart"
                 Grid.Row="0"
                 FontSize="28"
-                TextColor="Black"
+                TextColor="White"
                 HorizontalTextAlignment="Center"
                 HorizontalOptions="Start">
             </Label>
@@ -36,7 +36,7 @@
                 Text="Total:"
                 Grid.Row="3"
                 FontSize="16"
-                TextColor="Black"
+                TextColor="White"
                 HorizontalTextAlignment="Center"
                 HorizontalOptions="Start">
             </Label>
@@ -44,17 +44,17 @@
                 x:Name="finalPrice"
                 Grid.Row="3"
                 FontSize="16"
-                TextColor="Black"
+                TextColor="White"
                 HorizontalTextAlignment="Center"
                 HorizontalOptions="End">
             </Label>
             <Button
                 x:Name="Reservate"
                 Grid.Row="4"
-                BackgroundColor="#4cb86b"
+                BackgroundColor="White"
                 Text="Reservate"
-                TextColor="White"
-                FontSize="Caption"
+                FontSize="18"
+                TextColor="{DynamicResource PrimaryColor}"
                 HorizontalOptions="FillAndExpand"
                 VerticalOptions="EndAndExpand"
                 CornerRadius="30"

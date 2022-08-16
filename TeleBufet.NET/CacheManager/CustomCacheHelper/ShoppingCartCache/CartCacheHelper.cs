@@ -5,6 +5,8 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
 {
     internal class CartCacheHelper : TableCacheHelper<ProductHolder, CartCache>
     {
+        public int CacheLength => (int)this.directory.CacheFileStream.Length;
+
         public override void Serialize()
         {
             int baseIndex = base.GetProperIndex();

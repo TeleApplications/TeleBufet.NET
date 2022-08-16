@@ -21,13 +21,7 @@ public partial class CartPage : ContentPage
         {
 			var orderElement = new CartOrderElement();
 			orderElement.Inicialize(products[i]);
-			var orderFrame = new Frame() 
-			{
-				BorderColor = Colors.LightGrey,
-				CornerRadius = 30,
-				Content = orderElement.LayoutHandler
-			};
-			Device.BeginInvokeOnMainThread(() => ordersLayout.Children.Add(orderFrame));
+			Device.BeginInvokeOnMainThread(() => ordersLayout.Children.Add(orderElement.LayoutHandler));
         }
 	}
 }
