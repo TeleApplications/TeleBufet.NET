@@ -8,6 +8,7 @@ using TeleBufet.NET.API.Database;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
+using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.API.Packets.ServerSide;
 
@@ -81,6 +82,29 @@ namespace TeleBufet.NET.Server
                 };
 
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(informationPacket));
+            }
+
+            if (datagram is OrderTransmitionPacket orderPacket) 
+            {
+
+                using var databaseManager = new DatabaseManager<ProductInformationTable>();
+                var tables = await databaseManager.GetTable();
+                for (int i = 0; i < orderPacket.Products.Length; i++)
+                {
+                    //This is not the best way, how to find a proper table, but this also saves
+                    //a lot of database computing
+                    int index = orderPacket.Products[i].Id;
+                    var currentTable = tables.Span[index];
+
+                    if (currentTable.Amount < orderPacket.Products[i].Amount) 
+                    {
+                        orderPacket.Products[i] = default;
+                        await ServerLogger.LogAsync<ErrorPrefix>($"Client asked for out of stock product with id:{currentTable.Id}", TimeFormat.Half);
+                    }
+                    else
+                        await ServerLogger.LogAsync<WarningPrefix>($"Client is trying to reservate {orderPacket.Products[i].Amount} pieces of product with id:{currentTable.Id}", TimeFormat.Half);
+                }
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(orderPacket));
             }
         }
 

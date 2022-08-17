@@ -3,7 +3,7 @@ using TeleBufet.NET.CacheManager.CacheDirectories;
 
 namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
 {
-    internal class CartCacheHelper : TableCacheHelper<ProductHolder, CartCache>
+    internal sealed class CartCacheHelper : TableCacheHelper<ProductHolder, CartCache>
     {
         public int CacheLength => (int)this.directory.CacheFileStream.Length;
 
@@ -61,24 +61,10 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             return tableIndex + indetificatorSize;
         }
 
-        private void RemoveBytes(int startIndex, int length) 
+        public static void Clear() 
         {
-            var shiftBytes = GetShiftBytes(startIndex, length).Span;
-
-            directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
-            var binaryWriter = new BinaryWriter(directory.CacheFileStream);
-            int fileLength = (int)directory.CacheFileStream.Length;
-            binaryWriter.Write(shiftBytes);
-
-            directory.CacheFileStream.SetLength(fileLength - length);
-        }
-
-        private Memory<byte> GetShiftBytes(int startIndex, int length) 
-        {
-            directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
-            var binaryReader = new BinaryReader(directory.CacheFileStream);
-            var spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length);
-            return spanBytes[(length)..];
+            using var cartCacheHelper = new CartCacheHelper();
+            cartCacheHelper.RemoveBytes(0, cartCacheHelper.CacheLength);
         }
     }
 }

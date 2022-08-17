@@ -58,7 +58,8 @@
                 HorizontalOptions="FillAndExpand"
                 VerticalOptions="EndAndExpand"
                 CornerRadius="30"
-                HeightRequest="45">
+                HeightRequest="45"
+                Clicked="ReservateProducts">
             </Button>
         </Grid>
         </Frame>

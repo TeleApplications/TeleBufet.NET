@@ -5,10 +5,13 @@ using System.Net.Sockets;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
+using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.API.Packets.ServerSide;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.CacheManager.Interfaces;
 
 namespace TeleBufet.NET
@@ -51,6 +54,47 @@ namespace TeleBufet.NET
             {
                 CacheTables<ProductInformationTable, ProductInformationCache>(newProductsInformationPacket.ProductsInfromations);
             }
+            if (datagram is OrderTransmitionPacket newTransmitionPacket) 
+            {
+                using var cartCacheHelper = new CartCacheHelper();
+                using var productCacheHelper = new TableCacheHelper<ProductTable, ProductCache>();
+                using var ticketCacheHelper = new CacheHelper<TicketHolder, TimeSpan, ReservationTicketCache>();
+
+                var products = productCacheHelper.Deserialize();
+                if (TryGetDefaultOrders(out ProductHolder[] defaultProducts, newTransmitionPacket.Products))
+                {
+                    for (int i = 0; i < defaultProducts.Length; i++)
+                    {
+                        int index = defaultProducts[i].Id;
+                        Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Out of stock", $"Sorry, but product {products[index].Name} is already", "Ok"));
+
+                        //This cause that this product will be removed from shopping cart cache
+                        cartCacheHelper.CacheValue = new ProductHolder(index, 0);
+                        cartCacheHelper.Serialize();
+                    }
+                }
+                else 
+                {
+                    ticketCacheHelper.CacheValue = new TicketHolder(newTransmitionPacket.Products, TimeSpan.Zero, newTransmitionPacket.TotalPrice);
+                    ticketCacheHelper.Serialize();
+                    CartCacheHelper.Clear();
+                    Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Order", $"Your reservation is created", "Ok"));
+                }
+            }
+        }
+
+        private bool TryGetDefaultOrders(out ProductHolder[] defaultOrders, ProductHolder[] orders)
+        {
+            var defaultOrdersList = new List<ProductHolder>();
+            using var cartCacheHelper = new CartCacheHelper();
+            var cartProducts = cartCacheHelper.Deserialize();
+            for (int i = 0; i < orders.Length; i++)
+            {
+                if (orders[i].Amount == 0)
+                    defaultOrdersList.Add(cartProducts[i]);
+            }
+            defaultOrders = defaultOrdersList.ToArray();
+            return defaultOrders.Length > 0;
         }
 
         public static async Task RequestCacheTablesPacketAsync()

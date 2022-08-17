@@ -38,6 +38,26 @@ namespace TeleBufet.NET.CacheManager
             return BinaryHelper.Read<T[]>(spanBytes.ToArray());
         }
 
+        public void RemoveBytes(int startIndex, int length) 
+        {
+            var shiftBytes = GetShiftBytes(startIndex, length).Span;
+
+            directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
+            var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+            int fileLength = (int)directory.CacheFileStream.Length;
+            binaryWriter.Write(shiftBytes);
+
+            directory.CacheFileStream.SetLength(fileLength - length);
+        }
+
+        private Memory<byte> GetShiftBytes(int startIndex, int length) 
+        {
+            directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
+            var binaryReader = new BinaryReader(directory.CacheFileStream);
+            var spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length);
+            return spanBytes[(length)..];
+        }
+
         public void Dispose() 
         {
             directory.CacheFileStream.Flush();
