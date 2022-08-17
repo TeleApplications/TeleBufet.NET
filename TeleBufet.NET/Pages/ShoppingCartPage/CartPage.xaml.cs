@@ -19,7 +19,7 @@ public partial class CartPage : ContentPage
 	{
         for (int i = 0; i < products.Length; i++)
         {
-			var orderElement = new CartOrderElement();
+			var orderElement = new CartOrderElement(ordersLayout);
 			orderElement.Inicialize(products[i]);
 			Device.BeginInvokeOnMainThread(() => ordersLayout.Children.Add(orderElement.LayoutHandler));
         }

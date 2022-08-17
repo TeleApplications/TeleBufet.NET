@@ -17,11 +17,13 @@ namespace TeleBufet.NET.ElementHelper.Elements
         private int lengthHolder;
         private ProductHolder currentProduct;
 
+        public StackLayout MainLayout { get; }
         public double ProductPrice { get; private set; }
 
-
-        public CartOrderElement() 
+        public CartOrderElement(StackLayout stackLayout)
         {
+            MainLayout = stackLayout;
+
             using var productCacheHelper = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
             productsInformation = productCacheHelper.Deserialize();
         }
@@ -115,15 +117,16 @@ namespace TeleBufet.NET.ElementHelper.Elements
             using var cartCacheHelper = new CartCacheHelper();
             cartCacheHelper.CacheValue = currentProduct;
 
-            if (cartCacheHelper.CacheLength != lengthHolder) 
+            int finalAmount = cartCacheHelper.GetCurrentAmount();
+            if (finalAmount != 0)
             {
-                int finalAmount = cartCacheHelper.GetCurrentAmount();
                 double finalPrice = ProductPrice * finalAmount;
 
                 (Controls.Span[2] as Label).Text = finalAmount.ToString();
                 (Controls.Span[5] as Label).Text = finalPrice.ToString();
             }
-
+            else
+                MainLayout.Remove(LayoutHandler);
         }
 
         private ProductInformationHolder GetProductByTable<T>(T tables) where T : ITable
