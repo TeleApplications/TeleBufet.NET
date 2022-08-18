@@ -11,6 +11,7 @@ namespace DatagramsNet
         public int Amount { get; set; }
         public TimeSpan Key { get; set; } = TimeSpan.Zero;
 
+        public ProductHolder() { }
         public ProductHolder(int productId, int amount) 
         {
             Id = productId;

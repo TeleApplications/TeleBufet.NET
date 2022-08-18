@@ -54,6 +54,7 @@ namespace TeleBufet.NET
             {
                 CacheTables<ProductInformationTable, ProductInformationCache>(newProductsInformationPacket.ProductsInfromations);
             }
+
             if (datagram is OrderTransmitionPacket newTransmitionPacket) 
             {
                 using var cartCacheHelper = new CartCacheHelper();
@@ -75,8 +76,9 @@ namespace TeleBufet.NET
                 }
                 else 
                 {
-                    ticketCacheHelper.CacheValue = new TicketHolder(newTransmitionPacket.Products, TimeSpan.Zero, newTransmitionPacket.TotalPrice);
+                    ticketCacheHelper.CacheValue = new TicketHolder(0, newTransmitionPacket.Products, TimeSpan.Zero, newTransmitionPacket.TotalPrice);
                     ticketCacheHelper.Serialize();
+                    var result = ticketCacheHelper.Deserialize();
                     CartCacheHelper.Clear();
                     Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Order", $"Your reservation is created", "Ok"));
                 }

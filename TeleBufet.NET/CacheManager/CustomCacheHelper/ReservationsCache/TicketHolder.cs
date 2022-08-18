@@ -5,14 +5,17 @@ using TeleBufet.NET.API.Interfaces;
 namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct TicketHolder : ICache<TimeSpan>
+    internal sealed class TicketHolder : ICache<TimeSpan>
     {
-        public ProductHolder[] Products { get; }
-        public TimeSpan Key { get; set; }
-        public double FinalPrice { get; }
+        public int Id { get; set; }
+        public ProductHolder[] Products { get; set; } = new ProductHolder[1];
+        public TimeSpan Key { get; set; } = TimeSpan.Zero;
+        public double FinalPrice { get; set; }
 
-        public TicketHolder(ProductHolder[] products, TimeSpan reservationTime, double finalPrice)
+        public TicketHolder() { }
+        public TicketHolder(int id, ProductHolder[] products, TimeSpan reservationTime, double finalPrice)
         {
+            Id = id;
             Products = products;
             Key = reservationTime;
             FinalPrice = finalPrice;

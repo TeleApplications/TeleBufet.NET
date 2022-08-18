@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TeleBufet.NET.Pages.TicketPage.ReservationPage"
+             Title="ReservationPage"
+             BackgroundColor="Transparent">
+    <ContentPage.Content>
+        <Frame 
+            Margin="0,150,0,0"
+            BackgroundColor="#fdfdfd"
+            CornerRadius="35">
+            <ScrollView>
+                <VerticalStackLayout
+                    x:Name="ticketLayout">
+                </VerticalStackLayout>
+            </ScrollView>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

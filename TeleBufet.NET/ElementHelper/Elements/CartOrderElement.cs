@@ -15,7 +15,6 @@ namespace TeleBufet.NET.ElementHelper.Elements
         //We do it in that way because the refresh of whole site for just only
         //updating the amount will cause big performace issue
         //In next update in MAUI, this will be changed
-        private int lengthHolder;
         private ProductHolder currentProduct;
 
         public StackLayout MainLayout { get; }
