@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.TicketPage.ReservationPage"
              Title="ReservationPage"
-             BackgroundColor="Transparent">
+             BackgroundColor="#999999b5">
     <ContentPage.Content>
         <Frame 
             Margin="0,150,0,0"

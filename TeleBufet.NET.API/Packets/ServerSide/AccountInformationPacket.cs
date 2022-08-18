@@ -11,6 +11,9 @@ namespace TeleBufet.NET.API.Packets.ServerSide
         public int Id { get; set; } = 19;
 
         [Field(1)]
+        public int Indetificator { get; set; }
+
+        [Field(2)]
         public int Karma { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.CacheManager.Interfaces;
+using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET
 {
@@ -40,8 +41,11 @@ namespace TeleBufet.NET
         {
             if (datagram is TwoWayHandshake newDatagram) 
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
-            if (datagram is AccountInformationPacket newAccountPacket)
+            if (datagram is AccountInformationPacket newAccountPacket) 
+            {
+                MainProductPage.User = new UserTable() {Id = newAccountPacket.Indetificator, Karma = newAccountPacket.Karma};
                 await RequestCacheTablesPacketAsync();
+            }
 
             //TODO: Create pure generics solution for this type of packets
             //We hope that this will be possible in the next update of Datagrams.NET
@@ -59,7 +63,7 @@ namespace TeleBufet.NET
             {
                 using var cartCacheHelper = new CartCacheHelper();
                 using var productCacheHelper = new TableCacheHelper<ProductTable, ProductCache>();
-                using var ticketCacheHelper = new CacheHelper<TicketHolder, TimeSpan, ReservationTicketCache>();
+                using var ticketCacheHelper = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
 
                 var products = productCacheHelper.Deserialize();
                 if (TryGetDefaultOrders(out ProductHolder[] defaultProducts, newTransmitionPacket.Products))
@@ -76,7 +80,7 @@ namespace TeleBufet.NET
                 }
                 else 
                 {
-                    ticketCacheHelper.CacheValue = new TicketHolder(0, newTransmitionPacket.Products, TimeSpan.Zero, newTransmitionPacket.TotalPrice);
+                    ticketCacheHelper.CacheValue = new TicketHolder(newTransmitionPacket.Indetifactor, newTransmitionPacket.Products, newTransmitionPacket.ReservationTimeId, newTransmitionPacket.TotalPrice);
                     ticketCacheHelper.Serialize();
                     var result = ticketCacheHelper.Deserialize();
                     CartCacheHelper.Clear();

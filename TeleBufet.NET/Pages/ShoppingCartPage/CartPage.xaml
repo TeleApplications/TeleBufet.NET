@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ShoppingCartPage.CartPage"
              Title="CartPage"
-             BackgroundColor="Transparent">
+             BackgroundColor="#999999b5">
     <ContentPage.Content>
         <Frame 
             Margin="0,200,0,0"

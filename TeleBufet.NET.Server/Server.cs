@@ -3,7 +3,6 @@ using DatagramsNet.Datagram;
 using DatagramsNet.Logging;
 using DatagramsNet.Prefixes;
 using System.Net;
-using System.Net.Sockets;
 using TeleBufet.NET.API.Database;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
@@ -52,6 +51,7 @@ namespace TeleBufet.NET.Server
                         await ServerLogger.LogAsync<NormalPrefix>($"Welcome back {currentUser.Email} in TeleBufet", TimeFormat.Half);
                     var accountInformationPacket = new AccountInformationPacket()
                     {
+                        Id = currentUser.Id,
                         Karma = currentUser.Karma
                     };
                     await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(accountInformationPacket));

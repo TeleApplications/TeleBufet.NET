@@ -10,7 +10,7 @@ public partial class ReservationPage : ContentPage
 	public ReservationPage()
 	{
 		InitializeComponent();
-		using var ticketCacheManager = new CacheHelper<TicketHolder, TimeSpan, ReservationTicketCache>();
+		using var ticketCacheManager = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
 		var tables = ticketCacheManager.Deserialize();
 		SetTickets(tables);
 	}

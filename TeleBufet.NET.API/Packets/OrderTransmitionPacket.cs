@@ -14,10 +14,13 @@ namespace TeleBufet.NET.API.Packets
         [Field(1)]
         public ProductHolder[] Products { get; set; } = new ProductHolder[1];
 
-        //[Field(2)]
-        //public DateTime ReservationTime { get; set; } = new DateTime();
-
         [Field(2)]
+        public int ReservationTimeId { get; set; }
+
+        [Field(3)]
         public double TotalPrice { get; set; }
+
+        [Field(4)]
+        public int Indetifactor { get; set; }
     }
 }

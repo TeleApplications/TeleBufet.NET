@@ -6,6 +6,7 @@ using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Elements;
+using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET.Pages.ShoppingCartPage;
 
@@ -40,7 +41,9 @@ public partial class CartPage : ContentPage
 		var orderPacket = new OrderTransmitionPacket() 
 		{
 			Products = products,
-			TotalPrice = totalPrice
+			TotalPrice = totalPrice,
+			Indetifactor = MainProductPage.User.Id,
+			ReservationTimeId = 0
 		};
 
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(orderPacket));

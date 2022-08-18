@@ -7,12 +7,28 @@ namespace TeleBufet.NET.Server
     {
         private static Server? server;
 
+        private static IdentificatorGenerator idGenerator;
+
         public static void Main() 
         {
-            Console.WriteLine("Please enter valid ip address: ");
-            server = new(nameof(Server), IPAddress.Parse(Console.ReadLine()));
-            Task.Run(() => server.StartServerAsync());
-            ReaderManager.StartReading();
+            idGenerator = new();
+            //Console.WriteLine("Please enter valid ip address: ");
+            //server = new(nameof(Server), IPAddress.Parse(Console.ReadLine()));
+            //Task.Run(() => server.StartServerAsync());
+            //ReaderManager.StartReading();
+
+            int offset = 255;
+            for (int i = 0; i < sizeof(uint); i++)
+            {
+                Console.Write($"SchoolBreakId:{i} ");
+                for (int j = 0; j < 255 * offset; j++)
+                {
+                    int identificator = idGenerator.GenerateId((byte)(i));
+                    Console.Write($" {identificator},");
+                }
+                Console.WriteLine();
+            }
+            Console.ReadLine();
         }
     }
 }
