@@ -15,6 +15,8 @@ namespace TeleBufet.NET.Server
 {
     internal sealed class Server : ServerManager
     {
+        private IdentificatorGenerator identificatorGenerator = new();
+
         public override int PortNumber => 1111;
 
         public Server(string name, IPAddress address) : base(name, address)
@@ -51,7 +53,7 @@ namespace TeleBufet.NET.Server
                         await ServerLogger.LogAsync<NormalPrefix>($"Welcome back {currentUser.Email} in TeleBufet", TimeFormat.Half);
                     var accountInformationPacket = new AccountInformationPacket()
                     {
-                        Id = currentUser.Id,
+                        Indetificator = currentUser.Id,
                         Karma = currentUser.Karma
                     };
                     await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(accountInformationPacket));
@@ -86,6 +88,8 @@ namespace TeleBufet.NET.Server
 
             if (datagram is OrderTransmitionPacket orderPacket) 
             {
+                int userId = orderPacket.Indetifactor;
+                orderPacket.Indetifactor = identificatorGenerator.GenerateId((byte)orderPacket.ReservationTimeId);
 
                 using var databaseManager = new DatabaseManager<ProductInformationTable>();
                 var tables = await databaseManager.GetTable();

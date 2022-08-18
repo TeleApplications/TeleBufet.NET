@@ -5,7 +5,7 @@ using TeleBufet.NET.API.Interfaces;
 namespace DatagramsNet
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ProductHolder : ITable, ICache<TimeSpan>
+    public sealed class ProductHolder : ITable, ICache<TimeSpan>
     {
         public int Id { get; set; }
         public int Amount { get; set; }

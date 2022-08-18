@@ -12,8 +12,10 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"></RowDefinition>
-                    <RowDefinition Height="35"></RowDefinition>
                     <RowDefinition Height="150*"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
                     <RowDefinition Height="35"></RowDefinition>
                     <RowDefinition Height="55"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -26,23 +28,36 @@
                 HorizontalOptions="Start">
             </Label>
             <ScrollView
-                    Grid.Row="2">
+                    Grid.Row="1">
                     <StackLayout
                     x:Name="orderLayout"
-                    Grid.Row="2">
+                    Grid.Row="1">
                 </StackLayout>
             </ScrollView>
             <Label 
                 Text="Total:"
-                Grid.Row="3"
+                Grid.Row="2"
                 FontSize="16"
                 TextColor="White"
                 HorizontalTextAlignment="Center"
                 HorizontalOptions="Start">
             </Label>
+            <Frame
+                x:Name="indicatorLayout"
+                Grid.Row="3"
+                HorizontalOptions="Fill"
+                VerticalOptions="Center"
+                BackgroundColor="Transparent">
+            </Frame>
+            <HorizontalStackLayout
+                x:Name="breaksLayout"
+                Grid.Row="4"
+                HorizontalOptions="Fill"
+                HeightRequest="60">
+            </HorizontalStackLayout>
             <Label 
                 x:Name="finalPrice"
-                Grid.Row="3"
+                Grid.Row="5"
                 FontSize="16"
                 TextColor="White"
                 HorizontalTextAlignment="Center"
@@ -50,7 +65,7 @@
             </Label>
             <Button
                 x:Name="Reservate"
-                Grid.Row="4"
+                Grid.Row="6"
                 BackgroundColor="White"
                 Text="Reservate"
                 FontSize="18"

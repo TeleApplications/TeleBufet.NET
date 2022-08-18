@@ -24,8 +24,10 @@ namespace TeleBufet.NET.CacheManager
             directory.CacheFileStream.Seek(index, origin);
         }
 
-        protected int GetTableIndex(T currentTable, T[] cacheTables) 
+        protected int GetTableIndex(T? currentTable, T[] cacheTables) 
         {
+            if (currentTable is null)
+                return NotFoundInt;
             for (int i = 0; i < cacheTables.Length; i++)
             {
                 if (cacheTables[i].Id == currentTable.Id) 
