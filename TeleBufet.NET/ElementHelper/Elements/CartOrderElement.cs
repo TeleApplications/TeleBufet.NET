@@ -132,7 +132,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 (Controls.Span[5] as Label).Text = finalPrice.ToString();
             }
             else
-                MainLayout.Remove(LayoutHandler);
+                MainLayout.Remove((IView)LayoutHandler.Parent);
         }
 
         private ProductInformationHolder GetProductByTable<T>(T tables) where T : ITable

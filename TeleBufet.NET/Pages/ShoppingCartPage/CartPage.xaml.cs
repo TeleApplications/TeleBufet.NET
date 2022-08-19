@@ -34,7 +34,7 @@ public partial class CartPage : ContentPage
 	{
 		WidthRequest = 20,
 		HeightRequest = 20,
-		BackgroundColor = Colors.White
+		BackgroundColor = Color.FromArgb("#4cb86b"),
 	};
 
 	public CartPage()
@@ -67,7 +67,9 @@ public partial class CartPage : ContentPage
 			breakButton.Clicked += async (object sender, EventArgs e) =>
 			{
 				currentBreak = (sender as Button).ZIndex;
-				await MoveIndicator(breakButton.WidthRequest, 10);
+				await MoveIndicator(breakButton.WidthRequest, 15);
+				await breakButton.ScaleTo(2);
+				await breakButton.ScaleTo(1);
 			};
 			Device.BeginInvokeOnMainThread(() => breaksLayout.Children.Add(breakButton));
         }
@@ -77,9 +79,10 @@ public partial class CartPage : ContentPage
 	private async Task MoveIndicator(double width, int offset) 
 	{
 		var currentPosition = new Vector2(breakIndicator.TranslationX, breaksLayout.TranslationY);
-		double destinationX = ((currentBreak * 2) - 1) * (width / 2) * offset;
+		double destinationX = (((currentBreak) * width) + width / 2) + (offset * currentBreak);
 
-		await breakIndicator.TranslateTo(currentPosition.X - destinationX, currentPosition.Y);
+		//await breakIndicator.TranslateTo(currentPosition.X + (index * 10), 0);
+		await breakIndicator.TranslateTo(destinationX, currentPosition.Y);
 	}
 
 	private void SetOrders(ProductHolder[] products) 

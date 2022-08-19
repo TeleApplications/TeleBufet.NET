@@ -32,6 +32,14 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 TextColor = Colors.Black,
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.End
+            },
+            new Label
+            {
+                FontSize = 24,
+                TextColor = Colors.White,
+                FontAttributes = FontAttributes.Bold,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.End
             }
         };
 
@@ -40,6 +48,10 @@ namespace TeleBufet.NET.ElementHelper.Elements
             (Controls.Span[0] as Label).Text = data.Id.ToString();
             (Controls.Span[1] as Label).Text = $"{data.Key} Přestávka";
             (Controls.Span[2] as Label).Text = $"{data.FinalPrice} Kč";
+
+            string stateText = data.IsExpired ? "Expired" : "Unexpired";
+            (Controls.Span[3] as Label).Text = $"{stateText} Kč";
+            (Controls.Span[3] as Label).BackgroundColor = data.IsExpired ? Colors.Red : Colors.Green;
             base.Inicialize(data);
         }
     }
