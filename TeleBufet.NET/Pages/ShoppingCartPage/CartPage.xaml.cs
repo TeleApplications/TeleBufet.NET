@@ -57,12 +57,12 @@ public partial class CartPage : ContentPage
 				ZIndex = i,
 				Text = $"{i}",
 				TextColor = Colors.White,
-				WidthRequest = 50,
-				HeightRequest = 50,
-				CornerRadius = 25, 
+				WidthRequest = 35,
+				HeightRequest = 35,
+				CornerRadius = 17, 
 				HorizontalOptions = LayoutOptions.Center,
 				Margin = new Thickness(0, 0, 10, 0),
-				BackgroundColor = Color.FromRgb(i << 15, i * 20, (i * 50) + 10)
+				BackgroundColor = Color.FromRgb(0, 255 - (i * 20), (i * 5) + 10)
 			};
 			breakButton.Clicked += async (object sender, EventArgs e) =>
 			{
@@ -88,7 +88,17 @@ public partial class CartPage : ContentPage
         {
 			var orderElement = new CartOrderElement(ordersLayout);
 			orderElement.Inicialize(products[i]);
-			Device.BeginInvokeOnMainThread(() => ordersLayout.Children.Add(orderElement.LayoutHandler));
+			var baseFrame = new Frame()
+			{
+				BackgroundColor = Colors.White,
+				HorizontalOptions = LayoutOptions.Fill,
+				HeightRequest = 75,
+				Margin = new Thickness(0, 0, 0, 15),
+				CornerRadius = 15,
+				Content = orderElement.LayoutHandler
+			};
+
+			Device.BeginInvokeOnMainThread(() => ordersLayout.Children.Add(baseFrame));
         }
 	}
 

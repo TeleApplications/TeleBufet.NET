@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ShoppingCartPage.CartPage"
              Title="CartPage"
-             BackgroundColor="#999999b5">
+             BackgroundColor="Transparent">
     <ContentPage.Content>
         <Frame 
             Margin="0,200,0,0"
-            BackgroundColor="{DynamicResource PrimaryColor}"
+            BackgroundColor="#fafafa"
             CornerRadius="35">
             <Grid>
                 <Grid.RowDefinitions>
@@ -15,15 +15,13 @@
                     <RowDefinition Height="150*"></RowDefinition>
                     <RowDefinition Height="35"></RowDefinition>
                     <RowDefinition Height="25"></RowDefinition>
-                    <RowDefinition Height="35"></RowDefinition>
-                    <RowDefinition Height="35"></RowDefinition>
-                    <RowDefinition Height="55"></RowDefinition>
+                    <RowDefinition Height="125*"></RowDefinition>
                 </Grid.RowDefinitions>
             <Label 
-                Text="Cart"
+                Text="Order"
                 Grid.Row="0"
                 FontSize="28"
-                TextColor="White"
+                TextColor="Black"
                 HorizontalTextAlignment="Center"
                 HorizontalOptions="Start">
             </Label>
@@ -34,14 +32,6 @@
                     Grid.Row="1">
                 </StackLayout>
             </ScrollView>
-            <Label 
-                Text="Total:"
-                Grid.Row="2"
-                FontSize="16"
-                TextColor="White"
-                HorizontalTextAlignment="Center"
-                HorizontalOptions="Start">
-            </Label>
             <Frame
                 x:Name="indicatorLayout"
                 Grid.Row="3"
@@ -49,34 +39,49 @@
                 VerticalOptions="Center"
                 BackgroundColor="Transparent">
             </Frame>
-            <HorizontalStackLayout
-                x:Name="breaksLayout"
-                Grid.Row="4"
-                HorizontalOptions="Fill"
-                HeightRequest="60">
-            </HorizontalStackLayout>
-            <Label 
-                x:Name="finalPrice"
-                Grid.Row="5"
-                FontSize="16"
-                TextColor="White"
-                HorizontalTextAlignment="Center"
-                HorizontalOptions="End">
-            </Label>
-            <Button
-                x:Name="Reservate"
-                Grid.Row="6"
-                BackgroundColor="White"
-                Text="Reservate"
-                FontSize="18"
-                TextColor="{DynamicResource PrimaryColor}"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="EndAndExpand"
-                CornerRadius="30"
-                HeightRequest="45"
-                Clicked="ReservateProducts">
-            </Button>
-        </Grid>
+                <Frame
+                    Grid.Row="4"
+                    BackgroundColor="White"
+                    CornerRadius="15">
+                <VerticalStackLayout>
+                    <HorizontalStackLayout
+                        x:Name="breaksLayout"
+                        HorizontalOptions="Center"
+                        HeightRequest="60">
+                    </HorizontalStackLayout>
+                        <HorizontalStackLayout
+                            Margin="0,0,0,15">
+                            <Label 
+                                Text="Order"
+                                FontSize="16"
+                                TextColor="Black"
+                                HorizontalTextAlignment="Center"
+                                HorizontalOptions="Start">
+                            </Label>
+                            <Label 
+                                x:Name="finalPrice"
+                                FontSize="16"
+                                TextColor="Black"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center"
+                                HorizontalOptions="End">
+                            </Label>
+                        </HorizontalStackLayout>
+                    <Button
+                        x:Name="Reservate"
+                        BackgroundColor="{DynamicResource PrimaryColor}"
+                        Text="Reservate"
+                        FontSize="18"
+                        TextColor="White"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="EndAndExpand"
+                        CornerRadius="30"
+                        HeightRequest="65"
+                        Clicked="ReservateProducts">
+                    </Button>
+                </VerticalStackLayout>
+                </Frame>
+            </Grid>
         </Frame>
     </ContentPage.Content>
 </ContentPage>

@@ -39,51 +39,57 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Image()
             {
-                WidthRequest = 25,
-                HeightRequest = 25,
-                VerticalOptions = LayoutOptions.Start,
+                WidthRequest = 65,
+                HeightRequest = 65,
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             },
             new Label()
             {
-                FontSize = 18,
-                TextColor = Colors.White,
-                Margin = new Thickness(15,0,0,0)
+                FontSize = 16,
+                TextColor = Colors.Black,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(15,0,25,0)
             },
+            new Button()
+            {
+                WidthRequest = 25,
+                HeightRequest = 25,
+                Text = "-",
+                FontSize = 10,
+                TextColor = Colors.White,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                BackgroundColor = Color.FromArgb("#4cb86b"),
+                Margin = new Thickness(0,0,10,0)
+            },
+
             new Label()
             {
                 FontSize = 12,
-                TextColor = Colors.White,
+                TextColor = Colors.Black,
                 HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0,0,10,0)
             },
+
             new Button()
             {
-                WidthRequest = 15,
-                HeightRequest = 15,
+                WidthRequest = 25,
+                HeightRequest = 25,
                 Text = "+",
                 FontSize = 10,
-                TextColor = Color.FromArgb("#4cb86b"),
+                TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                BackgroundColor = Colors.White,
-            },
-            new Button()
-            {
-                WidthRequest = 15,
-                HeightRequest = 15,
-                Text = "-",
-                FontSize = 10,
-                TextColor = Color.FromArgb("#4cb86b"),
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                BackgroundColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center,
+                BackgroundColor = Color.FromArgb("#4cb86b"),
             },
             new Label()
             {
                 FontSize = 16,
-                VerticalOptions = LayoutOptions.Start,
-                TextColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.End,
+                TextColor = Colors.Black,
             },
         };
 
@@ -95,13 +101,13 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
             (Controls.Span[0] as Image).Source = "microsoft_logo.png";
             (Controls.Span[1] as Label).Text = productTable.Product.Name;
-            (Controls.Span[2] as Label).Text = data.Amount.ToString();
 
-            (Controls.Span[3] as Button).Clicked += (object sender, EventArgs e) => 
+            (Controls.Span[2] as Button).Clicked += (object sender, EventArgs e) => 
             {
                 _ = ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Minus);
                 _ = UpdateAsync();
             };
+            (Controls.Span[3] as Label).Text = data.Amount.ToString();
             (Controls.Span[4] as Button).Clicked += (object sender, EventArgs e) => 
             {
                 _ = ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Plus);
@@ -122,7 +128,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
             {
                 double finalPrice = ProductPrice * finalAmount;
 
-                (Controls.Span[2] as Label).Text = finalAmount.ToString();
+                (Controls.Span[3] as Label).Text = finalAmount.ToString();
                 (Controls.Span[5] as Label).Text = finalPrice.ToString();
             }
             else

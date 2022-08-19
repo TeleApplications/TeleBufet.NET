@@ -3,17 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.TicketPage.ReservationPage"
              Title="ReservationPage"
-             BackgroundColor="#999999b5">
+             BackgroundColor="Transparent">
     <ContentPage.Content>
+        <Frame
+            x:Name="shadowEffect"
+            BackgroundColor="#e7e7e7de"
+            Opacity="0">
         <Frame 
             Margin="0,150,0,0"
-            BackgroundColor="#fdfdfd"
+            BackgroundColor="#fafafa"
             CornerRadius="35">
             <ScrollView>
                 <VerticalStackLayout
                     x:Name="ticketLayout">
                 </VerticalStackLayout>
             </ScrollView>
+        </Frame>
         </Frame>
     </ContentPage.Content>
 </ContentPage>
