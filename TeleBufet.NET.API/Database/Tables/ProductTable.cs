@@ -5,7 +5,6 @@ using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Database.Tables
 {
-
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("Products")]
     public sealed class ProductTable : ITable, ICache<TimeSpan> 

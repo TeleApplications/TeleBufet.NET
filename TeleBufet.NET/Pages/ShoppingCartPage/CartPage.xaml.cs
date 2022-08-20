@@ -81,7 +81,6 @@ public partial class CartPage : ContentPage
 		var currentPosition = new Vector2(breakIndicator.TranslationX, breaksLayout.TranslationY);
 		double destinationX = (((currentBreak) * width) + width / 2) + (offset * currentBreak);
 
-		//await breakIndicator.TranslateTo(currentPosition.X + (index * 10), 0);
 		await breakIndicator.TranslateTo(destinationX, currentPosition.Y);
 	}
 

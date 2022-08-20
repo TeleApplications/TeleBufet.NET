@@ -1,11 +1,9 @@
-﻿using System.Runtime.InteropServices;
-using TeleBufet.NET.CacheManager.Interfaces;
+﻿using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.API.Interfaces;
 using DatagramsNet;
 
 namespace TeleBufet.NET.CacheManager
 {
-    //TODO: This implementation is not complete 
     internal class CacheHelper<T, TKey, TDirectory> : IDisposable where T : ICache<TKey> where TDirectory : ICacheDirectory, new()
     {
         public T CacheValue { get; set; }

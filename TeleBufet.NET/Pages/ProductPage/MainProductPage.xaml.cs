@@ -1,12 +1,10 @@
 using DatagramsNet.Datagram;
-using System.Text;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
-using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.ElementHelper;
 using TeleBufet.NET.ElementHelper.Elements;
@@ -36,7 +34,13 @@ public partial class MainProductPage : ContentPage
 		InitializeComponent();
 		ShoppingCart.Clicked += async(object sender, EventArgs e) => await Navigation.PushModalAsync(new CartPage());
 		Tickets.Clicked += async(object sender, EventArgs e) => await Navigation.PushModalAsync(new ReservationPage());
-		Task.Run(async() => await UpdateElements());
+		Task.Run(async() => 
+		{
+			while (this.IsEnabled) 
+			{
+				await UpdateElements();
+			}
+		});
 		productLayout = collection;
 	}
 
@@ -51,15 +55,17 @@ public partial class MainProductPage : ContentPage
 
 	private async Task UpdateElements() 
 	{
-		if (TryUpdateCacheTables<ProductTable, ProductCache>(ref products))
+		var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+		var oldProductData = cacheTable.Deserialize().ToArray();
+
+		var requestProductInfromatios = new RequestProductInformationPacket() {ProductInformationTables = oldProductData};
+		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(requestProductInfromatios));
+
+		var productCache = TryUpdateCacheTables<ProductTable, ProductCache>(ref products);
+		if (productCache)
 		{
-			var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
-			var oldProductData = cacheTable.Deserialize().ToArray();
 
-			var requestProductInfromatios = new RequestProductInformationPacket() {ProductInformationTables = oldProductData};
-			await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(requestProductInfromatios));
 			var newProductData = cacheTable.Deserialize().ToArray();
-
 
 			var productObjects = ProductElement.CreateElementObjects(products.Span.ToArray(), newProductData).ToArray();
 			var elements = GetTableElements<ProductInformationHolder, ProductElement, StackLayout>(productObjects).ToArray();
@@ -85,7 +91,7 @@ public partial class MainProductPage : ContentPage
 
 				productFrames[i] = baseFrame;
             }
-			SetCategory(null);
+			//SetCategory(null);
 		}
 		if (TryUpdateCacheTables<CategoryTable, CategoryCache>(ref categories)) 
 		{
@@ -129,20 +135,6 @@ public partial class MainProductPage : ContentPage
 		return new Memory<ProductTable>(currentTables[0..newProductsCount].ToArray());
 	}
 
-	private async Task<bool> TryProductAmountAsync(ProductTable product)
-	{
-		var requestProductInfromatios = new RequestProductInformationPacket();
-        await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(requestProductInfromatios));
-
-		var cacheTable = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
-        foreach (var table in cacheTable.Deserialize())
-        {
-			if (table.Id == product.Id)
-				return table.Amount > 0;
-        }
-		return false;
-	}
-
 	private IEnumerable<TLayout> GetTableElements<T, TElement, TLayout>(Memory<T> tables) where TLayout : Microsoft.Maui.ILayout, new() where TElement : ImmutableElement<T, TLayout>, new()
 	{
         for (int i = 0; i < tables.Length; i++)
@@ -155,11 +147,25 @@ public partial class MainProductPage : ContentPage
 
 	private bool TryUpdateCacheTables<T, TDirectory>(ref Memory<T> tables) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 
 	{
-		Span<T> oldTables = tables.Span;
+		var oldTables = tables.Span.ToArray();
 		using var cacheManager = new CacheHelper<T, TimeSpan, TDirectory>();
 		var newTables = cacheManager.Deserialize();
 
+		var keyCompare = CompareTimestamps((ICache<TimeSpan>[])(object)oldTables, (ICache<TimeSpan>[])(object)newTables);
 		tables = newTables;
-		return tables.Span != oldTables;
+		return !(keyCompare);
+	}
+
+	private bool CompareTimestamps(ICache<TimeSpan>[] firstCaches, ICache<TimeSpan>[] secondCaches) 
+	{
+		if (firstCaches.Length != secondCaches.Length)
+			return false;
+
+        for (int i = 0; i < firstCaches.Length; i++)
+        {
+			if (firstCaches[i].Key.CompareTo(secondCaches[i].Key) == 1)
+				return false;
+        }
+		return true;
 	}
 }

@@ -88,28 +88,79 @@ namespace TeleBufet.NET.Server
 
             if (datagram is OrderTransmitionPacket orderPacket) 
             {
+                using var databaseManager = new DatabaseManager<ProductInformationTable>();
+                var tables = await databaseManager.GetTable();
+
                 int userId = orderPacket.Indetifactor;
                 orderPacket.Indetifactor = identificatorGenerator.GenerateId((byte)orderPacket.ReservationTimeId);
 
-                using var databaseManager = new DatabaseManager<ProductInformationTable>();
-                var tables = await databaseManager.GetTable();
-                for (int i = 0; i < orderPacket.Products.Length; i++)
-                {
-                    //This is not the best way, how to find a proper table, but this also saves
-                    //a lot of database computing
-                    int index = orderPacket.Products[i].Id;
-                    var currentTable = tables.Span[index];
+                var orders = orderPacket.Products.AsMemory();
 
-                    if (currentTable.Amount < orderPacket.Products[i].Amount) 
+                bool amountCheck = TryGetCheckProductAmount(tables, ref orders);
+                if (!(amountCheck))
+                    orderPacket.Products = orders.ToArray();
+                else
+                {
+                    for (int i = 0; i < orderPacket.Products.Length; i++)
                     {
-                        orderPacket.Products[i] = default;
-                        await ServerLogger.LogAsync<ErrorPrefix>($"Client asked for out of stock product with id:{currentTable.Id}", TimeFormat.Half);
+                        //This is not the best way, how to find a proper table, but this also saves
+                        //a lot of database computing
+                        int index = orderPacket.Products[i].Id;
+                        int productAmount = orderPacket.Products[i].Amount;
+                        var currentTable = tables.Span[index];
+
+                        await ReservateProductAsync(userId, productAmount, currentTable, orderPacket);
                     }
-                    else
-                        await ServerLogger.LogAsync<WarningPrefix>($"Client is trying to reservate {orderPacket.Products[i].Amount} pieces of product with id:{currentTable.Id}", TimeFormat.Half);
                 }
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(orderPacket));
             }
+        }
+
+        private async Task ReservateProductAsync(int userId, int amount, ProductInformationTable table, OrderTransmitionPacket packetInfromation)
+        {
+            using var orderDatabaseManager = new DatabaseManager<OrderTable>();
+            using var databaseManager = new DatabaseManager<ProductInformationTable>();
+
+            var currentOrder = new OrderTable()
+            {
+                Id = packetInfromation.Indetifactor,
+                UserId = userId,
+                Amount = amount,
+                ReservedTime = packetInfromation.ReservationTimeId,
+                ProductId = table.Id
+            };
+
+            await orderDatabaseManager.SetTable(currentOrder);
+
+            table.Amount -= amount;
+            await databaseManager.UpdateTable(table, new ProductInformationTable() { Id = table.Id });
+            await ServerLogger.LogAsync<WarningPrefix>($"Client reservate {amount} items with id: {table.Id}", TimeFormat.Half);
+        }
+
+        private bool TryGetCheckProductAmount(ReadOnlyMemory<ProductInformationTable> tables, ref Memory<ProductHolder> orders)
+        {
+            Memory<ProductHolder> oldProducts = orders.ToArray();
+            int defaultCount = 0;
+            for (int i = 0; i < orders.Length; i++)
+            {
+                var currentOrder = orders.Span[i];
+                var currentTable = tables.Span.ToArray().FirstOrDefault(n => n.Id == currentOrder.Id);
+
+                if (currentTable is null) 
+                {
+                    ServerLogger.LogAsync<ErrorPrefix>($"Product with id: {currentOrder.Id} was not found", TimeFormat.Half);
+                    orders.Span[i] = default!;
+                    defaultCount++;
+                }
+
+                if (currentTable.Amount < currentOrder.Amount) 
+                {
+                    ServerLogger.LogAsync<ErrorPrefix>($"{currentOrder.Amount} pieces of product with id: {currentOrder.Id} are not availible", TimeFormat.Half);
+                    orders.Span[i] = default!;
+                    defaultCount++;
+                }
+            }
+            return defaultCount == 0;
         }
 
         private ReadOnlyMemory<ProductInformationTable> GetNewProductTables(ProductInformationTable[] orignalTables, ReadOnlyMemory<ProductInformationTable> newTables) 
