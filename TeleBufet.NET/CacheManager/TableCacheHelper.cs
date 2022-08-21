@@ -20,6 +20,8 @@ namespace TeleBufet.NET.CacheManager
 
         protected sealed override void SetBinarySeek()
         {
+            if (!directory.CacheFileStream.CanRead)
+                directory = new();
             int index = GetProperIndex();
             var origin = index == NotFoundInt ? SeekOrigin.End : SeekOrigin.Begin;
             index = index == NotFoundInt ? 0 : index;

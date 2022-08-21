@@ -42,7 +42,7 @@ public partial class MainProductPage : ContentPage
 		CreateCategories();
 		SetCategory(null);
 
-		UpdateElements();
+		_ = UpdateElements();
 		MainRefreshView.Command = new Command(async() =>
 		{
 			await UpdateElements();
@@ -60,9 +60,7 @@ public partial class MainProductPage : ContentPage
 		var oldTimeSpan = ExtendedClient.lastRequest;
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
 
-		while (oldTimeSpan == ExtendedClient.lastRequest)
-		{
-		}
+		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
 		var newData = newInformationTableCacheManager.Deserialize();
