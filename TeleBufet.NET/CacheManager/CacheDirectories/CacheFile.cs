@@ -6,7 +6,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
     {
         public string SystemCacheDirectory => FileSystem.CacheDirectory;
         public abstract string FileName { get; }
-        public Stream CacheFileStream { get; set; } 
+        public Stream CacheFileStream { get; set; }
 
         public CacheFile() 
         {

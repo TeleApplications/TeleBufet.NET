@@ -25,7 +25,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             if (properIndex != NotFoundInt)
             {
                 directory.CacheFileStream.Seek(properIndex, SeekOrigin.Begin);
-                var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+                using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
                 byte[] amountBytes = BinaryHelper.Write(CacheValue.Amount);
                 binaryWriter.Write(amountBytes);
             }
@@ -40,7 +40,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
                 return 0;
 
             directory.CacheFileStream.Seek(properIndex, SeekOrigin.Begin);
-            var binaryReader = new BinaryReader(directory.CacheFileStream);
+            using var binaryReader = new BinaryReader(directory.CacheFileStream);
 
             //For now We will leave it on this field size, but in the future it's
             //going to be a proper generic solution

@@ -24,6 +24,9 @@ namespace TeleBufet.NET
 
         public static Socket ?ClientSocket { get; private set; }
 
+        //TODO: In a future every request packet is going to have a proper interface
+        public static TimeSpan lastRequest { get; private set; }
+
         private static ExtendedClient staticHolder;
 
         public ExtendedClient(string name, IPAddress clientAddress, IPAddress serverAddress) : base(name, serverAddress) //TODO: constructor only socket of server
@@ -57,13 +60,18 @@ namespace TeleBufet.NET
             if (datagram is ProductsInformationPacket newProductsInformationPacket) 
             {
                 CacheTables<ProductInformationTable, ProductInformationCache>(newProductsInformationPacket.ProductsInfromations);
+                object lockObject = new object();
+                lock (lockObject) 
+                {
+                    lastRequest = DateTime.Now.TimeOfDay;
+                }
             }
 
             if (datagram is OrderTransmitionPacket newTransmitionPacket) 
             {
                 using var cartCacheHelper = new CartCacheHelper();
                 using var productCacheHelper = new TableCacheHelper<ProductTable, ProductCache>();
-                using var ticketCacheHelper = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
+                using var ticketCacheHelperSerialization = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
 
                 var products = productCacheHelper.Deserialize();
                 if (TryGetDefaultOrders(out ProductHolder[] defaultProducts, newTransmitionPacket.Products))
@@ -80,9 +88,11 @@ namespace TeleBufet.NET
                 }
                 else 
                 {
-                    ticketCacheHelper.CacheValue = new TicketHolder(newTransmitionPacket.Indetifactor, newTransmitionPacket.Products, newTransmitionPacket.ReservationTimeId, newTransmitionPacket.TotalPrice);
-                    ticketCacheHelper.Serialize();
-                    var result = ticketCacheHelper.Deserialize();
+                    ticketCacheHelperSerialization.CacheValue = new TicketHolder(newTransmitionPacket.Indetifactor, newTransmitionPacket.Products, newTransmitionPacket.ReservationTimeId, newTransmitionPacket.TotalPrice);
+                    ticketCacheHelperSerialization.Serialize();
+
+                    using var ticketCacheHelperDeserialization = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
+                    var result = ticketCacheHelperDeserialization.Deserialize();
                     CartCacheHelper.Clear();
                     Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Order", $"Your reservation is created", "Ok"));
                 }
@@ -124,6 +134,8 @@ namespace TeleBufet.NET
                 tableSerialization.CacheValue = (T)newTables[i];
                 tableSerialization.Serialize();
             }
+		    using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+            var data = informationTableCacheManager.Deserialize();
         }
 
         private static bool TryGetCacheConnectionKeys<T, TDirectory>(out IEnumerable<CacheConnection> connections) where T : ITable, ICache<TimeSpan> where TDirectory : ICacheDirectory, new() 

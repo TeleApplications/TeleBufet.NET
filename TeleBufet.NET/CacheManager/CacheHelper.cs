@@ -1,6 +1,7 @@
 ﻿using TeleBufet.NET.CacheManager.Interfaces;
 using TeleBufet.NET.API.Interfaces;
 using DatagramsNet;
+using TeleBufet.NET.CacheManager.CacheDirectories;
 
 namespace TeleBufet.NET.CacheManager
 {
@@ -15,6 +16,8 @@ namespace TeleBufet.NET.CacheManager
         public CacheHelper(T value) 
         {
             CacheValue = value;
+            if (!directory.CacheFileStream.CanRead)
+                directory = new();
         }
 
         protected virtual void SetBinarySeek() => directory.CacheFileStream.Seek(0, SeekOrigin.End);
@@ -22,7 +25,7 @@ namespace TeleBufet.NET.CacheManager
         public virtual void Serialize() 
         {
             SetBinarySeek();
-            var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+            using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
             byte[] bytes = BinaryHelper.Write(CacheValue);
             binaryWriter.Write(bytes);
         }
@@ -31,7 +34,7 @@ namespace TeleBufet.NET.CacheManager
         {
             directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
 
-            var binaryReader = new BinaryReader(directory.CacheFileStream);
+            using var binaryReader = new BinaryReader(directory.CacheFileStream);
             Span<byte> spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length).AsSpan();
             return BinaryHelper.Read<T[]>(spanBytes.ToArray());
         }
@@ -40,8 +43,10 @@ namespace TeleBufet.NET.CacheManager
         {
             var shiftBytes = GetShiftBytes(startIndex, length).Span;
 
+            if (!directory.CacheFileStream.CanRead)
+                directory = new();
             directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
-            var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+            using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
             int fileLength = (int)directory.CacheFileStream.Length;
             binaryWriter.Write(shiftBytes);
 
@@ -51,15 +56,14 @@ namespace TeleBufet.NET.CacheManager
         private Memory<byte> GetShiftBytes(int startIndex, int length) 
         {
             directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
-            var binaryReader = new BinaryReader(directory.CacheFileStream);
+            using var binaryReader = new BinaryReader(directory.CacheFileStream);
             var spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length);
             return spanBytes[(length)..];
         }
 
         public void Dispose() 
         {
-            directory.CacheFileStream.Flush();
-            directory.CacheFileStream.Dispose();
+            directory.CacheFileStream.Close();
         }
     }
 }

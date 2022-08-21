@@ -13,6 +13,8 @@ namespace TeleBufet.NET.CacheManager
         protected virtual int GetProperIndex() 
         {
             var cacheTables = Deserialize();
+            if (!directory.CacheFileStream.CanRead)
+                directory = new();
             return GetTableIndex(CacheValue, cacheTables);
         }
 

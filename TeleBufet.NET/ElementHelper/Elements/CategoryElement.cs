@@ -29,12 +29,14 @@ namespace TeleBufet.NET.ElementHelper.Elements
             HeightRequest = 45,
         };
 
-        public static IEnumerable<ActionTable<CategoryTable>> CreateElementObjects(CategoryTable[] objectOne, Action<CategoryTable> objectTwo) 
+        public static ReadOnlyMemory<ActionTable<CategoryTable>> CreateElementObjects(CategoryTable[] objectOne, Action<CategoryTable> objectTwo) 
         {
+            Memory<ActionTable<CategoryTable>> holder = new ActionTable<CategoryTable>[objectOne.Length];
             for (int i = 0; i < objectOne.Length; i++)
             {
-                yield return new ActionTable<CategoryTable>(objectOne[i], objectTwo);
+                holder.Span[i] = new ActionTable<CategoryTable>(objectOne[i], objectTwo);
             }
+            return holder;
         }
 
         public override Memory<View> Controls { get; protected set; } = new View[]
