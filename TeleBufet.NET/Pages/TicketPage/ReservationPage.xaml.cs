@@ -12,27 +12,31 @@ public partial class ReservationPage : ContentPage
 		InitializeComponent();
 		using var ticketCacheManager = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
 		var tables = ticketCacheManager.Deserialize();
-		SetTickets(tables);
+		SetTickets(tables, false);
 	}
 
-	private void SetTickets(TicketHolder[] tickets) 
+	private void SetTickets(TicketHolder[] tickets, bool expire)
 	{
         for (int i = 0; i < tickets.Length; i++)
         {
-			var ticketElement = new TicketElement();
-			ticketElement.Inicialize(tickets[i]);
-
-			var baseFrame = new Frame()
+			if (tickets[i].IsExpired == expire) 
 			{
-				HorizontalOptions = LayoutOptions.Fill,
-				HeightRequest = 175,
-				BackgroundColor = Colors.White,
-				CornerRadius = 15,
-				Margin = new Thickness(0, 0, 0, 25),
-				Content = ticketElement.LayoutHandler
-			};
+				var ticketElement = new TicketElement();
+				ticketElement.Inicialize(tickets[i]);
 
-			Device.BeginInvokeOnMainThread(() => ticketLayout.Children.Add(baseFrame));
+
+				var baseFrame = new Frame()
+				{
+					HorizontalOptions = LayoutOptions.Fill,
+					HeightRequest = 175,
+					BackgroundColor = Colors.White,
+					CornerRadius = 15,
+					Margin = new Thickness(0, 0, 0, 25),
+					Content = ticketElement.LayoutHandler
+				};
+
+				Device.BeginInvokeOnMainThread(() => ticketLayout.Children.Add(baseFrame));
+			}
         }
 	}
 }

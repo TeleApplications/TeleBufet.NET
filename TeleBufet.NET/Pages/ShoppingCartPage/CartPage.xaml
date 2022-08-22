@@ -3,58 +3,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ShoppingCartPage.CartPage"
              Title="CartPage"
-             BackgroundColor="Transparent">
+             BackgroundColor="#50963d">
     <ContentPage.Content>
+        <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"></RowDefinition>
+                    <RowDefinition Height="60*"></RowDefinition>
+                </Grid.RowDefinitions>
+            <StackLayout
+                    Grid.Row="0"
+                Margin="20,20,0,0"
+                Orientation="Horizontal"
+                >
+                <ImageButton
+                        x:Name="backButton"
+                        Source="back_icon.png"
+                        WidthRequest="25"
+                        HeightRequest="25"
+                    HorizontalOptions="Start">
+                    </ImageButton>
+                    <Label 
+                        Margin="-40,0,0,0"
+                        Text="Cart"
+                        FontSize="28"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        HorizontalTextAlignment="Start"
+                        HorizontalOptions="CenterAndExpand">
+                    </Label>
+            </StackLayout>
         <Frame 
-            Margin="0,200,0,0"
-            BackgroundColor="#fafafa"
-            CornerRadius="35">
+            Margin="0,40,0,0"
+            BackgroundColor="#E9E9EA"
+            CornerRadius="35"
+            Grid.Row="1"
+            HorizontalOptions="StartAndExpand">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="40"></RowDefinition>
-                    <RowDefinition Height="150*"></RowDefinition>
-                    <RowDefinition Height="35"></RowDefinition>
-                    <RowDefinition Height="25"></RowDefinition>
-                    <RowDefinition Height="125*"></RowDefinition>
+                    <RowDefinition Height="160*"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="140*"></RowDefinition>
                 </Grid.RowDefinitions>
-            <Label 
-                Text="Order"
-                Grid.Row="0"
-                FontSize="28"
-                TextColor="Black"
-                HorizontalTextAlignment="Center"
-                HorizontalOptions="Start">
-            </Label>
             <ScrollView
-                    Grid.Row="1">
+                    Grid.Row="0">
                     <StackLayout
                     x:Name="orderLayout"
                     Grid.Row="1">
                 </StackLayout>
             </ScrollView>
-            <Frame
-                x:Name="indicatorLayout"
-                Grid.Row="3"
-                HorizontalOptions="StartAndExpand"
-                VerticalOptions="Center"
-                BackgroundColor="Transparent">
-            </Frame>
-                <Frame
+                    <Frame
                     Grid.Row="4"
                     BackgroundColor="White"
-                    CornerRadius="15">
-                <VerticalStackLayout>
+                        HorizontalOptions="FillAndExpand"
+                        CornerRadius="5">
+                        <VerticalStackLayout>
+                    <Label 
+                        Text="School break"
+                        FontSize="16"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Center"
+                        HorizontalOptions="Start">
+                    </Label>
+                        <Frame
+                            x:Name="indicatorLayout"
+                            HorizontalOptions="StartAndExpand"
+                            WidthRequest="10"
+                            BackgroundColor="Transparent">
+                        </Frame>
                     <HorizontalStackLayout
                         x:Name="breaksLayout"
                         HorizontalOptions="Center"
                         HeightRequest="60">
                     </HorizontalStackLayout>
-                        <HorizontalStackLayout
-                            Margin="0,0,0,15">
-                            <Label 
-                                Text="Order"
-                                FontSize="16"
+                            <StackLayout
+                            Orientation="Horizontal"
+                            Margin="15,0,15,10">
+                                <Label 
+                                Text="Total"
+                                FontSize="18"
                                 TextColor="Black"
+                                FontAttributes="Bold"
                                 HorizontalTextAlignment="Center"
                                 HorizontalOptions="Start">
                             </Label>
@@ -62,13 +90,12 @@
                                 x:Name="finalPrice"
                                 FontSize="16"
                                 TextColor="Black"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                HorizontalOptions="End">
+                                HorizontalTextAlignment="End"
+                                HorizontalOptions="EndAndExpand">
                             </Label>
-                        </HorizontalStackLayout>
+                        </StackLayout>
                     <Button
-                        x:Name="Reservate"
+                        x:Name="RESERVATE"
                         BackgroundColor="{DynamicResource PrimaryColor}"
                         Text="Reservate"
                         FontSize="18"
@@ -83,5 +110,6 @@
                 </Frame>
             </Grid>
         </Frame>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

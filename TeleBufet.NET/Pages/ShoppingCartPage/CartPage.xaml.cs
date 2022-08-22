@@ -6,6 +6,7 @@ using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Elements;
 using TeleBufet.NET.Pages.ProductPage;
@@ -52,26 +53,29 @@ public partial class CartPage : ContentPage
 	{
         for (int i = 0; i < breaks; i++)
         {
-			var breakButton = new Button()
+			if (TicketHolder.GetCurrentState(i, DateTime.Now)) 
 			{
-				ZIndex = i,
-				Text = $"{i}",
-				TextColor = Colors.White,
-				WidthRequest = 35,
-				HeightRequest = 35,
-				CornerRadius = 17, 
-				HorizontalOptions = LayoutOptions.Center,
-				Margin = new Thickness(0, 0, 10, 0),
-				BackgroundColor = Color.FromRgb(0, 255 - (i * 20), (i * 5) + 10)
-			};
-			breakButton.Clicked += async (object sender, EventArgs e) =>
-			{
-				currentBreak = (sender as Button).ZIndex;
-				await MoveIndicator(breakButton.WidthRequest, 15);
-				await breakButton.ScaleTo(2);
-				await breakButton.ScaleTo(1);
-			};
-			Device.BeginInvokeOnMainThread(() => breaksLayout.Children.Add(breakButton));
+				var breakButton = new Button()
+				{
+					ZIndex = i,
+					Text = $"{i}",
+					TextColor = Colors.White,
+					WidthRequest = 35,
+					HeightRequest = 35,
+					CornerRadius = 17, 
+					HorizontalOptions = LayoutOptions.Center,
+					Margin = new Thickness(0, 0, 10, 0),
+					BackgroundColor = Color.FromRgb(0, 255 - (i * 20), (i * 5) + 10)
+				};
+				breakButton.Clicked += async (object sender, EventArgs e) =>
+				{
+					currentBreak = (sender as Button).ZIndex;
+					await MoveIndicator(breakButton.WidthRequest, 15);
+					await breakButton.ScaleTo(2);
+					await breakButton.ScaleTo(1);
+				};
+				Device.BeginInvokeOnMainThread(() => breaksLayout.Children.Add(breakButton));
+			}
         }
 		Device.BeginInvokeOnMainThread(() => indicatorLayout.Content = breakIndicator);
 	}
@@ -89,6 +93,11 @@ public partial class CartPage : ContentPage
         for (int i = 0; i < products.Length; i++)
         {
 			var orderElement = new CartOrderElement(ordersLayout);
+			orderElement.ManipulationAction = () => 
+			{
+				using var cartCacheHelper = new CartCacheHelper();
+				finalPrice.Text = $"{ComputeFinalPrice(cartCacheHelper.Deserialize())} Kè"; 
+			};
 			orderElement.Inicialize(products[i]);
 			var baseFrame = new Frame()
 			{

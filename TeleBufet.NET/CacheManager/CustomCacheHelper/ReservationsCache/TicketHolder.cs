@@ -18,29 +18,28 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
         public int Key { get; set; }
         public double FinalPrice { get; set; }
         public bool IsExpired { get; set; } = false;
+        public string StringDateTime { get; set; }
 
         public TicketHolder() { }
-        public TicketHolder(int id, ProductHolder[] products, int reservationTime, double finalPrice)
+        public TicketHolder(int id, ProductHolder[] products, int reservationTime, double finalPrice, string dateTime)
         {
             Id = id;
             Products = products;
             Key = reservationTime;
             FinalPrice = finalPrice;
-            IsExpired = GetCurrentState(IsExpired);
+            StringDateTime = dateTime;
+            var currentDateTime = DateTime.Parse(StringDateTime);
+            IsExpired = GetCurrentState(Key, currentDateTime);
         }
 
-        private bool GetCurrentState(bool currentState)
+        public static bool GetCurrentState(int schoolBreak, DateTime currentDateTime)
         {
-            if (currentState)
-                return currentState; 
-
             int start = (8 * 60);
 
             var currentTime = DateTime.Now.TimeOfDay;
-            var ticketTime = TimeSpan.FromMinutes(start + (Key * 60));
-
-            currentState = currentTime < ticketTime;
-            return !(currentState);
+            var ticketTime = TimeSpan.FromMinutes(start + (schoolBreak * 60));
+            
+            return (currentTime < ticketTime) && currentDateTime >= DateTime.Now;
         }
     }
 }

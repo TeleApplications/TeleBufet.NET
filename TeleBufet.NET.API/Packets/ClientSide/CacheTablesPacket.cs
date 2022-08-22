@@ -28,9 +28,9 @@ namespace TeleBufet.NET.API.Packets.ClientSide
         public int Id { get; set; } = 23;
 
         [Field(1)]
-        public CacheConnection[] CacheProducts { get; set; }
+        public CacheConnection[] CacheProducts { get; set; } = new CacheConnection[1] {new CacheConnection() };
 
         [Field(2)]
-        public CacheConnection[] CacheCategories { get; set; }
+        public CacheConnection[] CacheCategories { get; set; } = new CacheConnection[1] {new CacheConnection() };
     }
 }

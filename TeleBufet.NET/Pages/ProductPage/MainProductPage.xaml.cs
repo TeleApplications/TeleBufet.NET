@@ -38,6 +38,9 @@ public partial class MainProductPage : ContentPage
 		productLayout = collection;
 		categoryLayout = categoryStackLayout;
 
+		var oldTimeSpan = ExtendedClient.lastRequest;
+		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
+
 		CreateProducts();
 		CreateCategories();
 		SetCategory(null);
@@ -64,9 +67,10 @@ public partial class MainProductPage : ContentPage
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
 		var newData = newInformationTableCacheManager.Deserialize();
+
         for (int i = 0; i < newData.Length; i++)
         {
-			int index = newData[i].Id;
+			int index = newData[i].Id - 1;
 			var currentElement = productsElements.Span[index];
 			if (ProductElement.TryUpdateElement(ref currentElement, newData[i])) 
 			{
@@ -113,6 +117,7 @@ public partial class MainProductPage : ContentPage
 
         for (int i = 0; i < inicializeElements.Length; i++)
         {
+			frames.Span[i].Margin = 0;
 			categoryLayout.Children.Add(frames.Span[i]);
         }
 	}
@@ -127,7 +132,7 @@ public partial class MainProductPage : ContentPage
 		ReadOnlyMemory<ProductInformationHolder> memoryTables = table is null ? products : GetProductsById(products, table.Id).ToArray();
         for (int i = 0; i < memoryTables.Length; i++)
         {
-			int index = memoryTables.Span[i].Product.Id;
+			int index = memoryTables.Span[i].Product.Id - 1;
 			Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(productFrames.Span[index]));
         }
 	}
@@ -170,7 +175,7 @@ public partial class MainProductPage : ContentPage
 			var baseFrame = new Frame()
 			{
 				Margin = 4,
-				BackgroundColor = Colors.White,
+				BackgroundColor = Color.FromHex("#f9f9fd"),
 				CornerRadius = 15,
 				Content = currentView
 			};

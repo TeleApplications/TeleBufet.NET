@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TeleBufet.NET.API.Database.Interfaces;
+﻿using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.ElementHelper.Interfaces;
 
@@ -25,8 +20,9 @@ namespace TeleBufet.NET.ElementHelper.Elements
     {
         public override Grid LayoutHandler { get; set; } = new Grid()
         {
-            WidthRequest = 35,
-            HeightRequest = 45,
+            HorizontalOptions = LayoutOptions.CenterAndExpand,
+            WidthRequest = 45,
+            HeightRequest = 10,
         };
 
         public static ReadOnlyMemory<ActionTable<CategoryTable>> CreateElementObjects(CategoryTable[] objectOne, Action<CategoryTable> objectTwo) 
@@ -41,17 +37,20 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override Memory<View> Controls { get; protected set; } = new View[]
         {
-            new ImageButton()
+            new Button()
             {
-                WidthRequest = 35,
-                HeightRequest = 35 
+                BackgroundColor = Colors.Transparent,
+                HeightRequest = 10,
+                FontSize = 12,
+                TextColor = Colors.Black,
+                HorizontalOptions = LayoutOptions.FillAndExpand
             }
         };
 
         public override void Inicialize(ActionTable<CategoryTable> data)
         {
-            (Controls.Span[0] as ImageButton).Source = "microsoft_logo.png";
-            (Controls.Span[0] as ImageButton).Clicked += (object sender, EventArgs e) => { data.TableAction.Invoke(data.Table); };
+            (Controls.Span[0] as Button).Text = data.Table.Name;
+            (Controls.Span[0] as Button).Clicked += (object sender, EventArgs e) => { data.TableAction.Invoke(data.Table); };
             base.Inicialize(data);
         }
 

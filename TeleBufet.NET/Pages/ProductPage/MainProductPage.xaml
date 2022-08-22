@@ -3,60 +3,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ProductPage.MainProductPage"
              Title="MainProductPage"
-             BackgroundColor="#fafafa">
+             BackgroundColor="White">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="85"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
-        <Frame CornerRadius="15"
-               HeightRequest="120"
-               HorizontalOptions="FillAndExpand"
-               VerticalOptions="CenterAndExpand"
-               Grid.Row="0"
-               Padding="0,30,0,0">
-            <ScrollView
-                Orientation="Horizontal">
-                <HorizontalStackLayout
-                    x:Name="categoryStackLayout">
-                </HorizontalStackLayout>
-            </ScrollView>
-        </Frame>
-        <Frame CornerRadius="20" Grid.Row="1">
+        <Frame Grid.Row="0"
+               BackgroundColor="White">
             <ScrollView
                 x:Name="scrollView">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"></RowDefinition>
+                            <RowDefinition Height="50*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                    <ScrollView
+                        Orientation="Horizontal"
+                        Grid.Row="0">
+                            <HorizontalStackLayout
+                                x:Name="categoryStackLayout"
+                                Spacing="15">
+                            </HorizontalStackLayout>
+                    </ScrollView>
                     <FlexLayout
                         Wrap="Wrap"
                         Direction="Row"
                         JustifyContent="SpaceEvenly"
                         AlignContent="Center"
                         AlignItems="Center"
+                        Grid.Row="1"
                         x:Name="collection">
                     </FlexLayout>
+                    </Grid>
             </ScrollView>
         </Frame>
-        <Button 
+        <StackLayout
             Grid.Row="2"
-            x:Name="ShoppingCart"
-            HorizontalOptions="End"
-            TextColor="White"
-            FontSize="12"
-            FontAttributes="Bold"
-            Text="Cart"
-            WidthRequest="45"
-            BackgroundColor="#037ff5">
-        </Button>
-        <Button 
-            Grid.Row="2"
-            x:Name="Tickets"
-            HorizontalOptions="Start"
-            TextColor="White"
-            FontSize="12"
-            FontAttributes="Bold"
-            Text="Reservations"
-            WidthRequest="45"
-            BackgroundColor="#037ff5">
-        </Button>
+            Orientation="Horizontal">
+            <ImageButton 
+                x:Name="ShoppingCart"
+                HorizontalOptions="EndAndExpand"
+                Source="cart_icon.png"
+                Aspect="AspectFit"
+                CornerRadius="10"
+                HeightRequest="40"
+                Margin="5,5,5,0"
+                BackgroundColor="{DynamicResource PrimaryColor}">
+            </ImageButton>
+            <ImageButton 
+                x:Name="Tickets"
+                HorizontalOptions="StartAndExpand"
+                Source="ticket_icon.png"
+                Aspect="AspectFit"
+                CornerRadius="10"
+                HeightRequest="40"
+                Margin="5,5,5,0"
+                BackgroundColor="{DynamicResource PrimaryColor}">
+            </ImageButton>
+        </StackLayout>
     </Grid>
 </ContentPage>

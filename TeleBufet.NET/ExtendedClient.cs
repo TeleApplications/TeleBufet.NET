@@ -56,6 +56,11 @@ namespace TeleBufet.NET
             {
                 CacheTables<ProductTable, ProductCache>(newUncachedTablesPacket.Products);
                 CacheTables<CategoryTable, CategoryCache>(newUncachedTablesPacket.Categories);
+                object lockObject = new object();
+                lock (lockObject) 
+                {
+                    lastRequest = DateTime.Now.TimeOfDay;
+                }
             }
             if (datagram is ProductsInformationPacket newProductsInformationPacket) 
             {
@@ -88,7 +93,7 @@ namespace TeleBufet.NET
                 }
                 else 
                 {
-                    ticketCacheHelperSerialization.CacheValue = new TicketHolder(newTransmitionPacket.Indetifactor, newTransmitionPacket.Products, newTransmitionPacket.ReservationTimeId, newTransmitionPacket.TotalPrice);
+                    ticketCacheHelperSerialization.CacheValue = new TicketHolder(newTransmitionPacket.Indetifactor, newTransmitionPacket.Products, newTransmitionPacket.ReservationTimeId, newTransmitionPacket.TotalPrice, newTransmitionPacket.StringDateTime);
                     ticketCacheHelperSerialization.Serialize();
 
                     using var ticketCacheHelperDeserialization = new CacheHelper<TicketHolder, int, ReservationTicketCache>();
@@ -119,6 +124,12 @@ namespace TeleBufet.NET
             cacheTable.CacheProducts = TryGetCacheConnectionKeys<ProductTable, ProductCache>(out IEnumerable<CacheConnection> productsConnection) ? productsConnection.ToArray() : cacheTable.CacheProducts;
             cacheTable.CacheCategories = TryGetCacheConnectionKeys<CategoryTable, CategoryCache>(out IEnumerable<CacheConnection> categoryConnection) ? categoryConnection.ToArray() : cacheTable.CacheCategories;
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await SendDataAsync(data), DatagramHelper.WriteDatagram(cacheTable));
+
+            var updatePacketRequest = new RequestProductInformationPacket()
+            {
+                ProductInformationTables = new ProductInformationTable[1] { new ProductInformationTable() }
+		    };
+		    await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
         }
 
         public static async Task SendDataAsync(byte[] data) 

@@ -20,6 +20,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
         public StackLayout MainLayout { get; }
         public double ProductPrice { get; private set; }
 
+        public Action ManipulationAction { get; set; }
+
         public CartOrderElement(StackLayout stackLayout)
         {
             MainLayout = stackLayout;
@@ -46,22 +48,23 @@ namespace TeleBufet.NET.ElementHelper.Elements
             },
             new Label()
             {
-                FontSize = 16,
+                FontSize = 14,
                 TextColor = Colors.Black,
                 VerticalOptions = LayoutOptions.Center,
+                MaximumWidthRequest = 50,
                 Margin = new Thickness(15,0,25,0)
             },
             new Button()
             {
-                WidthRequest = 25,
-                HeightRequest = 25,
+                WidthRequest = 15,
+                HeightRequest = 15,
                 Text = "-",
                 FontSize = 10,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                BackgroundColor = Color.FromArgb("#4cb86b"),
-                Margin = new Thickness(0,0,10,0)
+                BackgroundColor = Color.FromArgb("#3b3b3b"),
+                Margin = new Thickness(0,0,7,0)
             },
 
             new Label()
@@ -70,25 +73,26 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 TextColor = Colors.Black,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0,0,10,0)
+                Margin = new Thickness(0,0,7,0)
             },
 
             new Button()
             {
-                WidthRequest = 25,
-                HeightRequest = 25,
+                WidthRequest = 15,
+                HeightRequest = 15,
                 Text = "+",
                 FontSize = 10,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                BackgroundColor = Color.FromArgb("#4cb86b"),
+                BackgroundColor = Color.FromArgb("#3b3b3b"),
             },
             new Label()
             {
+                Margin = new Thickness(20,0,0,0),
                 FontSize = 16,
                 VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.End,
+                HorizontalOptions = LayoutOptions.EndAndExpand,
                 TextColor = Colors.Black,
             },
         };
@@ -114,7 +118,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 _ = UpdateAsync();
             };
 
-            (Controls.Span[5] as Label).Text = productTable.Information.Price.ToString();
+            (Controls.Span[5] as Label).Text = $"{productTable.Information.Price.ToString()} Kč";
             base.Inicialize(data);
         }
 
@@ -129,10 +133,11 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 double finalPrice = ProductPrice * finalAmount;
 
                 (Controls.Span[3] as Label).Text = finalAmount.ToString();
-                (Controls.Span[5] as Label).Text = finalPrice.ToString();
+                (Controls.Span[5] as Label).Text = $"{finalPrice.ToString()} Kč";
             }
             else
                 MainLayout.Remove((IView)LayoutHandler.Parent);
+            ManipulationAction.Invoke();
         }
 
         private ProductInformationHolder GetProductByTable<T>(T tables) where T : ITable

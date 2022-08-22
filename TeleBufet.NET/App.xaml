@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
 
-            <Color x:Key="PrimaryColor">#86a335</Color>
+            <Color x:Key="PrimaryColor">#25A914</Color>
             <Color x:Key="SecondaryColor">White</Color>
 
             <Style TargetType="Label">
@@ -17,7 +17,7 @@
 
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="Black" />
-                <Setter Property="FontFamily" Value="OpenSansRegular" />
+                <Setter Property="FontFamily" Value="SanFrancisco" />
                 <Setter Property="BackgroundColor" Value="#4cb86b" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>

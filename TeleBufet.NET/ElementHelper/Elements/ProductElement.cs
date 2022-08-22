@@ -51,25 +51,32 @@ namespace TeleBufet.NET.ElementHelper.Elements
             },
             new Label()
             {
-                FontSize = 12,
+                FontSize = 14,
                 TextColor = Colors.Black,
-                HorizontalTextAlignment = TextAlignment.Center
+                FontAttributes = FontAttributes.Bold,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.Center
+            },
+            new Label()
+            {
+                FontSize = 12,
+                TextColor = Color.FromHex("#A7ABB2"),
+                HorizontalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0,0,10,0),
             },
             new Label()
             {
                 FontSize = 18,
-                TextColor = Color.FromArgb("#4cb86b")
-            },
-            new Label()
-            {
-                FontSize = 12,
                 TextColor = Colors.Black,
-                HorizontalTextAlignment = TextAlignment.End
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalTextAlignment = TextAlignment.End,
+                VerticalOptions = LayoutOptions.End,
+                Margin = new Thickness(0,0,10,0),
             },
             new Button()
             {
                 HorizontalOptions = LayoutOptions.End,
-                BackgroundColor = Color.FromArgb("#4cb86b"),
+                BackgroundColor = Color.FromArgb("#25A914"),
                 Padding = new Thickness(0, 0, 50, 45),
                 VerticalOptions = LayoutOptions.End,
                 WidthRequest = 45,
@@ -82,8 +89,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             (Controls.Span[0] as Image).Source = "microsoft_logo.png";
             (Controls.Span[1] as Label).Text = data.Product.Name;
-            (Controls.Span[2] as Label).Text = data.Information.Price.ToString();
-            (Controls.Span[3] as Label).Text = data.Information.Amount.ToString();
+            (Controls.Span[2] as Label).Text = $"{data.Information.Amount} skladem";
+            (Controls.Span[3] as Label).Text = $"{data.Information.Price} Kč";
 
             var currentButton = (Controls.Span[4] as Button);
             var currentProduct = data.Product;
@@ -99,8 +106,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         protected override async Task UpdateAsync()
         {
-            (Controls.Span[2] as Label).Text = UpdateHolder.Price.ToString();
-            (Controls.Span[3] as Label).Text = UpdateHolder.Amount.ToString();
+            (Controls.Span[2] as Label).Text = $"{UpdateHolder.Amount} skladem";
+            (Controls.Span[3] as Label).Text = $"{UpdateHolder.Price} Kč";
 			(Controls.Span[4] as Button).IsEnabled = UpdateHolder.Amount > 0;
         }
 

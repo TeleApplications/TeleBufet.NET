@@ -22,5 +22,8 @@ namespace TeleBufet.NET.API.Packets
 
         [Field(4)]
         public int Indetifactor { get; set; }
+
+        [Field(5)]
+        public string StringDateTime { get; set; }
     }
 }

@@ -93,6 +93,7 @@ namespace TeleBufet.NET.Server
 
                 int userId = orderPacket.Indetifactor;
                 orderPacket.Indetifactor = identificatorGenerator.GenerateId((byte)orderPacket.ReservationTimeId);
+                orderPacket.StringDateTime = DateTime.Now.ToShortDateString();
 
                 var orders = orderPacket.Products.AsMemory();
 

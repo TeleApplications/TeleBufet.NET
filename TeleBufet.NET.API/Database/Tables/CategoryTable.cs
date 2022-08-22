@@ -15,9 +15,6 @@ namespace TeleBufet.NET.API.Database.Tables
         [DataColumn("Category")]
         public string Name { get; set; }
 
-        [DataColumn("ImagesId")]
-        public int ImageId { get; set; }
-
 		[DataColumn("Timestamp")]
         public TimeSpan Key { get; set; }
     }
