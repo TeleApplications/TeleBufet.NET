@@ -32,7 +32,7 @@ public partial class LoginPage : ContentPage
 		//TODO: This hard coded ip address needs to be written by probably main school website
 		try
 		{
-			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.19"), ipAddress);
+			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.21"), ipAddress);
 		}
 		catch
 		{
@@ -46,7 +46,7 @@ public partial class LoginPage : ContentPage
 		var authentificateResult = await authenticateHolder.LoginAsync();
 		if (authentificateResult is not null || authentificateResult.IdToken != String.Empty) 
 		{
-			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
+			var account = new NormalAccount() {Username = "matej.sestaubr@teleinformatika.eu", Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjJaUXBKM1VwYmpBWVh"};
 			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
 			Navigation.PopAsync();

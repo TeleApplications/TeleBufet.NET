@@ -1,4 +1,5 @@
 ﻿using DatagramsNet;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using TeleBufet.NET.API.Interfaces;
 
@@ -28,7 +29,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
             Key = reservationTime;
             FinalPrice = finalPrice;
             StringDateTime = dateTime;
-            var currentDateTime = DateTime.Parse(StringDateTime);
+            var currentDateTime = DateTime.ParseExact(dateTime, "dd.mm.yyyy", CultureInfo.InvariantCulture);
             IsExpired = GetCurrentState(Key, currentDateTime);
         }
 
@@ -39,7 +40,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
             var currentTime = DateTime.Now.TimeOfDay;
             var ticketTime = TimeSpan.FromMinutes(start + (schoolBreak * 60));
             
-            return (currentTime < ticketTime) && currentDateTime >= DateTime.Now;
+            return (currentTime < ticketTime) && currentDateTime.Date >= DateTime.Now.Date;
         }
     }
 }
