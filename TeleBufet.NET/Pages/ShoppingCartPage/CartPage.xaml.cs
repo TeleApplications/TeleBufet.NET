@@ -1,7 +1,6 @@
 using DatagramsNet;
 using DatagramsNet.Datagram;
 using Microsoft.Maui.Controls.Shapes;
-using System.Collections.Immutable;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.CacheManager;
@@ -138,7 +137,7 @@ public partial class CartPage : ContentPage
 
         for (int i = 0; i < products.Length; i++)
         {
-			int index = products[i].Id;
+			int index = products[i].Id - 1;
 			double currentPrice = tables[index].Price * products[i].Amount;
 
 			finalPrice += currentPrice;

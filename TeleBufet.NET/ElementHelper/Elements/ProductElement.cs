@@ -54,7 +54,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 FontSize = 14,
                 TextColor = Colors.Black,
                 FontAttributes = FontAttributes.Bold,
-                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Start,
                 HorizontalOptions = LayoutOptions.Center
             },
             new Label()

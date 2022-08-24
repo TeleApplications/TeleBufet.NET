@@ -51,6 +51,9 @@ public partial class MainProductPage : ContentPage
 			await UpdateElements();
 			MainRefreshView.IsRefreshing = false;
 		});
+
+		MainRefreshView.Content = scrollView;
+		karmaCounter.Text = User.Karma.ToString();
 	}
 
 	private async Task UpdateElements() 
@@ -60,8 +63,11 @@ public partial class MainProductPage : ContentPage
 		{
 			ProductInformationTables = informationTableCacheManager.Deserialize()
 		};
+		var updateAccountRequest = new RequestAccountInformationPacket();
+
 		var oldTimeSpan = ExtendedClient.lastRequest;
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updateAccountRequest));
 
 		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 
@@ -78,20 +84,6 @@ public partial class MainProductPage : ContentPage
 				Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Update", $"Product {products.Span[index].Product.Name} was updated", "Ok"));
 			}
         }
-	}
-
-	private bool ProductEqual(ProductInformationTable[] firstTable, ProductInformationTable[] secondTable) 
-	{
-		if (firstTable.Length != secondTable.Length)
-			return false;
-        for (int i = 0; i < firstTable.Length; i++)
-        {
-			double firstIndex = firstTable[i].Amount + firstTable[i].Price;
-			double secondIndex = secondTable[i].Amount + secondTable[i].Price;
-			if (firstIndex != secondIndex)
-				return false;
-        }
-		return true;
 	}
 
 	private void CreateProducts() 
@@ -117,7 +109,8 @@ public partial class MainProductPage : ContentPage
 
         for (int i = 0; i < inicializeElements.Length; i++)
         {
-			frames.Span[i].Margin = 0;
+			var currentFrame = frames.Span[i];
+			currentFrame.HeightRequest = 50;
 			categoryLayout.Children.Add(frames.Span[i]);
         }
 	}
@@ -127,7 +120,6 @@ public partial class MainProductPage : ContentPage
 	{
 		//We know that this type of clearing is not fastest, but still this is a temporary solution
 		productLayout.Children.Clear();
-
 
 		ReadOnlyMemory<ProductInformationHolder> memoryTables = table is null ? products : GetProductsById(products, table.Id).ToArray();
         for (int i = 0; i < memoryTables.Length; i++)

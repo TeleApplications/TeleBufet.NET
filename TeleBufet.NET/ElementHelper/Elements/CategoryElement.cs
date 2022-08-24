@@ -20,9 +20,9 @@ namespace TeleBufet.NET.ElementHelper.Elements
     {
         public override Grid LayoutHandler { get; set; } = new Grid()
         {
-            HorizontalOptions = LayoutOptions.CenterAndExpand,
-            WidthRequest = 45,
-            HeightRequest = 10,
+            VerticalOptions = LayoutOptions.StartAndExpand,
+            HorizontalOptions = LayoutOptions.Center,
+            HeightRequest = 35 
         };
 
         public static ReadOnlyMemory<ActionTable<CategoryTable>> CreateElementObjects(CategoryTable[] objectOne, Action<CategoryTable> objectTwo) 
@@ -39,11 +39,12 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Button()
             {
-                BackgroundColor = Colors.Transparent,
-                HeightRequest = 10,
-                FontSize = 12,
+                FontSize = 16,
                 TextColor = Colors.Black,
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                FontAttributes = FontAttributes.Bold,
+                HeightRequest = 40,
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.StartAndExpand
             }
         };
 

@@ -45,10 +45,7 @@ namespace TeleBufet.NET
             if (datagram is TwoWayHandshake newDatagram) 
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
             if (datagram is AccountInformationPacket newAccountPacket) 
-            {
                 MainProductPage.User = new UserTable() {Id = newAccountPacket.Indetificator, Karma = newAccountPacket.Karma};
-                await RequestCacheTablesPacketAsync();
-            }
 
             //TODO: Create pure generics solution for this type of packets
             //We hope that this will be possible in the next update of Datagrams.NET

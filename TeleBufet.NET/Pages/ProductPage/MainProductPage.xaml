@@ -7,20 +7,34 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="85"></RowDefinition>
         </Grid.RowDefinitions>
         <Frame Grid.Row="0"
                BackgroundColor="White">
             <ScrollView
-                x:Name="scrollView">
+                x:Name="scrollView"
+                ZIndex="5">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50"></RowDefinition>
-                            <RowDefinition Height="50*"></RowDefinition>
+                            <RowDefinition Height="80"></RowDefinition>
+                            <RowDefinition Height="100"></RowDefinition>
+                            <RowDefinition Height="140*"></RowDefinition>
                         </Grid.RowDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        x:Name="karmaCounter"
+                        FontSize="42"
+                        TextColor="Black"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        FontFamily="SourceCodePro">
+                    </Label>
                     <ScrollView
                         Orientation="Horizontal"
-                        Grid.Row="0">
+                        Grid.Row="1"
+                        HeightRequest="60">
                             <HorizontalStackLayout
                                 x:Name="categoryStackLayout"
                                 Spacing="15">
@@ -32,7 +46,7 @@
                         JustifyContent="SpaceEvenly"
                         AlignContent="Center"
                         AlignItems="Center"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         x:Name="collection">
                     </FlexLayout>
                     </Grid>

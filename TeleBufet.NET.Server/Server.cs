@@ -106,7 +106,7 @@ namespace TeleBufet.NET.Server
                     {
                         //This is not the best way, how to find a proper table, but this also saves
                         //a lot of database computing
-                        int index = orderPacket.Products[i].Id;
+                        int index = orderPacket.Products[i].Id - 1;
                         int productAmount = orderPacket.Products[i].Amount;
                         var currentTable = tables.Span[index];
 
