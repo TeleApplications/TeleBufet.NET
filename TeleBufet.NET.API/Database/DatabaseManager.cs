@@ -41,7 +41,7 @@ namespace TeleBufet.NET.API.Database
 
             using (var databaseAdapter = new MySqlDataAdapter(query, mySqlConnection)) 
             {
-                databaseAdapter.Fill(dataTable);
+                await databaseAdapter.FillAsync(dataTable);
                 databaseAdapter.Dispose();
             }
             var tables = CreateTables(dataTable, selectQuery.CurrentTableInformation.Properties);

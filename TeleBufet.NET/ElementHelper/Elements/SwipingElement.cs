@@ -107,10 +107,10 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 int currentIndex = (CurrentTicketIndex - i) - 1;
                 var currentFrame = (LayoutHandler.Children[i] as Frame);
                 double scaleX = 1 - (((double)currentIndex) / 10);
-                currentFrame.ScaleXTo(scaleX);
+                _ = currentFrame.ScaleXTo(scaleX);
 
                 int frameYPosition = ((int)(ticketDefaultPosition.Y)) - (currentIndex * 20);
-                currentFrame.TranslateTo(ticketDefaultPosition.X, frameYPosition);
+                _ = currentFrame.TranslateTo(ticketDefaultPosition.X, frameYPosition);
             }
         }
 

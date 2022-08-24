@@ -12,12 +12,12 @@
 
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="Black" />
-                <Setter Property="FontFamily" Value="OpenSansRegular" />
+                <Setter Property="FontFamily" Value="RobotoMono" />
             </Style>
 
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="Black" />
-                <Setter Property="FontFamily" Value="SanFrancisco" />
+                <Setter Property="FontFamily" Value="RobotoMono" />
                 <Setter Property="BackgroundColor" Value="#4cb86b" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>

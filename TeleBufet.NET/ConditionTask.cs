@@ -5,7 +5,7 @@ namespace TeleBufet.NET
     {
         private const int OneSecond = 1000;
 
-        public static bool WaitUntil(Func<bool> condition, int waitTime) 
+        public static async Task<bool> WaitUntil(Func<bool> condition, int waitTime) 
         {
             int currentTime = 0;
             var whileTask = Task<bool>.Run(async () =>
@@ -22,7 +22,7 @@ namespace TeleBufet.NET
                 }
                 return true;
             });
-            return whileTask.Result;
+            return await whileTask;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.ClientAuthentication;
+using TeleBufet.NET.Pages.AccessRestrictionPage;
 using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET.Pages.LoginPage;
@@ -51,8 +52,13 @@ public partial class LoginPage : ContentPage
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
             await ExtendedClient.RequestCacheTablesPacketAsync();
 
+			var oldTimeSpan = ExtendedClient.lastRequest;
+			_ = await ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
+
 			Navigation.PopAsync();
-			await Navigation.PushModalAsync(new MainProductPage());
+
+			var nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
+			await Navigation.PushModalAsync(nextPage);
 		}
 	}
 }

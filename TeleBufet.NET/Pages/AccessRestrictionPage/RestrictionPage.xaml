@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TeleBufet.NET.Pages.AccessRestrictionPage.RestrictionPage"
+             Title="RestrictionPage">
+    <VerticalStackLayout>
+        <Label
+            Text="Upss !"
+            FontSize="48"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center">
+        </Label>
+        <Label
+            Text="Můžeme vám nabídnou tolik produktů kolik máte karmy.">
+        </Label>
+        <HorizontalStackLayout>
+            <Label
+                Text="A to je "
+                FontSize="16">
+            </Label>
+            <Label
+                Text="0"
+                VerticalOptions="Start"
+                VerticalTextAlignment="Start"
+                FontAttributes="Bold"
+                FontSize="32">
+            </Label>
+            <Label
+                Text="."
+                FontSize="16">
+            </Label>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

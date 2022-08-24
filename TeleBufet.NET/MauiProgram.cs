@@ -10,6 +10,7 @@ public static class MauiProgram
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+				fonts.AddFont("RobotoMono.ttf", "RobotoMono");
 			});
 
 		return builder.Build();
