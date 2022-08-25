@@ -1,6 +1,7 @@
 ﻿using DatagramsNet.Attributes;
 using TeleBufet.NET.API.Database.Interfaces;
 using System.Runtime.InteropServices;
+using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Packets.ClientSide
 {
@@ -8,29 +9,28 @@ namespace TeleBufet.NET.API.Packets.ClientSide
     public sealed class CacheConnection
     {
         public int Id { get; set; }
-
         public TimeSpan Key { get; set; }
 
         public CacheConnection() { }
 
-        public CacheConnection(ITable table, TimeSpan key) 
+        public CacheConnection(ICacheTable<TimeSpan> table) 
         {
             Id = table.Id;
-            Key = key;
+            Key = table.Key;
         }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Packet]
-    public sealed class CacheTablesPacket
+    public sealed class CacheProductsTablePacket
     {
         [Field(0)]
         public int Id { get; set; } = 23;
 
         [Field(1)]
-        public CacheConnection[] CacheProducts { get; set; } = new CacheConnection[1] {new CacheConnection() };
+        public Memory<CacheConnection> CacheTables { get; set; } = new Memory<CacheConnection>();
 
         [Field(2)]
-        public CacheConnection[] CacheCategories { get; set; } = new CacheConnection[1] {new CacheConnection() };
+        public Type TableType { get; set; }
     }
 }

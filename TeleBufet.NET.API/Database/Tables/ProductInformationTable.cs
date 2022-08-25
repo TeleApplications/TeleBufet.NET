@@ -7,7 +7,7 @@ namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("ProductsInformation")]
-    public sealed class ProductInformationTable : ITable, ICache<TimeSpan>
+    public sealed class ProductInformationTable : ICacheTable<TimeSpan>
     {
         [DataColumn("Id")]
         public int Id { get; set; }

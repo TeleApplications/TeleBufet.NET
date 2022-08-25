@@ -1,13 +1,12 @@
 ﻿using System.Runtime.InteropServices;
 using TeleBufet.NET.API.Database.Attributes;
-using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("Categories")]
-    public sealed class CategoryTable : ITable, ICache<TimeSpan> 
+    public sealed class CategoryTable : ICacheTable<TimeSpan> 
     {
 		[DataColumn("CategoryId")]
         public int Id { get; set; }

@@ -132,7 +132,7 @@ public partial class CartPage : ContentPage
 	private double ComputeFinalPrice(ProductHolder[] products) 
 	{
 		double finalPrice = 0;
-		using var productInfromationCacheHelper = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+		using var productInfromationCacheHelper = new TableCacheHelper<ProductInformationTable>();
 		var tables = productInfromationCacheHelper.Deserialize();
 
         for (int i = 0; i < products.Length; i++)

@@ -61,13 +61,20 @@ namespace TeleBufet.NET.Server
             }
             
             //TODO: Update products amount
-            if (datagram is CacheTablesPacket newCacheDatagram)
+            if (datagram is CacheProductsTablePacket newCacheDatagram)
             {
                 UncachedTablesPacket uncachedTables = new();
-                uncachedTables.Products = await GetNewTables<ProductTable>(newCacheDatagram.CacheProducts.ToArray());
-                uncachedTables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.CacheCategories.ToArray());
 
-                await ServerLogger.LogAsync<NormalPrefix>($"In caching process was found {uncachedTables.Products.Length + uncachedTables.Categories.Length} old datas", TimeFormat.Half);
+                if(newCacheDatagram.TableType == typeof(ProductTable))
+                    uncachedTables.CacheTables = await GetNewTables<ProductTable>(newCacheDatagram.CacheTables.ToArray());
+                if(newCacheDatagram.TableType == typeof(CategoryTable))
+                    uncachedTables.CacheTables = await GetNewTables<CategoryTable>(newCacheDatagram.CacheTables.ToArray());
+                if(newCacheDatagram.TableType == typeof(ImageTable))
+                    uncachedTables.CacheTables = await GetNewTables<ImageTable>(newCacheDatagram.CacheTables.ToArray());
+                //uncachedTables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.CacheCategories.ToArray());
+
+                await ServerLogger.LogAsync<NormalPrefix>($"In caching process was found {uncachedTables.CacheTables.Length} old datas of type {nameof(uncachedTables.TableType)}", TimeFormat.Half);
+                uncachedTables.TableType = newCacheDatagram.TableType;
                 var data = DatagramHelper.WriteDatagram(uncachedTables);
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), data);
             }
@@ -182,7 +189,7 @@ namespace TeleBufet.NET.Server
             return spanTables[0..totalChanges].ToArray();
         }
 
-        private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ITable, ICache<TimeSpan>, new()
+        private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ICacheTable<TimeSpan>, new()
         {
             var newTables = new List<T>();
             using var databaseManager = new DatabaseManager<T>();

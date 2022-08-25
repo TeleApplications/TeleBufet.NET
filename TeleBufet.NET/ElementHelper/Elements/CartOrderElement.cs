@@ -26,7 +26,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             MainLayout = stackLayout;
 
-            using var productCacheHelper = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+            using var productCacheHelper = new TableCacheHelper<ProductInformationTable>();
             productsInformation = productCacheHelper.Deserialize();
         }
 
@@ -144,7 +144,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             if (products.IsEmpty)
             {
-                using var productCacheHelper = new TableCacheHelper<ProductTable, ProductCache>();
+                using var productCacheHelper = new TableCacheHelper<ProductTable>();
                 products = productCacheHelper.Deserialize();
             }
 

@@ -1,6 +1,5 @@
 ﻿using DatagramsNet;
 using TeleBufet.NET.API.Database.Tables;
-using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Interfaces;
 using TeleBufet.NET.Pages.ProductPage;

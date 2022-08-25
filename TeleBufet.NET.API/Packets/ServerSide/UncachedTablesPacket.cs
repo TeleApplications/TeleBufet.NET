@@ -1,6 +1,8 @@
 ﻿using DatagramsNet.Attributes;
 using System.Runtime.InteropServices;
+using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Packets.ServerSide
 {
@@ -13,9 +15,9 @@ namespace TeleBufet.NET.API.Packets.ServerSide
         public int Id { get; set; } = 28;
 
         [Field(1)]
-        public ProductTable[] Products { get; set; }
+        public Memory<ICacheTable<TimeSpan>> CacheTables { get; set; } = new Memory<ICacheTable<TimeSpan>>();
 
         [Field(2)]
-        public CategoryTable[] Categories { get; set; }
+        public Type TableType { get; set; }
     }
 }

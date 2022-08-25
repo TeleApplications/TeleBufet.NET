@@ -1,6 +1,8 @@
-﻿namespace TeleBufet.NET.API.Interfaces
+﻿using TeleBufet.NET.API.Database.Interfaces;
+
+namespace TeleBufet.NET.API.Interfaces
 {
-    public interface ICache<T>
+    public interface ICacheTable<T> : ITable
     {
         public T Key { get; set; }
     }

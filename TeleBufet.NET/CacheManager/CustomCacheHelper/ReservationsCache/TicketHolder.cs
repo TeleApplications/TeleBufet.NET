@@ -12,7 +12,7 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal sealed class TicketHolder : ICache<int>
+    internal sealed class TicketHolder : ICacheTable<int>
     {
         public int Id { get; set; }
         public ProductHolder[] Products { get; set; } = new ProductHolder[1];

@@ -58,7 +58,7 @@ public partial class MainProductPage : ContentPage
 
 	private async Task UpdateElements() 
 	{
-		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var updatePacketRequest = new RequestProductInformationPacket()
 		{
 			ProductInformationTables = informationTableCacheManager.Deserialize()
@@ -71,7 +71,7 @@ public partial class MainProductPage : ContentPage
 
 		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 
-		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var newData = newInformationTableCacheManager.Deserialize();
 
         for (int i = 0; i < newData.Length; i++)
@@ -88,8 +88,8 @@ public partial class MainProductPage : ContentPage
 
 	private void CreateProducts() 
 	{
-		using var productTableCacheManager = new TableCacheHelper<ProductTable, ProductCache>();
-		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable, ProductInformationCache>();
+		using var productTableCacheManager = new TableCacheHelper<ProductTable>();
+		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 
 		var elements = ProductElement.CreateElementObjects(productTableCacheManager.Deserialize(), informationTableCacheManager.Deserialize());
 		products = elements;
@@ -100,7 +100,7 @@ public partial class MainProductPage : ContentPage
 
 	private void CreateCategories() 
 	{
-		using var categoryTableCacheManager = new TableCacheHelper<CategoryTable, CategoryCache>();
+		using var categoryTableCacheManager = new TableCacheHelper<CategoryTable>();
 
 		var elements = CategoryElement.CreateElementObjects(categoryTableCacheManager.Deserialize(), SetCategory);
 

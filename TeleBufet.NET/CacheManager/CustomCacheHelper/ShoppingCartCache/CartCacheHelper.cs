@@ -3,9 +3,15 @@ using TeleBufet.NET.CacheManager.CacheDirectories;
 
 namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
 {
-    internal sealed class CartCacheHelper : TableCacheHelper<ProductHolder, CartCache>
+    internal sealed class CartCacheHelper : TableCacheHelper<ProductHolder>
     {
         public int CacheLength => (int)this.directory.CacheFileStream.Length;
+
+        public CartCacheHelper() 
+        {
+            directory = new CartCache();
+
+        }
 
         public override void Serialize()
         {
