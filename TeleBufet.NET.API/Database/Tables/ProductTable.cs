@@ -7,10 +7,10 @@ namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("Products")]
-    public sealed class ProductTable : ICacheTable<TimeSpan> 
+    public sealed class ProductTable : ITimeSpanCache
     {
 		[DataColumn("ProductID")]
-        public int Id { get; set; }
+        public new int Id { get; set; }
 
         [DataColumn("Name")]
         public string Name { get; set; }
@@ -22,6 +22,6 @@ namespace TeleBufet.NET.API.Database.Tables
         public int ImageId { get; set; }
 
 		[DataColumn("Timestamp")]
-        public TimeSpan Key { get; set; }
+        public new TimeSpan Key { get; set; }
     }
 }

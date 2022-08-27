@@ -1,4 +1,5 @@
-﻿using TeleBufet.NET.API.Database.Tables;
+﻿using System.Reflection;
+using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;

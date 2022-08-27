@@ -6,7 +6,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
     [CacheTable(typeof(CategoryTable))]
     internal sealed class CategoryCache : CacheFile
     {
-        public override string FileName => "CacheCategoriesTwelvessssssssssss";
+        public override string FileName => "CacheCategoriesTwelvesssssssssssss";
         public static TimeSpan LastChanges { get; set; }
 
         public CategoryCache() : base() { }

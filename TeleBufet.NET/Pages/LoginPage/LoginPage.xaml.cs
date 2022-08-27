@@ -2,7 +2,10 @@ using DatagramsNet;
 using DatagramsNet.Datagram;
 using System.Net;
 using System.Net.Sockets;
+using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
+using TeleBufet.NET.CacheManager;
+using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.ClientAuthentication;
 using TeleBufet.NET.Pages.AccessRestrictionPage;
 using TeleBufet.NET.Pages.ProductPage;
@@ -50,14 +53,22 @@ public partial class LoginPage : ContentPage
 			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
 			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
-            await ExtendedClient.RequestCacheTablesPacketAsync();
 
+			using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
+			//var updatePacketRequest = new RequestProductInformationPacket()
+			//{
+				//ProductInformationTables = informationTableCacheManager.Deserialize()
+			//};
+			//await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+
+            await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable(), new CategoryTable());
 			var oldTimeSpan = ExtendedClient.lastRequest;
-			_ = await ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
+			ContentPage nextPage;
+			ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 
+			nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
 			Navigation.PopAsync();
 
-			var nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
 			await Navigation.PushModalAsync(nextPage);
 		}
 	}

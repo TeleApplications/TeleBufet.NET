@@ -7,10 +7,10 @@ namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("ProductsInformation")]
-    public sealed class ProductInformationTable : ICacheTable<TimeSpan>
+    public sealed class ProductInformationTable : ITimeSpanCache
     {
         [DataColumn("Id")]
-        public int Id { get; set; }
+        public new int Id { get; set; }
 
         [DataColumn("Price")]
         public double Price { get; set; }
@@ -19,7 +19,7 @@ namespace TeleBufet.NET.API.Database.Tables
         public int Amount { get; set; }
 
         [DataColumn("Timestamp")]
-        public TimeSpan Key { get; set; }
+        public new TimeSpan Key { get; set; }
 
         public override bool Equals(object obj)
         {

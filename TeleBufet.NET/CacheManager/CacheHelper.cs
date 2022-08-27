@@ -27,10 +27,7 @@ namespace TeleBufet.NET.CacheManager
         public CacheHelper(T value) 
         {
             CacheValue = value;
-            if (!directory.CacheFileStream.CanRead) 
-            {
-                directory = GetCurrentCacheDirectory();
-            }
+            directory = GetCurrentCacheDirectory();
         }
 
         protected ICacheDirectory? GetCurrentCacheDirectory() 

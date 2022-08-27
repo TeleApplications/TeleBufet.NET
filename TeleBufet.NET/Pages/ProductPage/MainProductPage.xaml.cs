@@ -41,11 +41,12 @@ public partial class MainProductPage : ContentPage
 		var oldTimeSpan = ExtendedClient.lastRequest;
 		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 
+		_ = UpdateElements();
+
 		CreateProducts();
 		CreateCategories();
 		SetCategory(null);
 
-		_ = UpdateElements();
 		MainRefreshView.Command = new Command(async() =>
 		{
 			await UpdateElements();
@@ -73,6 +74,9 @@ public partial class MainProductPage : ContentPage
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var newData = newInformationTableCacheManager.Deserialize();
+
+		if (productsElements.IsEmpty)
+			return;
 
         for (int i = 0; i < newData.Length; i++)
         {

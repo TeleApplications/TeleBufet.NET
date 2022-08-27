@@ -13,10 +13,10 @@ namespace TeleBufet.NET.API.Packets.ClientSide
 
         public CacheConnection() { }
 
-        public CacheConnection(ICacheTable<TimeSpan> table) 
+        public CacheConnection(ITable table, TimeSpan key) 
         {
             Id = table.Id;
-            Key = table.Key;
+            Key = key;
         }
     }
 
@@ -28,7 +28,7 @@ namespace TeleBufet.NET.API.Packets.ClientSide
         public int Id { get; set; } = 23;
 
         [Field(1)]
-        public Memory<CacheConnection> CacheTables { get; set; } = new Memory<CacheConnection>();
+        public CacheConnection[] CacheTables { get; set; } = new CacheConnection[1];
 
         [Field(2)]
         public Type TableType { get; set; }

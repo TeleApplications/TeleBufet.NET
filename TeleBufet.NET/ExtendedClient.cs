@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.API.Packets.ServerSide;
@@ -26,6 +27,8 @@ namespace TeleBufet.NET
         private static ExtendedClient staticHolder;
         private static readonly MethodInfo createConnectioKeys = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.GetCacheConnectionKeys));
         private static readonly MethodInfo createCacheTables = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.CacheTables));
+        private static readonly MethodInfo read = typeof(BinaryHelper).GetMethod(nameof(BinaryHelper.Read));
+        private static readonly MethodInfo create = typeof(ExtendedClient).GetMethod(nameof(ExtendedClient.CreateTables));
 
         public ExtendedClient(string name, IPAddress clientAddress, IPAddress serverAddress) : base(name, serverAddress)
         {
@@ -43,11 +46,22 @@ namespace TeleBufet.NET
             if (datagram is TwoWayHandshake newDatagram) 
                 Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
             if (datagram is AccountInformationPacket newAccountPacket) 
+            {
                 MainProductPage.User = new UserTable() {Id = newAccountPacket.Indetificator, Karma = newAccountPacket.Karma};
+                lastRequest = DateTime.Now.TimeOfDay;
+            }
 
             if (datagram is UncachedTablesPacket newUncachedTablesPacket)
             {
-                createCacheTables.MakeGenericMethod(newUncachedTablesPacket.TableType).Invoke(null, new object[] { newUncachedTablesPacket.CacheTables });
+                var tableType = newUncachedTablesPacket.TableType;
+                var tableArrayType = Array.CreateInstance(tableType, 1).GetType();
+
+                if (newUncachedTablesPacket.TableHolders is not null) 
+                {
+                    var holders = newUncachedTablesPacket.TableHolders;
+                    var tables = create.MakeGenericMethod(tableType).Invoke(null, new object[] { holders });
+                    createCacheTables.MakeGenericMethod(tableType).Invoke(null, new object[] { tables });
+                }
                 object lockObject = new object();
                 lock (lockObject) 
                 {
@@ -97,6 +111,18 @@ namespace TeleBufet.NET
             }
         }
 
+        public static ReadOnlyMemory<T> CreateTables<T>(TableByteHolder[] tableHolders) where T : ICacheTable<TimeSpan> 
+        {
+            int length = tableHolders.Length;
+            Memory<T> tables = new T[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                tables.Span[i] = (T)read.MakeGenericMethod(typeof(T)).Invoke(null, new object[] { tableHolders[i].TableBytes });
+            }
+            return tables;
+        }
+
         private bool TryGetDefaultOrders(out ProductHolder[] defaultOrders, ProductHolder[] orders)
         {
             var defaultOrdersList = new List<ProductHolder>();
@@ -112,7 +138,7 @@ namespace TeleBufet.NET
             return defaultOrders.Length > 0;
         }
 
-        public static async Task RequestCacheTablesPacketAsync(params CacheFile[] cacheFiles)
+        public static async Task RequestCacheTablesPacketAsync(params ICacheTable<TimeSpan>[] cacheFiles)
         {
             for (int i = 0; i < cacheFiles.Length; i++)
             {
@@ -120,7 +146,8 @@ namespace TeleBufet.NET
                 var currentDirectoryType = cacheFiles[i].GetType();
                 var connectionKeys = createConnectioKeys.MakeGenericMethod(currentDirectoryType);
 
-                cacheTable.CacheTables = (CacheConnection[])connectionKeys.Invoke(null, Array.Empty<object>());
+                cacheTable.CacheTables = ((IEnumerable<CacheConnection>)connectionKeys.Invoke(null, Array.Empty<object>())).ToArray();
+                cacheTable.TableType = cacheFiles[i].GetType();
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await SendDataAsync(data), DatagramHelper.WriteDatagram(cacheTable));
             }
         }

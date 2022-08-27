@@ -26,7 +26,7 @@ namespace TeleBufet.NET.CacheManager
             var tables = cacheManager.Deserialize();
             for (int i = 0; i < tables.Length; i++)
             {
-                var connectionKey = new CacheConnection(tables[i]);
+                var connectionKey = new CacheConnection(tables[i], tables[i].Key);
                 yield return connectionKey;
             }
         }

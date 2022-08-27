@@ -3,6 +3,8 @@ using DatagramsNet.Datagram;
 using DatagramsNet.Logging;
 using DatagramsNet.Prefixes;
 using System.Net;
+using System.Reflection;
+using TeleBufet.NET.API;
 using TeleBufet.NET.API.Database;
 using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
@@ -16,6 +18,7 @@ namespace TeleBufet.NET.Server
     internal sealed class Server : ServerManager
     {
         private IdentificatorGenerator identificatorGenerator = new();
+        private static readonly MethodInfo changeType = typeof(GenericType).GetMethod(nameof(GenericType.ReType));
 
         public override int PortNumber => 1111;
 
@@ -65,18 +68,27 @@ namespace TeleBufet.NET.Server
             {
                 UncachedTablesPacket uncachedTables = new();
 
-                if(newCacheDatagram.TableType == typeof(ProductTable))
-                    uncachedTables.CacheTables = await GetNewTables<ProductTable>(newCacheDatagram.CacheTables.ToArray());
-                if(newCacheDatagram.TableType == typeof(CategoryTable))
-                    uncachedTables.CacheTables = await GetNewTables<CategoryTable>(newCacheDatagram.CacheTables.ToArray());
-                if(newCacheDatagram.TableType == typeof(ImageTable))
-                    uncachedTables.CacheTables = await GetNewTables<ImageTable>(newCacheDatagram.CacheTables.ToArray());
+                var tableType = newCacheDatagram.TableType;
+                var tableName = newCacheDatagram.TableType.Name;
+
+                if(tableType == typeof(ProductTable))
+                    uncachedTables.TableHolders = CreateTableHolders(await GetNewTables<ProductTable>(newCacheDatagram.CacheTables.ToArray()));
+                if(tableType == typeof(CategoryTable))
+                    uncachedTables.TableHolders = CreateTableHolders(await GetNewTables<CategoryTable>(newCacheDatagram.CacheTables.ToArray()));
+                if(tableType == typeof(ImageTable))
+                    uncachedTables.TableHolders = CreateTableHolders(await GetNewTables<ImageTable>(newCacheDatagram.CacheTables.ToArray()));
                 //uncachedTables.Categories = await GetNewTables<CategoryTable>(newCacheDatagram.CacheCategories.ToArray());
 
-                await ServerLogger.LogAsync<NormalPrefix>($"In caching process was found {uncachedTables.CacheTables.Length} old datas of type {nameof(uncachedTables.TableType)}", TimeFormat.Half);
-                uncachedTables.TableType = newCacheDatagram.TableType;
+                if (uncachedTables.TableHolders.Length == 0 || uncachedTables.TableHolders[0] is null) 
+                {
+                    await ServerLogger.LogAsync<NormalPrefix>($"{tableName} is up to date", TimeFormat.Half);
+                    return;
+                }
+                uncachedTables.TableType = tableType;
                 var data = DatagramHelper.WriteDatagram(uncachedTables);
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), data);
+
+                await ServerLogger.LogAsync<WarningPrefix>($"In caching process was found {uncachedTables.TableHolders.Length} old datas of type {tableName}", TimeFormat.Half);
             }
 
             if (datagram is RequestProductInformationPacket newAmountDatagram) 
@@ -189,9 +201,26 @@ namespace TeleBufet.NET.Server
             return spanTables[0..totalChanges].ToArray();
         }
 
-        private async Task<T[]> GetNewTables<T>(CacheConnection[] cacheTables) where T : ICacheTable<TimeSpan>, new()
+        private TableByteHolder[] CreateTableHolders<T>(ReadOnlyMemory<T> tables) where T : ICacheTable<TimeSpan>, new() 
+        {
+            int tableLength = tables.Length;
+            var tableHolders = new TableByteHolder[tableLength];
+
+            for (int i = 0; i < tableLength; i++)
+            {
+                var currentBytes = BinaryHelper.Write(tables.Span[i]);
+                tableHolders[i] = new TableByteHolder()
+                {
+                    TableBytes = currentBytes
+                };
+            }
+            return tableHolders;
+        }
+
+        private async Task<ReadOnlyMemory<T>> GetNewTables<T>(CacheConnection[] cacheTables) where T : ICacheTable<TimeSpan>, new()
         {
             var newTables = new List<T>();
+
             using var databaseManager = new DatabaseManager<T>();
             var products = await databaseManager.GetTable();
             for (int i = 0; i < products.Length; i++)
@@ -202,7 +231,7 @@ namespace TeleBufet.NET.Server
                     if (databaseProduct.Key != products.Span[i].Key)
                         newTables.Add(products.Span[i]);
                 }
-                else
+                else 
                     newTables.Add(products.Span[i]);
             }
             return newTables.ToArray();

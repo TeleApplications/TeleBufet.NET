@@ -6,15 +6,15 @@ namespace TeleBufet.NET.API.Database.Tables
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [Table("Categories")]
-    public sealed class CategoryTable : ICacheTable<TimeSpan> 
+    public sealed class CategoryTable : ITimeSpanCache
     {
 		[DataColumn("CategoryId")]
-        public int Id { get; set; }
+        public new int Id { get; set; }
 
         [DataColumn("Category")]
         public string Name { get; set; }
 
 		[DataColumn("Timestamp")]
-        public TimeSpan Key { get; set; }
+        public new TimeSpan Key { get; set; }
     }
 }
