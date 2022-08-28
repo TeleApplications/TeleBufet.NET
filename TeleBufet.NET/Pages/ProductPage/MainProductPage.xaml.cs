@@ -38,6 +38,14 @@ public partial class MainProductPage : ContentPage
 		productLayout = collection;
 		categoryLayout = categoryStackLayout;
 
+		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
+		var updatePacketRequest = new RequestProductInformationPacket()
+		{
+			ProductInformationTables = informationTableCacheManager.Deserialize()
+		};
+		_ = DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+
+
 		var oldTimeSpan = ExtendedClient.lastRequest;
 		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
 

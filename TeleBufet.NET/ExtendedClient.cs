@@ -61,11 +61,11 @@ namespace TeleBufet.NET
                     var tables = create.MakeGenericMethod(tableType).Invoke(null, new object[] { holders });
                     createCacheTables.MakeGenericMethod(tableType).Invoke(null, new object[] { tables });
                 }
-                object lockObject = new object();
-                lock (lockObject) 
-                {
-                    lastRequest = DateTime.Now.TimeOfDay;
-                }
+                //object lockObject = new object();
+                //lock (lockObject) 
+                //{
+                    //lastRequest = DateTime.Now.TimeOfDay;
+                //}
             }
 
             if (datagram is ProductsInformationPacket newProductsInformationPacket) 

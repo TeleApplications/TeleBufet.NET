@@ -80,14 +80,13 @@ namespace TeleBufet.NET.CacheManager
             {
                 if (cacheTables[i].Id == CacheValue.Id) 
                 {
-                    //This part where we add multiplied sizeof is really temporary solution
-                    //due to unupdated version of Datagrams.NET where getting serialized size of object
-                    //is possible
-                    var finalSize = BinaryHelper.GetSizeOfArray(spanTables[0..(i)].ToArray(), ref bytesHolder);
-                    finalSize = finalSize + (i * sizeof(int));
+                    int sizeDifference = GetSizeDifference(CacheValue);
 
-                    var oldSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(T), ref bytesHolder) + sizeof(int);
-                    var newSize = BinaryHelper.GetSizeOf(CacheValue, typeof(T), ref bytesHolder) + sizeof(int);
+                    var finalSize = BinaryHelper.GetSizeOfArray(spanTables[0..(i)].ToArray(), ref bytesHolder);
+                    finalSize = finalSize + (i * sizeDifference);
+
+                    var oldSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(T), ref bytesHolder) + sizeDifference;
+                    var newSize = BinaryHelper.GetSizeOf(CacheValue, typeof(T), ref bytesHolder) + sizeDifference;
 
                     int difference = newSize - oldSize;
                     directory.CacheFileStream.SetLength(directoryLength + difference);
@@ -108,6 +107,14 @@ namespace TeleBufet.NET.CacheManager
                 }
             }
             return NotFoundInt;
+        }
+
+        private int GetSizeDifference(T table) 
+        {
+            var originalSize = BinaryHelper.GetSizeOf(table, typeof(T), ref bytesHolder);
+            var bytes = BinaryHelper.Write(table);
+
+            return bytes.Length - originalSize;
         }
     }
 }

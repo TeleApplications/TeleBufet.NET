@@ -55,13 +55,6 @@ public partial class LoginPage : ContentPage
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
 
             await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable(), new CategoryTable(), new ImageTable());
-			using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
-			var updatePacketRequest = new RequestProductInformationPacket()
-			{
-				ProductInformationTables = informationTableCacheManager.Deserialize()
-			};
-			await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
-
 			var oldTimeSpan = ExtendedClient.lastRequest;
 			ContentPage nextPage;
 			ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);

@@ -88,8 +88,10 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override void Inicialize(ProductInformationHolder data)
         {
-            var currentImage = ImageCache.GetCacheTables().ToArray().First(n => n.Id == data.Product.ImageId);
-            (Controls.Span[0] as Image).Source = currentImage.Source; //"microsoft_logo.png";
+            var currentImage = ImageCache.GetCacheTables().ToArray().FirstOrDefault(n => n.Id == data.Product.ImageId);
+            currentImage = currentImage ?? new ImageTable() { Source = "microsoft_logo.png" };
+
+            (Controls.Span[0] as Image).Source = currentImage.Source;
             (Controls.Span[1] as Label).Text = data.Product.Name;
             (Controls.Span[2] as Label).Text = $"{data.Information.Amount} skladem";
             (Controls.Span[3] as Label).Text = $"{data.Information.Price} Kč";
