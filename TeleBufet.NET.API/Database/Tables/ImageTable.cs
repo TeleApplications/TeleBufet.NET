@@ -9,12 +9,12 @@ namespace TeleBufet.NET.API.Database.Tables
     public sealed class ImageTable : ITimeSpanCache
     {
         [DataColumn("ImagesId")]
-        public new int Id { get; set; }
+        public int Id { get; set; }
 
         [DataColumn("Url")]
         public string Source { get; set; }
 
         [DataColumn("TimeStamp")]
-        public new TimeSpan Key { get; set; }
+        public TimeSpan Key { get; set; }
     }
 }

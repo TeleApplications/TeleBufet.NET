@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 using TeleBufet.NET.API.Database.Attributes;
-using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Interfaces;
 
 namespace TeleBufet.NET.API.Database.Tables
@@ -10,7 +9,7 @@ namespace TeleBufet.NET.API.Database.Tables
     public sealed class ProductTable : ITimeSpanCache
     {
 		[DataColumn("ProductID")]
-        public new int Id { get; set; }
+        public int Id { get; set; }
 
         [DataColumn("Name")]
         public string Name { get; set; }
@@ -22,6 +21,6 @@ namespace TeleBufet.NET.API.Database.Tables
         public int ImageId { get; set; }
 
 		[DataColumn("Timestamp")]
-        public new TimeSpan Key { get; set; }
+        public TimeSpan Key { get; set; }
     }
 }

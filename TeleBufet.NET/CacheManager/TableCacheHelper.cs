@@ -20,15 +20,18 @@ namespace TeleBufet.NET.CacheManager
             }
         }
 
-        public static IEnumerable<CacheConnection> GetCacheConnectionKeys<T>() where T : ICacheTable<TimeSpan>
+        public static ReadOnlyMemory<CacheConnection> GetCacheConnectionKeys<T>() where T : ICacheTable<TimeSpan>
         {
             using var cacheManager = new TableCacheHelper<T>();
             var tables = cacheManager.Deserialize();
+
+            Memory<CacheConnection> connectionKeys = new CacheConnection[tables.Length];
             for (int i = 0; i < tables.Length; i++)
             {
                 var connectionKey = new CacheConnection(tables[i], tables[i].Key);
-                yield return connectionKey;
+                connectionKeys.Span[i] = connectionKey;
             }
+            return connectionKeys;
         }
 
     }
@@ -54,21 +57,54 @@ namespace TeleBufet.NET.CacheManager
             if (!directory.CacheFileStream.CanRead)
                 directory = GetCurrentCacheDirectory();
             int index = GetProperIndex();
+
             var origin = index == NotFoundInt ? SeekOrigin.End : SeekOrigin.Begin;
             index = index == NotFoundInt ? 0 : index;
+
+            if (!directory.CacheFileStream.CanRead)
+                directory = GetCurrentCacheDirectory();
             directory.CacheFileStream.Seek(index, origin);
         }
 
         protected int GetTableIndex(T[] cacheTables) 
         {
+            if (!directory.CacheFileStream.CanRead)
+                directory = GetCurrentCacheDirectory();
+
+            Span<T> spanTables = cacheTables;
+            int directoryLength = ((int)(directory.CacheFileStream.Length));
+
             if (CacheValue is null)
                 return NotFoundInt;
             for (int i = 0; i < cacheTables.Length; i++)
             {
                 if (cacheTables[i].Id == CacheValue.Id) 
                 {
-                    int tableSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(ICacheTable<TimeSpan>), ref bytesHolder);
-                    return i * tableSize;
+                    //This part where we add multiplied sizeof is really temporary solution
+                    //due to unupdated version of Datagrams.NET where getting serialized size of object
+                    //is possible
+                    var finalSize = BinaryHelper.GetSizeOfArray(spanTables[0..(i)].ToArray(), ref bytesHolder);
+                    finalSize = finalSize + (i * sizeof(int));
+
+                    var oldSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(T), ref bytesHolder) + sizeof(int);
+                    var newSize = BinaryHelper.GetSizeOf(CacheValue, typeof(T), ref bytesHolder) + sizeof(int);
+
+                    int difference = newSize - oldSize;
+                    directory.CacheFileStream.SetLength(directoryLength + difference);
+
+                    if (i > (cacheTables.Length - 1) && difference != 0) 
+                    {
+                        int shiftBytesLength = directoryLength - (finalSize + oldSize);
+                        var shiftBytes = GetShiftBytes(shiftBytesLength, 0).Span;
+
+                        directory.CacheFileStream.Seek(finalSize + newSize, SeekOrigin.Begin);
+                        using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
+                        binaryWriter.Write(shiftBytes);
+                    }
+                        using var binaryReader = new BinaryReader(directory.CacheFileStream);
+                    var bytes = binaryReader.ReadBytes(directoryLength);
+
+                    return finalSize;
                 }
             }
             return NotFoundInt;

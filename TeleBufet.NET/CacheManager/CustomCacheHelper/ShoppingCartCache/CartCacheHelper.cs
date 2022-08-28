@@ -30,6 +30,9 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             int properIndex = GetProperIndex();
             if (properIndex != NotFoundInt)
             {
+                if (!directory.CacheFileStream.CanRead)
+                    directory = GetCurrentCacheDirectory();
+
                 directory.CacheFileStream.Seek(properIndex, SeekOrigin.Begin);
                 using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
                 byte[] amountBytes = BinaryHelper.Write(CacheValue.Amount);
@@ -44,6 +47,9 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             var properIndex = GetProperIndex();
             if (properIndex == NotFoundInt)
                 return 0;
+
+            if (!directory.CacheFileStream.CanRead)
+                directory = GetCurrentCacheDirectory();
 
             directory.CacheFileStream.Seek(properIndex, SeekOrigin.Begin);
             using var binaryReader = new BinaryReader(directory.CacheFileStream);

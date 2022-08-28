@@ -1,5 +1,6 @@
 ﻿using DatagramsNet;
 using TeleBufet.NET.API.Database.Tables;
+using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Interfaces;
 using TeleBufet.NET.Pages.ProductPage;
@@ -43,10 +44,11 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Image()
             {
-                WidthRequest = 100,
-                HeightRequest = 100,
+                WidthRequest = 128,
+                HeightRequest = 128,
                 VerticalOptions = LayoutOptions.Start,
-                HorizontalOptions = LayoutOptions.Center
+                HorizontalOptions = LayoutOptions.Center,
+                Aspect = Aspect.AspectFit
             },
             new Label()
             {
@@ -86,7 +88,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override void Inicialize(ProductInformationHolder data)
         {
-            (Controls.Span[0] as Image).Source = "microsoft_logo.png";
+            var currentImage = ImageCache.GetCacheTables().ToArray().First(n => n.Id == data.Product.ImageId);
+            (Controls.Span[0] as Image).Source = currentImage.Source; //"microsoft_logo.png";
             (Controls.Span[1] as Label).Text = data.Product.Name;
             (Controls.Span[2] as Label).Text = $"{data.Information.Amount} skladem";
             (Controls.Span[3] as Label).Text = $"{data.Information.Price} Kč";

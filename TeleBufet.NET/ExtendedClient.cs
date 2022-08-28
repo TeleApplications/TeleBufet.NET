@@ -9,7 +9,6 @@ using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.API.Packets.ServerSide;
 using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.Pages.ProductPage;
@@ -118,7 +117,8 @@ namespace TeleBufet.NET
 
             for (int i = 0; i < length; i++)
             {
-                tables.Span[i] = (T)read.MakeGenericMethod(typeof(T)).Invoke(null, new object[] { tableHolders[i].TableBytes });
+                var currentType = typeof(T);
+                tables.Span[i] = (T)read.MakeGenericMethod(currentType).Invoke(null, new object[] { tableHolders[i].TableBytes });
             }
             return tables;
         }
@@ -146,7 +146,7 @@ namespace TeleBufet.NET
                 var currentDirectoryType = cacheFiles[i].GetType();
                 var connectionKeys = createConnectioKeys.MakeGenericMethod(currentDirectoryType);
 
-                cacheTable.CacheTables = ((IEnumerable<CacheConnection>)connectionKeys.Invoke(null, Array.Empty<object>())).ToArray();
+                cacheTable.CacheTables = ((ReadOnlyMemory<CacheConnection>)connectionKeys.Invoke(null, Array.Empty<object>())).ToArray();
                 cacheTable.TableType = cacheFiles[i].GetType();
                 await DatagramHelper.SendDatagramAsync(async (byte[] data) => await SendDataAsync(data), DatagramHelper.WriteDatagram(cacheTable));
             }

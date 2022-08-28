@@ -16,6 +16,9 @@ public partial class MainPage : ContentPage
 		InitializeComponent();
 		nextPageGesture.Swiped += async(object sender, SwipedEventArgs e) => await Navigation.PushModalAsync(new LoginPage());
 		SlideOut.GestureRecognizers.Add(nextPageGesture);
+
+		using var tableCacheManager = new TableCacheHelper<ProductTable>();
+		var tables = tableCacheManager.Deserialize();
 	}
 }
 

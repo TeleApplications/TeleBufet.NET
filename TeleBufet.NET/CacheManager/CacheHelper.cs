@@ -62,7 +62,8 @@ namespace TeleBufet.NET.CacheManager
 
             directory.CacheFileStream.Seek(0, SeekOrigin.Begin);
             using var binaryReader = new BinaryReader(directory.CacheFileStream);
-            Span<byte> spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length).AsSpan();
+            int length = (int)directory.CacheFileStream.Length;
+            Span<byte> spanBytes = binaryReader.ReadBytes(length).AsSpan();
             return BinaryHelper.Read<T[]>(spanBytes.ToArray());
         }
 
@@ -81,8 +82,11 @@ namespace TeleBufet.NET.CacheManager
             directory.CacheFileStream.SetLength(fileLength - length);
         }
 
-        private Memory<byte> GetShiftBytes(int startIndex, int length) 
+        protected Memory<byte> GetShiftBytes(int startIndex, int length) 
         {
+            if (!directory.CacheFileStream.CanRead)
+                directory = GetCurrentCacheDirectory();
+
             directory.CacheFileStream.Seek(startIndex, SeekOrigin.Begin);
             using var binaryReader = new BinaryReader(directory.CacheFileStream);
             var spanBytes = binaryReader.ReadBytes((int)directory.CacheFileStream.Length);
