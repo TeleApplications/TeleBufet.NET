@@ -44,7 +44,7 @@ public partial class MainProductPage : ContentPage
 			ProductInformationTables = informationTableCacheManager.Deserialize()
 		};
 		_ = DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
-		var conditionResult = Task.Run(async() => await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable == typeof(ProductInformationTable)), 10));
+		var conditionResult = Task.Run(async() => await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable != typeof(ProductInformationTable)), 10));
 
 		//_ = UpdateElements();
 

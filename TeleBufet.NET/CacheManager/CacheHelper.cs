@@ -53,8 +53,6 @@ namespace TeleBufet.NET.CacheManager
             using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
             byte[] bytes = BinaryHelper.Write(CacheValue);
             binaryWriter.Write(bytes);
-
-            directory.LastChanges = DateTime.UtcNow.TimeOfDay;
         }
 
         public virtual T[] Deserialize() 

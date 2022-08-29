@@ -19,9 +19,6 @@ namespace TeleBufet.NET.CacheManager
             {
                 using var cacheManager = new TableCacheHelper<T>(tables.Span[i]);
                 cacheManager.Serialize();
-
-                if (currentType == typeof(T))
-                    currentType = cacheManager.CurrentType;
             }
             SetLastRequest(currentType);
         }

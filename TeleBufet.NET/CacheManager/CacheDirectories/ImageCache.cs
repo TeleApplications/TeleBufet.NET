@@ -7,21 +7,23 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
     internal sealed class ImageCache : CacheFile
     {
         private static ReadOnlyMemory<ImageTable> cacheImages;
-        private static TimeSpan CurrentChanges { get; set; }
+        private static TimeSpan lastChanges;
 
-        public static TimeSpan LastChanges { get; set; }
+        //TODO: Add in section of recieving image packet a new CurrentChanges timespan
+        public static TimeSpan CurrentChanges { get; set; }
 
-        public override string FileName => "CacheImagessss";
+
+        public override string FileName => "FirstImageCache";
 
         public ImageCache() : base() { }
 
         public static ReadOnlyMemory<ImageTable> GetCacheTables() 
         {
-            if (cacheImages.IsEmpty || LastChanges != CurrentChanges) 
+            if (cacheImages.IsEmpty || lastChanges != CurrentChanges) 
             {
                 using var tables = new TableCacheHelper<ImageTable>();
                 cacheImages = tables.Deserialize();
-                LastChanges = CurrentChanges;
+                lastChanges = CurrentChanges;
             }
 
             return cacheImages;

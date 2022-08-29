@@ -8,8 +8,6 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
         public abstract string FileName { get; }
         public Stream CacheFileStream { get; set; }
 
-        public TimeSpan LastChanges { get; set; }
-
         public CacheFile() 
         {
             var path = $"{SystemCacheDirectory}{FileName}";
