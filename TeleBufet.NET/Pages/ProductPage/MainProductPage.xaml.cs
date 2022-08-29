@@ -1,8 +1,8 @@
 using DatagramsNet.Datagram;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
+using TeleBufet.NET.API.Packets.ServerSide;
 using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.ElementHelper;
 using TeleBufet.NET.ElementHelper.Elements;
 using TeleBufet.NET.Pages.ShoppingCartPage;
@@ -44,16 +44,16 @@ public partial class MainProductPage : ContentPage
 			ProductInformationTables = informationTableCacheManager.Deserialize()
 		};
 		_ = DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+		var conditionResult = Task.Run(async() => await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable == typeof(ProductInformationTable)), 10));
 
+		//_ = UpdateElements();
 
-		var oldTimeSpan = ExtendedClient.lastRequest;
-		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
-
-		_ = UpdateElements();
-
-		CreateProducts();
-		CreateCategories();
-		SetCategory(null);
+		if (conditionResult.Result) 
+		{
+			CreateProducts();
+			CreateCategories();
+			SetCategory(null);
+		}
 
 		MainRefreshView.Command = new Command(async() =>
 		{
@@ -74,11 +74,10 @@ public partial class MainProductPage : ContentPage
 		};
 		var updateAccountRequest = new RequestAccountInformationPacket();
 
-		var oldTimeSpan = ExtendedClient.lastRequest;
-		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updateAccountRequest));
 
-		_ = ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
+		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+		await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable == typeof(ProductsInformationPacket)), 10);
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var newData = newInformationTableCacheManager.Deserialize();
@@ -122,6 +121,7 @@ public partial class MainProductPage : ContentPage
         for (int i = 0; i < inicializeElements.Length; i++)
         {
 			var currentFrame = frames.Span[i];
+			currentFrame.VerticalOptions = LayoutOptions.Start;
 			currentFrame.HeightRequest = 50;
 			categoryLayout.Children.Add(frames.Span[i]);
         }

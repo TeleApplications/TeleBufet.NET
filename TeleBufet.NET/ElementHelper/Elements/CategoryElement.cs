@@ -20,7 +20,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
     {
         public override Grid LayoutHandler { get; set; } = new Grid()
         {
-            VerticalOptions = LayoutOptions.StartAndExpand,
+            VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Center,
             HeightRequest = 35 
         };
@@ -39,12 +39,13 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Button()
             {
+                BackgroundColor = Colors.Transparent,
                 FontSize = 16,
                 TextColor = Colors.Black,
                 FontAttributes = FontAttributes.Bold,
                 HeightRequest = 40,
                 VerticalOptions = LayoutOptions.Start,
-                HorizontalOptions = LayoutOptions.StartAndExpand
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
             }
         };
 

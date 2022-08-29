@@ -19,7 +19,6 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public StackLayout MainLayout { get; }
         public double ProductPrice { get; private set; }
-
         public Action ManipulationAction { get; set; }
 
         public CartOrderElement(StackLayout stackLayout)
@@ -99,13 +98,16 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override void Inicialize(ProductHolder data)
         {
+
             var productTable = GetProductByTable(data);
             currentProduct = data;
             ProductPrice = productTable.Information.Price;
 
-            (Controls.Span[0] as Image).Source = "microsoft_logo.png";
-            (Controls.Span[1] as Label).Text = productTable.Product.Name;
+            var currentImage = ImageCache.GetCacheTables().ToArray().FirstOrDefault(n => n.Id == productTable.Product.ImageId);
+            currentImage = currentImage ?? new ImageTable() { Source = "microsoft_logo.png" };
+            (Controls.Span[0] as Image).Source = currentImage.Source;
 
+            (Controls.Span[1] as Label).Text = productTable.Product.Name;
             (Controls.Span[2] as Button).Clicked += (object sender, EventArgs e) => 
             {
                 _ = ProductElement.ProductManipulation(productTable.Product, Pages.ProductPage.Operator.Minus);
@@ -133,7 +135,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 double finalPrice = ProductPrice * finalAmount;
 
                 (Controls.Span[3] as Label).Text = finalAmount.ToString();
-                (Controls.Span[5] as Label).Text = $"{finalPrice.ToString()} Kč";
+                (Controls.Span[5] as Label).Text = $"{finalPrice} Kč";
             }
             else
                 MainLayout.Remove((IView)LayoutHandler.Parent);

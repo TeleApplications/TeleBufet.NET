@@ -7,7 +7,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
     [CacheTable(typeof(TicketHolder))]
     internal class ReservationTicketCache : CacheFile
     {
-        public override string FileName => "CacheReservationTicketsssssssssssssssssssssssss";
+        public override string FileName => "CacheReservationTicketssssssssssssssssssssssssssss";
         public static TimeSpan LastChanges { get; set; }
 
         public ReservationTicketCache() : base() { }

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
+using TeleBufet.NET.API.Packets.ServerSide;
 using TeleBufet.NET.CacheManager;
 using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.ClientAuthentication;
@@ -55,14 +56,13 @@ public partial class LoginPage : ContentPage
             await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
 
             await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable(), new CategoryTable(), new ImageTable());
-			var oldTimeSpan = ExtendedClient.lastRequest;
-			ContentPage nextPage;
-			ConditionTask.WaitUntil(new Func<bool>(() => oldTimeSpan == ExtendedClient.lastRequest), 10);
-
-			nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
-			Navigation.PopAsync();
-
-			await Navigation.PushModalAsync(nextPage);
+			ContentPage nextPage = new();
+			if (await ConditionTask.WaitUntil(new Func<bool>(() => MainProductPage.User.Karma <= 0), 10)) 
+			{
+				nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
+				Navigation.PopAsync();
+				await Navigation.PushModalAsync(nextPage);
+			}
 		}
 	}
 }

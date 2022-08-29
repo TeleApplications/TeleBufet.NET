@@ -13,7 +13,7 @@ namespace TeleBufet.NET.CacheManager
         protected ICacheDirectory directory;
         private static readonly Type[] attributeTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(n => n.GetTypes().Where(n => n.GetCustomAttributes(typeof(CacheTableAttribute), true).Length > 0)).ToArray();
 
-        private Type currentType;
+        public Type CurrentType;
 
         public CacheHelper() 
         {
@@ -32,17 +32,17 @@ namespace TeleBufet.NET.CacheManager
 
         protected ICacheDirectory? GetCurrentCacheDirectory() 
         {
-            if (currentType is null) 
+            if (CurrentType is null) 
             {
                 for (int i = 0; i < attributeTypes.Length; i++)
                 {
                     var currentAttribute = (CacheTableAttribute)attributeTypes[i].GetCustomAttribute(typeof(CacheTableAttribute));
                     if (currentAttribute.TableType == typeof(T))
-                        currentType = attributeTypes[i];
+                        CurrentType = attributeTypes[i];
                 }
             }
 
-            return (ICacheDirectory)Activator.CreateInstance(currentType);
+            return (ICacheDirectory)Activator.CreateInstance(CurrentType);
         }
 
         protected virtual void SetBinarySeek() => directory.CacheFileStream.Seek(0, SeekOrigin.End);
@@ -53,6 +53,8 @@ namespace TeleBufet.NET.CacheManager
             using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
             byte[] bytes = BinaryHelper.Write(CacheValue);
             binaryWriter.Write(bytes);
+
+            directory.LastChanges = DateTime.UtcNow.TimeOfDay;
         }
 
         public virtual T[] Deserialize() 

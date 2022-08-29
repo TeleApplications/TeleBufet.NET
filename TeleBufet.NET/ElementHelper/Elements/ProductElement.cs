@@ -44,8 +44,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Image()
             {
-                WidthRequest = 128,
-                HeightRequest = 128,
+                WidthRequest = 100,
+                HeightRequest = 100,
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.Center,
                 Aspect = Aspect.AspectFit

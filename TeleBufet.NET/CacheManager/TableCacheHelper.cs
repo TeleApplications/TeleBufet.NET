@@ -10,14 +10,20 @@ namespace TeleBufet.NET.CacheManager
         private static TableCacheHelper<T> CreateInstance<T>() where T : ICacheTable<TimeSpan> => new TableCacheHelper<T>();
 
         public static MethodInfo CreateGenericInstance = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.CacheTables));
+        public static Type LastTable { get; private set; }
 
         public static void CacheTables<T>(ReadOnlyMemory<T> tables) where T : ICacheTable<TimeSpan>
         {
+            var currentType = typeof(T);
             for (int i = 0; i < tables.Length; i++)
             {
                 using var cacheManager = new TableCacheHelper<T>(tables.Span[i]);
                 cacheManager.Serialize();
+
+                if (currentType == typeof(T))
+                    currentType = cacheManager.CurrentType;
             }
+            SetLastRequest(currentType);
         }
 
         public static ReadOnlyMemory<CacheConnection> GetCacheConnectionKeys<T>() where T : ICacheTable<TimeSpan>
@@ -34,15 +40,29 @@ namespace TeleBufet.NET.CacheManager
             return connectionKeys;
         }
 
+        private static void SetLastRequest(Type requestType) 
+        {
+            object lockObject = new object();
+            lock (lockObject) 
+            {
+                LastTable = requestType;
+            }
+        }
     }
 
     internal class TableCacheHelper<T> : CacheHelper<T> where T : ICacheTable<TimeSpan>
     {
-        protected const int NotFoundInt = (int.MaxValue >> (int)((128) / (5.565f))); // Am I crazy ? The final result of this constant is 255
+        protected static readonly int NotFoundInt = (int.MaxValue >> (int)((128) / (5.565f))); // Am I crazy ? The final result of this constant is 255
         private static byte[] bytesHolder = new byte[1];
 
+ 
         public TableCacheHelper() { }
         public TableCacheHelper(T value) : base(value) { }
+
+        public override void Serialize()
+        {
+            base.Serialize();
+        }
 
         protected virtual int GetProperIndex() 
         {
@@ -85,8 +105,8 @@ namespace TeleBufet.NET.CacheManager
                     var finalSize = BinaryHelper.GetSizeOfArray(spanTables[0..(i)].ToArray(), ref bytesHolder);
                     finalSize = finalSize + (i * sizeDifference);
 
-                    var oldSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(T), ref bytesHolder) + sizeDifference;
-                    var newSize = BinaryHelper.GetSizeOf(CacheValue, typeof(T), ref bytesHolder) + sizeDifference;
+                    int oldSize = BinaryHelper.GetSizeOf(cacheTables[i], typeof(T), ref bytesHolder) + sizeDifference;
+                    int newSize = BinaryHelper.GetSizeOf(CacheValue, typeof(T), ref bytesHolder) + sizeDifference;
 
                     int difference = newSize - oldSize;
                     directory.CacheFileStream.SetLength(directoryLength + difference);
@@ -100,8 +120,6 @@ namespace TeleBufet.NET.CacheManager
                         using var binaryWriter = new BinaryWriter(directory.CacheFileStream);
                         binaryWriter.Write(shiftBytes);
                     }
-                        using var binaryReader = new BinaryReader(directory.CacheFileStream);
-                    var bytes = binaryReader.ReadBytes(directoryLength);
 
                     return finalSize;
                 }

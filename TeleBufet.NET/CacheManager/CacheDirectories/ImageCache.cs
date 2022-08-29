@@ -11,7 +11,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
 
         public static TimeSpan LastChanges { get; set; }
 
-        public override string FileName => "CacheImages";
+        public override string FileName => "CacheImagessss";
 
         public ImageCache() : base() { }
 

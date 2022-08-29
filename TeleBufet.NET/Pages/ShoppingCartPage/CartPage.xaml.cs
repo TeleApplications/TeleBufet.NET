@@ -4,7 +4,6 @@ using Microsoft.Maui.Controls.Shapes;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets;
 using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper.Elements;
@@ -32,8 +31,8 @@ public partial class CartPage : ContentPage
 
 	private Ellipse breakIndicator = new Ellipse()
 	{
-		WidthRequest = 20,
-		HeightRequest = 20,
+		WidthRequest = 5,
+		HeightRequest = 5,
 		BackgroundColor = Color.FromArgb("#4cb86b"),
 	};
 
@@ -52,20 +51,21 @@ public partial class CartPage : ContentPage
 	{
         for (int i = 0; i < breaks; i++)
         {
-			if (TicketHolder.GetCurrentState(i, DateTime.Now)) 
+			var breakButton = new Button()
 			{
-				var breakButton = new Button()
-				{
-					ZIndex = i,
-					Text = $"{i}",
-					TextColor = Colors.White,
-					WidthRequest = 35,
-					HeightRequest = 35,
-					CornerRadius = 17, 
-					HorizontalOptions = LayoutOptions.Center,
-					Margin = new Thickness(0, 0, 10, 0),
-					BackgroundColor = Color.FromRgb(0, 255 - (i * 20), (i * 5) + 10)
-				};
+				ZIndex = i,
+				Text = $"{i}",
+				TextColor = Colors.White,
+				WidthRequest = 35,
+				HeightRequest = 35,
+				CornerRadius = 17, 
+				HorizontalOptions = LayoutOptions.Center,
+				BackgroundColor = Color.FromArgb("#4cb86b"),
+				Margin = new Thickness(0, 0, 10, 0),
+			};
+
+			if (TicketHolder.GetCurrentState(i, DateTime.UtcNow)) 
+			{
 				breakButton.Clicked += async (object sender, EventArgs e) =>
 				{
 					currentBreak = (sender as Button).ZIndex;
@@ -73,8 +73,9 @@ public partial class CartPage : ContentPage
 					await breakButton.ScaleTo(2);
 					await breakButton.ScaleTo(1);
 				};
-				Device.BeginInvokeOnMainThread(() => breaksLayout.Children.Add(breakButton));
+				breakButton.BackgroundColor = Colors.LightGray;
 			}
+			Device.BeginInvokeOnMainThread(() => breaksLayout.Children.Add(breakButton));
         }
 		Device.BeginInvokeOnMainThread(() => indicatorLayout.Content = breakIndicator);
 	}

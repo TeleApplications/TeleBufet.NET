@@ -21,7 +21,6 @@ namespace TeleBufet.NET
         public IPAddress ClientAddress { get; set; }
 
         public static Socket ?ClientSocket { get; private set; }
-        public static TimeSpan lastRequest { get; private set; }
 
         private static ExtendedClient staticHolder;
         private static readonly MethodInfo createConnectioKeys = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.GetCacheConnectionKeys));
@@ -47,7 +46,6 @@ namespace TeleBufet.NET
             if (datagram is AccountInformationPacket newAccountPacket) 
             {
                 MainProductPage.User = new UserTable() {Id = newAccountPacket.Indetificator, Karma = newAccountPacket.Karma};
-                lastRequest = DateTime.Now.TimeOfDay;
             }
 
             if (datagram is UncachedTablesPacket newUncachedTablesPacket)
@@ -61,21 +59,11 @@ namespace TeleBufet.NET
                     var tables = create.MakeGenericMethod(tableType).Invoke(null, new object[] { holders });
                     createCacheTables.MakeGenericMethod(tableType).Invoke(null, new object[] { tables });
                 }
-                //object lockObject = new object();
-                //lock (lockObject) 
-                //{
-                    //lastRequest = DateTime.Now.TimeOfDay;
-                //}
             }
 
             if (datagram is ProductsInformationPacket newProductsInformationPacket) 
             {
                 TableCacheBuilder.CacheTables<ProductInformationTable>(newProductsInformationPacket.ProductsInfromations);
-                object lockObject = new object();
-                lock (lockObject) 
-                {
-                    lastRequest = DateTime.Now.TimeOfDay;
-                }
             }
 
             if (datagram is OrderTransmitionPacket newTransmitionPacket) 
