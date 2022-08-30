@@ -1,7 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.MainPage"
-             BackgroundColor="{DynamicResource PrimaryColor}">
+             BackgroundColor="#87be56">
     <StackLayout Margin="0,0,0,0">
         <Image 
             Source="datagrams_powered_logo.png"
@@ -41,9 +41,7 @@
                 x:Name="SlideOut"
                 Fill="White"
                 VerticalOptions="EndAndExpand"
-                HorizontalOptions="Center"
-                WidthRequest="960"
-                HeightRequest="360"
+                HorizontalOptions="CenterAndExpand"
                Margin="0,0,0,-200"
                 />
         <Image Source="up_arrow.png"

@@ -13,7 +13,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
         public static TimeSpan CurrentChanges { get; set; }
 
 
-        public override string FileName => "FirstImageCache";
+        public override string FileName => "FirstImageCachess";
 
         public ImageCache() : base() { }
 

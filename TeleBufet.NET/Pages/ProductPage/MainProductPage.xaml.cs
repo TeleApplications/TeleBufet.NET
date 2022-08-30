@@ -21,13 +21,13 @@ public partial class MainProductPage : ContentPage
 	private FlexLayout productLayout;
 	private HorizontalStackLayout categoryLayout;
 
-	private ReadOnlyMemory<Frame> productFrames;
+	private Memory<Frame> productFrames;
 	private Memory<ProductElement> productsElements;
-	private ReadOnlyMemory<ProductInformationHolder> products;
+	private Memory<ProductInformationHolder> products;
 
-	public static UserTable User { get; set; }
+	public static UserTable User { get; set; } = null;
 
-	public RefreshView MainRefreshView { get; } = new();
+	private TimeSpan lastRefresh;
 
 	public MainProductPage()
 	{
@@ -46,8 +46,6 @@ public partial class MainProductPage : ContentPage
 		_ = DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
 		var conditionResult = Task.Run(async() => await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable != typeof(ProductInformationTable)), 10));
 
-		//_ = UpdateElements();
-
 		if (conditionResult.Result) 
 		{
 			CreateProducts();
@@ -55,18 +53,27 @@ public partial class MainProductPage : ContentPage
 			SetCategory(null);
 		}
 
-		MainRefreshView.Command = new Command(async() =>
-		{
-			await UpdateElements();
-			MainRefreshView.IsRefreshing = false;
-		});
+		refreshView.Content = scrollViewHolder;
+		var viewHolder = new Frame();
 
-		MainRefreshView.Content = scrollView;
+		refreshView.Command = new Command(async() =>
+		{
+			var currentTime = DateTime.UtcNow.TimeOfDay;
+			if (Math.Abs(currentTime.Seconds - lastRefresh.Seconds) > 2) 
+			{
+				await UpdateElements();
+				lastRefresh = currentTime;
+			}
+			refreshView.IsRefreshing = false;
+		});
 		karmaCounter.Text = User.Karma.ToString();
 	}
 
 	private async Task UpdateElements() 
 	{
+		if (productsElements.IsEmpty)
+			CreateProducts();
+
 		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var updatePacketRequest = new RequestProductInformationPacket()
 		{
@@ -75,20 +82,37 @@ public partial class MainProductPage : ContentPage
 		var updateAccountRequest = new RequestAccountInformationPacket();
 
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updateAccountRequest));
-
 		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
-		await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable == typeof(ProductsInformationPacket)), 10);
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
-		var newData = newInformationTableCacheManager.Deserialize();
 
-		if (productsElements.IsEmpty)
+		ProductInformationTable[] newData;
+		if (await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable != typeof(ProductInformationTable)), 10)) 
+		{
+			newData = newInformationTableCacheManager.Deserialize();
+		}
+		else
 			return;
 
+
+		if (productsElements.Length < newData.Length) 
+		{
+			int elmentLengthDifference = (newData.Length - productsElements.Length) - 2;
+
+			await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable());
+			if (await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable.Name != nameof(ProductTable)), 10)) 
+			{
+				CreateProducts();
+				SetProducts(elmentLengthDifference);
+			}
+		}
+
+		var lastTable = TableCacheBuilder.LastTable;
         for (int i = 0; i < newData.Length; i++)
         {
 			int index = newData[i].Id - 1;
 			var currentElement = productsElements.Span[index];
+
 			if (ProductElement.TryUpdateElement(ref currentElement, newData[i])) 
 			{
 				productsElements.Span[index] = currentElement;
@@ -97,13 +121,13 @@ public partial class MainProductPage : ContentPage
         }
 	}
 
-	private void CreateProducts() 
+	private void CreateProducts()
 	{
 		using var productTableCacheManager = new TableCacheHelper<ProductTable>();
 		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 
 		var elements = ProductElement.CreateElementObjects(productTableCacheManager.Deserialize(), informationTableCacheManager.Deserialize());
-		products = elements;
+		products = elements.ToArray();
 
 		productsElements = CreateTableElements<ProductInformationHolder, ProductElement, StackLayout>(elements);
 		productFrames = CreateTableFrames<ProductInformationHolder, ProductElement, StackLayout>(productsElements);
@@ -124,6 +148,14 @@ public partial class MainProductPage : ContentPage
 			currentFrame.VerticalOptions = LayoutOptions.Start;
 			currentFrame.HeightRequest = 50;
 			categoryLayout.Children.Add(frames.Span[i]);
+        }
+	}
+
+	private void SetProducts(int startIndex) 
+	{
+        for (int i = startIndex; i < productFrames.Length; i++)
+        {
+			Device.BeginInvokeOnMainThread(() => productLayout.Children.Add(productFrames.Span[i]));
         }
 	}
 
@@ -169,7 +201,7 @@ public partial class MainProductPage : ContentPage
 		return elements;
 	}
 
-	private ReadOnlyMemory<Frame> CreateTableFrames<T, TElement, TLayout>(Memory<TElement> elements) where TLayout : Microsoft.Maui.ILayout, new() where TElement : ImmutableElement<T, TLayout>, new()
+	private Memory<Frame> CreateTableFrames<T, TElement, TLayout>(Memory<TElement> elements) where TLayout : Microsoft.Maui.ILayout, new() where TElement : ImmutableElement<T, TLayout>, new()
 	{
 		Memory<Frame> frames = new Frame[elements.Length];
 

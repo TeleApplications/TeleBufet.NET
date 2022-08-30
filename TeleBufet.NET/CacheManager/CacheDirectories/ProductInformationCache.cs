@@ -6,7 +6,7 @@ namespace TeleBufet.NET.CacheManager.CacheDirectories
     [CacheTable(typeof(ProductInformationTable))]
     internal sealed class ProductInformationCache : CacheFile
     {
-        public override string FileName => "FirstProductInformationCache";
+        public override string FileName => "FirstProductInformationCachess";
 
         public ProductInformationCache() : base() { }
     }

@@ -1,12 +1,8 @@
 using DatagramsNet;
 using DatagramsNet.Datagram;
 using System.Net;
-using System.Net.Sockets;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
-using TeleBufet.NET.API.Packets.ServerSide;
-using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.ClientAuthentication;
 using TeleBufet.NET.Pages.AccessRestrictionPage;
 using TeleBufet.NET.Pages.ProductPage;
@@ -38,12 +34,12 @@ public partial class LoginPage : ContentPage
 		try
 		{
 			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.10"), ipAddress);
+			Task.Run(() => client.StartServerAsync());
 		}
 		catch
 		{
 			Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
 		}
-		Task.Run(() => client.StartServerAsync());
 	}
 
 	private async void OnLogin(object sender, EventArgs e) 
@@ -57,7 +53,8 @@ public partial class LoginPage : ContentPage
 
             await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable(), new CategoryTable(), new ImageTable());
 			ContentPage nextPage = new();
-			if (await ConditionTask.WaitUntil(new Func<bool>(() => MainProductPage.User.Karma <= 0), 10)) 
+
+			if (await ConditionTask.WaitUntil(new Func<bool>(() => MainProductPage.User is null), 10)) 
 			{
 				nextPage = MainProductPage.User.Karma <= 0 ? (ContentPage)new RestrictionPage() : (ContentPage)new MainProductPage();
 				Navigation.PopAsync();

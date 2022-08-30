@@ -55,7 +55,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 FontSize = 14,
                 TextColor = Colors.Black,
                 FontAttributes = FontAttributes.Bold,
-                HorizontalTextAlignment = TextAlignment.Start,
+                HorizontalTextAlignment = TextAlignment.Center,
                 HorizontalOptions = LayoutOptions.Center
             },
             new Label()
@@ -63,7 +63,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 FontSize = 12,
                 TextColor = Color.FromHex("#A7ABB2"),
                 HorizontalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0,0,10,0),
+                HorizontalTextAlignment = TextAlignment.Center,
             },
             new Label()
             {
@@ -93,8 +93,6 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
             (Controls.Span[0] as Image).Source = currentImage.Source;
             (Controls.Span[1] as Label).Text = data.Product.Name;
-            (Controls.Span[2] as Label).Text = $"{data.Information.Amount} skladem";
-            (Controls.Span[3] as Label).Text = $"{data.Information.Price} Kč";
 
             var currentButton = (Controls.Span[4] as Button);
             var currentProduct = data.Product;
@@ -105,14 +103,36 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
             Category = data.Product.CategoryId;
             UpdateHolder = data.Information;
+
+            _ = UpdateAsync();
             base.Inicialize(data);
         }
 
         protected override async Task UpdateAsync()
         {
-            (Controls.Span[2] as Label).Text = $"{UpdateHolder.Amount} skladem";
-            (Controls.Span[3] as Label).Text = $"{UpdateHolder.Price} Kč";
-			(Controls.Span[4] as Button).IsEnabled = UpdateHolder.Amount > 0;
+            var priceLabel = (Controls.Span[3] as Label);
+            priceLabel.Text = $"{UpdateHolder.Price} Kč";
+
+            var amountLabel = (Controls.Span[2] as Label);
+            var addButton = (Controls.Span[4] as Button);
+
+            Memory<View> currentViews = new View[] { priceLabel, addButton };
+            bool amountCondition = UpdateHolder.Amount > 0;
+
+            SetViewsState(currentViews, (View view, bool isEnable) => view.IsVisible = isEnable, amountCondition);
+            if (amountCondition)
+            {
+                amountLabel.Text = $"{UpdateHolder.Amount} skladem";
+                amountLabel.BackgroundColor = Colors.Transparent;
+                amountLabel.TextColor = Color.FromHex("#A7ABB2");
+
+            }
+            else 
+            {
+                amountLabel.Text = "Vyprodáno";
+                amountLabel.BackgroundColor = Colors.Red;
+                amountLabel.TextColor = Colors.White;
+            }
         }
 
         public static bool TryUpdateElement(ref ProductElement element, ProductInformationTable holder) 
@@ -137,5 +157,13 @@ namespace TeleBufet.NET.ElementHelper.Elements
 		    newCartCacheHelper.CacheValue = holder;
 		    newCartCacheHelper.Serialize();
 	    }
+
+        private void SetViewsState(Memory<View> views, Action<View, bool> viewAction, bool isEnable) 
+        {
+            for (int i = 0; i < views.Length; i++)
+            {
+                viewAction.Invoke(views.Span[i], isEnable);
+            }
+        }
     }
 }

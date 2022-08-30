@@ -40,47 +40,48 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Image()
             {
-                WidthRequest = 65,
-                HeightRequest = 65,
+                WidthRequest = 68,
+                HeightRequest = 68,
                 VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.Start
+                HorizontalOptions = LayoutOptions.Start,
+                Aspect = Aspect.Fill
             },
             new Label()
             {
                 FontSize = 14,
                 TextColor = Colors.Black,
                 VerticalOptions = LayoutOptions.Center,
-                MaximumWidthRequest = 50,
-                Margin = new Thickness(15,0,25,0)
+                MaximumWidthRequest = 100,
+                Margin = new Thickness(15,0,10,0)
             },
             new Button()
             {
-                WidthRequest = 15,
-                HeightRequest = 15,
+                WidthRequest = 25,
+                HeightRequest = 25,
                 Text = "-",
-                FontSize = 10,
+                FontSize = 14,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 BackgroundColor = Color.FromArgb("#3b3b3b"),
-                Margin = new Thickness(0,0,7,0)
+                Margin = new Thickness(0,0,10,0)
             },
 
             new Label()
             {
-                FontSize = 12,
+                FontSize = 14,
                 TextColor = Colors.Black,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0,0,7,0)
+                Margin = new Thickness(0,0,10,0)
             },
 
             new Button()
             {
-                WidthRequest = 15,
-                HeightRequest = 15,
+                WidthRequest = 25,
+                HeightRequest = 25,
                 Text = "+",
-                FontSize = 10,
+                FontSize = 14,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
@@ -120,7 +121,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 _ = UpdateAsync();
             };
 
-            (Controls.Span[5] as Label).Text = $"{productTable.Information.Price.ToString()} Kč";
+            (Controls.Span[5] as Label).Text = $"{productTable.Information.Price} Kč";
             base.Inicialize(data);
         }
 

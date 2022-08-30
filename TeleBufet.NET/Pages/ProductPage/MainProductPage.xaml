@@ -9,6 +9,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="85"></RowDefinition>
         </Grid.RowDefinitions>
+            
         <Frame Grid.Row="0"
                BackgroundColor="White">
             <ScrollView
@@ -20,17 +21,33 @@
                             <RowDefinition Height="100"></RowDefinition>
                             <RowDefinition Height="140*"></RowDefinition>
                         </Grid.RowDefinitions>
-                    <Label
-                        Grid.Row="0"
-                        x:Name="karmaCounter"
-                        FontSize="42"
-                        TextColor="Black"
+                    <Frame
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand"
+                        BackgroundColor="#87be56"
+                        CornerRadius="65">
+                    <RefreshView
+                        x:Name="refreshView"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        VerticalTextAlignment="Center"
-                        FontFamily="SourceCodePro">
-                    </Label>
+                        RefreshColor="{DynamicResource PrimaryColor}">
+                        <ScrollView
+                            x:Name="scrollViewHolder"
+                            Grid.Row="0"
+                            >
+                            <Label
+                                x:Name="karmaCounter"
+                                FontSize="42"
+                                TextColor="White"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"
+                                FontFamily="SourceCodePro">
+                            </Label>
+                        </ScrollView>
+                    </RefreshView>
+                    </Frame>
                     <ScrollView
                         Orientation="Horizontal"
                         Grid.Row="1"
