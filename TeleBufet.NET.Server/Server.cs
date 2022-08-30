@@ -20,6 +20,7 @@ namespace TeleBufet.NET.Server
         private IdentificatorGenerator identificatorGenerator = new();
         private static readonly MethodInfo changeType = typeof(GenericType).GetMethod(nameof(GenericType.ReType));
 
+
         public override int PortNumber => 1111;
 
         public Server(string name, IPAddress address) : base(name, address)
@@ -30,8 +31,13 @@ namespace TeleBufet.NET.Server
         {
             if (datagram is TwoWayHandshake newDatagram) 
             {
+                var responseDatagram = new TwoWayHandshakeResponsePacket()
+                {
+                    IpAddress = IPAddress.ToString()
+                };
+
                 await ServerLogger.LogAsync<NormalPrefix>($"Packet recieved from {ipAddress.AddressFamily}... sending packet to client", TimeFormat.Half);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(newDatagram));
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(responseDatagram));
             }
 
             if (datagram is AuthentificateAccountPacket newAuthenticationDatagram) 

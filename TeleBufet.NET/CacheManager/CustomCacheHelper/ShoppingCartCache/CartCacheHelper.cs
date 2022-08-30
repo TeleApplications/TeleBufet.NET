@@ -5,12 +5,16 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
 {
     internal sealed class CartCacheHelper : TableCacheHelper<ProductHolder>
     {
+        private static int productSize = GetProductSize();
+
         public int CacheLength => (int)this.directory.CacheFileStream.Length;
+        public static int ProductsCount { get; private set; }
+
 
         public CartCacheHelper() 
         {
             directory = new CartCache();
-
+            ProductsCount = CacheLength / productSize;
         }
 
         public override void Serialize()
@@ -71,6 +75,14 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             int indetificatorSize = BinaryHelper.GetSizeOf(CacheValue.Id, CacheValue.Id.GetType(), ref byteHolder);
 
             return tableIndex + indetificatorSize;
+        }
+
+        private static int GetProductSize() 
+        {
+            var byteHolder = new byte[1];
+            var productHolderSize = BinaryHelper.GetSizeOf(new ProductHolder(), typeof(ProductHolder), ref byteHolder);
+
+            return productHolderSize;
         }
 
         public static void Clear() 

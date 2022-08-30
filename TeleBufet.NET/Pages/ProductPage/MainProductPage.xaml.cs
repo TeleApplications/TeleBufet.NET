@@ -1,8 +1,8 @@
 using DatagramsNet.Datagram;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
-using TeleBufet.NET.API.Packets.ServerSide;
 using TeleBufet.NET.CacheManager;
+using TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache;
 using TeleBufet.NET.ElementHelper;
 using TeleBufet.NET.ElementHelper.Elements;
 using TeleBufet.NET.Pages.ShoppingCartPage;
@@ -37,6 +37,7 @@ public partial class MainProductPage : ContentPage
 
 		productLayout = collection;
 		categoryLayout = categoryStackLayout;
+		productCountLabel.Text = CartCacheHelper.ProductsCount.ToString();
 
 		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var updatePacketRequest = new RequestProductInformationPacket()

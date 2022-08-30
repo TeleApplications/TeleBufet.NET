@@ -2,7 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.MainPage"
              BackgroundColor="#87be56">
-    <StackLayout Margin="0,0,0,0">
+    <StackLayout
+        x:Name="mainStackLayout"
+        Margin="0,0,0,0">
         <Image 
             Source="datagrams_powered_logo.png"
             WidthRequest="296"
@@ -11,13 +13,15 @@
             HorizontalOptions="EndAndExpand"
             Rotation="30"
             Margin="0,-50,-70, 0"/>
-        <Grid Margin="0,-40,0,0"
-              TranslationY="-80">
-        <Image Source="school_logo.png"
+        <StackLayout
+               VerticalOptions="CenterAndExpand"
+               HorizontalOptions="CenterAndExpand"
+            >
+            <Image Source="school_logo.png"
                WidthRequest="254"
                HeightRequest="254"
-               VerticalOptions="FillAndExpand"
-               Margin="0,-196,0,0"/>
+               VerticalOptions="CenterAndExpand"
+               HorizontalOptions="CenterAndExpand"/>
             <Label Text="TeleBufet"
                HorizontalOptions="CenterAndExpand"
                VerticalOptions="CenterAndExpand"
@@ -26,38 +30,14 @@
                FontAutoScalingEnabled="True"
                FontAttributes="Bold">
             </Label>
-        <Label Text="A bufet reservation system in .NET"
+            <Label Text="A bufet reservation system in .NET"
                HorizontalOptions="Center"
                VerticalOptions="Center"
                TextColor="#c7dd89"
                FontSize="16"
                FontAutoScalingEnabled="True"
-               FontAttributes="Bold"
-               Margin="0,80,0,0"
-               ></Label>
-        </Grid>
-        <Grid>
-        <Ellipse
-                x:Name="SlideOut"
-                Fill="White"
-                VerticalOptions="EndAndExpand"
-                HorizontalOptions="CenterAndExpand"
-               Margin="0,0,0,-200"
-                />
-        <Image Source="up_arrow.png"
-               WidthRequest="24" 
-               HeightRequest="24"
-               VerticalOptions="Center" 
-               HorizontalOptions="CenterAndExpand" 
-               Margin="0,0,0,35"/>
-        <Label Text="Swipe up to login"
-               HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand"
-               TextColor="Black"
-               FontSize="18"
-               FontAutoScalingEnabled="True"
-               FontAttributes="Bold"
-               ></Label>
-        </Grid>
+               FontAttributes="Bold">
+            </Label>
+        </StackLayout>
     </StackLayout>
 </ContentPage>

@@ -20,9 +20,8 @@ namespace TeleBufet.NET
         public override int PortNumber => 1111;
         public IPAddress ClientAddress { get; set; }
 
-        public static Socket ?ClientSocket { get; private set; }
-
         private static ExtendedClient staticHolder;
+
         private static readonly MethodInfo createConnectioKeys = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.GetCacheConnectionKeys));
         private static readonly MethodInfo createCacheTables = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.CacheTables));
         private static readonly MethodInfo read = typeof(BinaryHelper).GetMethod(nameof(BinaryHelper.Read));
@@ -34,15 +33,10 @@ namespace TeleBufet.NET
             this.ServerSocket.Connect((EndPoint)new IPEndPoint(clientAddress, PortNumber));
             this.UdpReciever = new UdpReciever(ServerSocket);
             staticHolder = this;
-
-            var handShakePacket = new TwoWayHandshake() {Message = "Handshake message"};
-            DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendAsync(data, SocketFlags.None), DatagramHelper.WriteDatagram(handShakePacket));
         }
 
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
         {
-            if (datagram is TwoWayHandshake newDatagram) 
-                Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Reciever", "You recieve back a new HandShakePacket", "Done")); //TODO: Better implementation, however it's just for testing
             if (datagram is AccountInformationPacket newAccountPacket) 
             {
                 MainProductPage.User = new UserTable() {Id = newAccountPacket.Indetificator, Karma = newAccountPacket.Karma};

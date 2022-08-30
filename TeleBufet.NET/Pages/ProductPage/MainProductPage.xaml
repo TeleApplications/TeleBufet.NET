@@ -72,6 +72,16 @@
         <StackLayout
             Grid.Row="2"
             Orientation="Horizontal">
+            <Grid
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+            <Label
+                x:Name="productCountLabel"
+                TextColor="Red"
+                FontSize="6"
+                HorizontalTextAlignment="Center"
+                Margin="0,20,0,0">
+            </Label>
             <ImageButton 
                 x:Name="ShoppingCart"
                 HorizontalOptions="EndAndExpand"
@@ -82,6 +92,7 @@
                 Margin="5,5,5,0"
                 BackgroundColor="{DynamicResource PrimaryColor}">
             </ImageButton>
+            </Grid>
             <ImageButton 
                 x:Name="Tickets"
                 HorizontalOptions="StartAndExpand"
