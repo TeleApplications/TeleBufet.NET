@@ -12,22 +12,12 @@
             <ScrollView>
                 <VerticalStackLayout
                     x:Name="ticketLayout">
-                    <StackLayout
-                        Margin="0,0,0,10"
-                        Orientation="Horizontal">
                         <Label
-                            Text="Upcoming reservations"
-                            FontSize="14"
-                            FontAttributes="Bold"
-                            HorizontalOptions="Start">
+                            Text="Probihajici rezervace"
+                            FontSize="32"
+                            TextColor="Black"
+                            HorizontalOptions="Center">
                         </Label>
-                        <Button
-                            Text="History"
-                            FontSize="12"
-                            HeightRequest="10"
-                            HorizontalOptions="End">
-                        </Button>
-                    </StackLayout>
                 </VerticalStackLayout>
             </ScrollView>
         </Frame>

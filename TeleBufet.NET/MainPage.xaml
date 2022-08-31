@@ -26,7 +26,7 @@
                Margin="0,-50,0,-10"
                FontAttributes="Bold">
             </Label>
-            <Label Text="A bufet reservation system in .NET"
+            <Label Text="Rezervacni system v .NET 6"
                HorizontalTextAlignment="Center"
                Margin="0,0,0,-10"
                HorizontalOptions="Center"

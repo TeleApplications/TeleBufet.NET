@@ -1,6 +1,4 @@
-﻿using TeleBufet.NET.API.Database.Tables;
-using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.Pages.LoginPage;
+﻿using TeleBufet.NET.Pages.LoginPage;
 
 namespace TeleBufet.NET;
 

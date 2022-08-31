@@ -18,7 +18,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             new Label
             {
-                FontSize = 24,
+                FontSize = 20,
                 FontFamily = "SourceCodePro",
                 FontAttributes = FontAttributes.Bold,
                 TextColor = Colors.Black,

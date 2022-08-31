@@ -19,7 +19,7 @@
                     <RowDefinition Height="140*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label
-                    Text="Košík"
+                    Text="Kosik"
                     FontSize="32"
                     TextColor="Black"
                     HorizontalOptions="Center"
@@ -39,7 +39,7 @@
                         CornerRadius="5">
                         <VerticalStackLayout>
                     <Label 
-                        Text="School break"
+                        Text="Přestávka"
                         FontSize="16"
                         TextColor="Black"
                         HorizontalTextAlignment="Center"
@@ -76,7 +76,7 @@
                             </Label>
                         </StackLayout>
                     <Button
-                        x:Name="RESERVATE"
+                        x:Name="REZERVOVAT"
                         BackgroundColor="#87be56"
                         Text="Reservate"
                         FontSize="18"
