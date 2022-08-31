@@ -4,7 +4,6 @@
              x:Class="TeleBufet.NET.Pages.LoginPage.LoginPage"
              Title="LoginPage"
              BackgroundColor="Transparent">
-    <ContentPage.Content>
     <Grid Margin="0,550,0,-20">
         <Frame BackgroundColor="White" CornerRadius="35" HasShadow="True" />
         <Frame
@@ -28,5 +27,4 @@
             </StackLayout>
         </Frame>
     </Grid>
-</ContentPage.Content>
 </ContentPage>

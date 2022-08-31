@@ -72,15 +72,26 @@
         <StackLayout
             Grid.Row="2"
             Orientation="Horizontal">
+            <ImageButton 
+                x:Name="Tickets"
+                HorizontalOptions="EndAndExpand"
+                Source="ticket_icon.png"
+                Aspect="AspectFit"
+                CornerRadius="10"
+                HeightRequest="40"
+                Margin="5,5,5,0"
+                BackgroundColor="#87be56">
+            </ImageButton>
             <Grid
                 VerticalOptions="Center"
-                HorizontalOptions="Center">
+                HorizontalOptions="StartAndExpand">
             <Label
                 x:Name="productCountLabel"
-                TextColor="Red"
-                FontSize="6"
-                HorizontalTextAlignment="Center"
-                Margin="0,20,0,0">
+                ZIndex="1"
+                TextColor="White"
+                FontSize="16"
+                HorizontalOptions="Center"
+                Margin="60,10,0,0">
             </Label>
             <ImageButton 
                 x:Name="ShoppingCart"
@@ -90,19 +101,9 @@
                 CornerRadius="10"
                 HeightRequest="40"
                 Margin="5,5,5,0"
-                BackgroundColor="{DynamicResource PrimaryColor}">
+                BackgroundColor="#87be56">
             </ImageButton>
             </Grid>
-            <ImageButton 
-                x:Name="Tickets"
-                HorizontalOptions="StartAndExpand"
-                Source="ticket_icon.png"
-                Aspect="AspectFit"
-                CornerRadius="10"
-                HeightRequest="40"
-                Margin="5,5,5,0"
-                BackgroundColor="{DynamicResource PrimaryColor}">
-            </ImageButton>
         </StackLayout>
     </Grid>
 </ContentPage>

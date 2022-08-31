@@ -22,7 +22,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
         {
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Center,
-            HeightRequest = 35 
+            HeightRequest = 40 
         };
 
         public static ReadOnlyMemory<ActionTable<CategoryTable>> CreateElementObjects(CategoryTable[] objectOne, Action<CategoryTable> objectTwo) 
@@ -41,11 +41,9 @@ namespace TeleBufet.NET.ElementHelper.Elements
             {
                 BackgroundColor = Colors.Transparent,
                 FontSize = 16,
-                TextColor = Colors.Black,
+                TextColor = Colors.White,
                 FontAttributes = FontAttributes.Bold,
                 HeightRequest = 40,
-                VerticalOptions = LayoutOptions.Start,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
             }
         };
 

@@ -37,7 +37,10 @@ public partial class MainProductPage : ContentPage
 
 		productLayout = collection;
 		categoryLayout = categoryStackLayout;
-		productCountLabel.Text = CartCacheHelper.ProductsCount.ToString();
+		CartCacheHelper.OnChangedCountAction = (int currentCount) =>
+		{
+			productCountLabel.Text = currentCount.ToString();
+		};
 
 		using var informationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 		var updatePacketRequest = new RequestProductInformationPacket()
@@ -146,7 +149,8 @@ public partial class MainProductPage : ContentPage
         for (int i = 0; i < inicializeElements.Length; i++)
         {
 			var currentFrame = frames.Span[i];
-			currentFrame.VerticalOptions = LayoutOptions.Start;
+			currentFrame.VerticalOptions = LayoutOptions.StartAndExpand;
+			currentFrame.BackgroundColor = Color.FromHex("#87be56");
 			currentFrame.HeightRequest = 50;
 			categoryLayout.Children.Add(frames.Span[i]);
         }

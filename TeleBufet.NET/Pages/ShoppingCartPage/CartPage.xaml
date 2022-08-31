@@ -3,35 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TeleBufet.NET.Pages.ShoppingCartPage.CartPage"
              Title="CartPage"
-             BackgroundColor="#50963d">
+             BackgroundColor="Transparent">
     <ContentPage.Content>
-        <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="60"></RowDefinition>
-                    <RowDefinition Height="60*"></RowDefinition>
-                </Grid.RowDefinitions>
-            <StackLayout
-                    Grid.Row="0"
-                Margin="20,20,0,0"
-                Orientation="Horizontal"
-                >
-                <ImageButton
-                        x:Name="backButton"
-                        Source="back_icon.png"
-                        WidthRequest="25"
-                        HeightRequest="25"
-                    HorizontalOptions="Start">
-                    </ImageButton>
-                    <Label 
-                        Margin="-40,0,0,0"
-                        Text="Cart"
-                        FontSize="28"
-                        FontAttributes="Bold"
-                        TextColor="White"
-                        HorizontalTextAlignment="Start"
-                        HorizontalOptions="CenterAndExpand">
-                    </Label>
-            </StackLayout>
         <Frame 
             Margin="0,40,0,0"
             BackgroundColor="#E9E9EA"
@@ -40,19 +13,27 @@
             HorizontalOptions="StartAndExpand">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="20*"></RowDefinition>
                     <RowDefinition Height="160*"></RowDefinition>
                     <RowDefinition Height="20"></RowDefinition>
                     <RowDefinition Height="140*"></RowDefinition>
                 </Grid.RowDefinitions>
+                <Label
+                    Text="Košík"
+                    FontSize="32"
+                    TextColor="Black"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center">
+                </Label>
             <ScrollView
-                    Grid.Row="0">
+                    Grid.Row="1">
                     <StackLayout
                     x:Name="orderLayout"
-                    Grid.Row="1">
+                    Grid.Row="2">
                 </StackLayout>
             </ScrollView>
                     <Frame
-                    Grid.Row="4"
+                    Grid.Row="3"
                     BackgroundColor="White"
                         HorizontalOptions="FillAndExpand"
                         CornerRadius="5">
@@ -96,7 +77,7 @@
                         </StackLayout>
                     <Button
                         x:Name="RESERVATE"
-                        BackgroundColor="{DynamicResource PrimaryColor}"
+                        BackgroundColor="#87be56"
                         Text="Reservate"
                         FontSize="18"
                         TextColor="White"
@@ -110,6 +91,5 @@
                 </Frame>
             </Grid>
         </Frame>
-        </Grid>
     </ContentPage.Content>
 </ContentPage>

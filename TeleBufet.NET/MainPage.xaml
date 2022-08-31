@@ -7,37 +7,33 @@
         Margin="0,0,0,0">
         <Image 
             Source="datagrams_powered_logo.png"
-            WidthRequest="296"
-            HeightRequest="196"
-            VerticalOptions="StartAndExpand"
-            HorizontalOptions="EndAndExpand"
+            VerticalOptions="Start"
+            WidthRequest="256"
             Rotation="30"
-            Margin="0,-50,-70, 0"/>
-        <StackLayout
-               VerticalOptions="CenterAndExpand"
-               HorizontalOptions="CenterAndExpand"
-            >
-            <Image Source="school_logo.png"
+            TranslationX="45"
+            TranslationY="15"
+            HorizontalOptions="EndAndExpand"/>
+        <Image Source="school_logo.png"
                WidthRequest="254"
-               HeightRequest="254"
-               VerticalOptions="CenterAndExpand"
-               HorizontalOptions="CenterAndExpand"/>
+               Margin="0,80,0,0"
+               HeightRequest="254"/>
             <Label Text="TeleBufet"
-               HorizontalOptions="CenterAndExpand"
-               VerticalOptions="CenterAndExpand"
                TextColor="White"
                FontSize="64"
                FontAutoScalingEnabled="True"
+               HorizontalTextAlignment="Center"
+               HorizontalOptions="Center"
+               Margin="0,-50,0,-10"
                FontAttributes="Bold">
             </Label>
             <Label Text="A bufet reservation system in .NET"
+               HorizontalTextAlignment="Center"
+               Margin="0,0,0,-10"
                HorizontalOptions="Center"
-               VerticalOptions="Center"
                TextColor="#c7dd89"
                FontSize="16"
                FontAutoScalingEnabled="True"
                FontAttributes="Bold">
             </Label>
-        </StackLayout>
     </StackLayout>
 </ContentPage>

@@ -7,14 +7,15 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
     {
         private static int productSize = GetProductSize();
 
-        public int CacheLength => (int)this.directory.CacheFileStream.Length;
-        public static int ProductsCount { get; private set; }
+        public int CacheLength { get; private set; }
+
+        public static Action<int> OnChangedCountAction { get; set; }
 
 
         public CartCacheHelper() 
         {
             directory = new CartCache();
-            ProductsCount = CacheLength / productSize;
+            CacheLength = (int)directory.CacheFileStream.Length;
         }
 
         public override void Serialize()
@@ -44,6 +45,8 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ShoppingCartCache
             }
             else
                 base.Serialize();
+
+            OnChangedCountAction(CacheLength / productSize);
         }
 
         public int GetCurrentAmount()

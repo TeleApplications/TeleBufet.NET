@@ -18,7 +18,6 @@ namespace TeleBufet.NET
     internal sealed class ExtendedClient : ServerManager
     {
         public override int PortNumber => 1111;
-        public IPAddress ClientAddress { get; set; }
 
         private static ExtendedClient staticHolder;
 
@@ -27,9 +26,8 @@ namespace TeleBufet.NET
         private static readonly MethodInfo read = typeof(BinaryHelper).GetMethod(nameof(BinaryHelper.Read));
         private static readonly MethodInfo create = typeof(ExtendedClient).GetMethod(nameof(ExtendedClient.CreateTables));
 
-        public ExtendedClient(string name, IPAddress clientAddress, IPAddress serverAddress) : base(name, serverAddress)
+        public ExtendedClient(string name, IPAddress clientAddress) : base(name, IPAddress.Any)
         {
-            ClientAddress = serverAddress;
             this.ServerSocket.Connect((EndPoint)new IPEndPoint(clientAddress, PortNumber));
             this.UdpReciever = new UdpReciever(ServerSocket);
             staticHolder = this;
@@ -137,13 +135,6 @@ namespace TeleBufet.NET
         public static async Task SendDataAsync(byte[] data) 
         {
             await staticHolder.ServerSocket.SendAsync(data, SocketFlags.None);
-        }
-
-        protected override async Task<ClientDatagram> StartRecievingAsync()
-        {
-            var memory = new byte[4096];
-            await this.ServerSocket.ReceiveAsync(memory, SocketFlags.None);
-            return new ClientDatagram() { Client = default, Datagram = memory };
         }
     }
 }

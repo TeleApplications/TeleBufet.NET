@@ -29,16 +29,17 @@ public partial class LoginPage : ContentPage
 
 	private void ConnectClient()
 	{
-		var ipAddress = IPAddress.Any;
 		//TODO: This hard coded ip address needs to be written by probably main school website
+		var ipAddress = IPAddress.Parse("10.0.0.10");
+
 		try
 		{
-			client = new ExtendedClient("TestClient", IPAddress.Parse("10.0.0.10"), ipAddress);
-			Task.Run(() => client.StartServerAsync());
+			client = new ExtendedClient("TestClient", ipAddress);
+			Task.Run(async() => await client.StartServerAsync());
 		}
 		catch
 		{
-			Device.BeginInvokeOnMainThread(async() => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
+			Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
 		}
 	}
 
