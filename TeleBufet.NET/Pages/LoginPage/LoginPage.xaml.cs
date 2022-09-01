@@ -1,6 +1,8 @@
 using DatagramsNet;
 using DatagramsNet.Datagram;
 using System.Net;
+using TeleBufet.NET.AddressFinder;
+using TeleBufet.NET.AddressFinder.Clients;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.ClientAuthentication;
@@ -24,23 +26,25 @@ public partial class LoginPage : ContentPage
 		InitializeComponent();
 		authenticateHolder = new AuthenticateHolder(connectionData);
 		if(client is null)
-			ConnectClient();
+			Task.Run(() => ConnectClientAsync());
 	}
 
-	private void ConnectClient()
+	private async Task ConnectClientAsync()
 	{
 		//TODO: This hard coded ip address needs to be written by probably main school website
-		var ipAddress = IPAddress.Parse("10.0.0.10");
+		var ipAddress = IPAddress.Parse("10.0.0.255");
+		var broadcastFinder = new BroadcastFinder(ipAddress);
 
-		try
+		await broadcastFinder.StartFindingAsync();
+		if(await ConditionTask.WaitUntil(() => AddressClient.NewIPAddress is null, 10))
 		{
-			client = new ExtendedClient("TestClient", ipAddress);
+			await broadcastFinder.ResponseClient.CloseConnectionAsync();
+
+			client = new ExtendedClient("TestClient", AddressClient.NewIPAddress);
 			Task.Run(async() => await client.StartServerAsync());
 		}
-		catch
-		{
+		else
 			Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
-		}
 	}
 
 	private async void OnLogin(object sender, EventArgs e) 

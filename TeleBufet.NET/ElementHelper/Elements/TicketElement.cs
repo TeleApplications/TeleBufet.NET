@@ -1,5 +1,4 @@
-﻿using Microsoft.Maui.Controls.Shapes;
-using System.Text;
+﻿using System.Text;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 
 namespace TeleBufet.NET.ElementHelper.Elements
@@ -72,6 +71,22 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 HorizontalOptions = LayoutOptions.Start,
                 Margin = new Thickness(0,5,0,0)
             },
+            new Label
+            {
+                FontSize = 16,
+                FontFamily = "SourceCodePro",
+                TextColor = Colors.Black,
+                HorizontalOptions = LayoutOptions.Start,
+                Margin = new Thickness(0,5,0,0)
+            },
+            new Label
+            {
+                FontSize = 32,
+                FontFamily = "SourceCodePro",
+                TextColor = Colors.Black,
+                HorizontalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0,5,0,0)
+            },
         };
 
         public override void Inicialize(TicketHolder data)
@@ -82,10 +97,14 @@ namespace TeleBufet.NET.ElementHelper.Elements
             var priceLabel = (Controls.Span[3] as Label);
             var dateLabel = (Controls.Span[4] as Label);
             var statusLabel = (Controls.Span[5] as Label);
+            var dotsLineLable = (Controls.Span[6] as Label);
+            var identificatorLabel = (Controls.Span[6] as Label);
 
             breakLabel.Text += $"{CreateDots(dotsLength - breakLabel.Text.Length)}{data.Key}";
             priceLabel.Text += $"{CreateDots(dotsLength - priceLabel.Text.Length)}{data.FinalPrice} Kč";
             dateLabel.Text += $"{CreateDots(dotsLength - dateLabel.Text.Length)}{data.StringDateTime}";
+            dotsLineLable.Text = $"{CreateDots(dotsLength)}";
+            identificatorLabel.Text = data.Key.ToString();
 
             string stateText = data.IsExpired ? "Expired" : "Unexpired";
             statusLabel.Text += $"{CreateDots(dotsLength - statusLabel.Text.Length)}{stateText}";

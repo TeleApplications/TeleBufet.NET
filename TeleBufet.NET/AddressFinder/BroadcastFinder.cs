@@ -22,7 +22,6 @@ namespace TeleBufet.NET.AddressFinder
         public async Task<IPAddress> StartFindingAsync() 
         {
             ResponseClient = new("ResponseClinet", BroadcastAddress);
-
             await ResponseClient.PingAsync(handshakePacket);
             return null;
         }

@@ -132,6 +132,16 @@ namespace TeleBufet.NET
             }
         }
 
+        protected override async Task<ClientDatagram> StartRecievingAsync()
+        {
+            Memory<byte> datagramMemory = new byte[4096];
+            EndPoint currentEndPoint = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
+            var dataTask = await ServerSocket.ReceiveFromAsync(datagramMemory, SocketFlags.None, currentEndPoint);
+
+            SocketReceiveFromResult result = dataTask;
+            return new ClientDatagram() { Client = (IPEndPoint)result.RemoteEndPoint, Datagram = datagramMemory.Span.ToArray() };
+        }
+
         public static async Task SendDataAsync(byte[] data) 
         {
             await staticHolder.ServerSocket.SendAsync(data, SocketFlags.None);

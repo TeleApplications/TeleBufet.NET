@@ -3,6 +3,7 @@ using DatagramsNet.Datagram;
 using DatagramsNet.Logging;
 using DatagramsNet.Prefixes;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using TeleBufet.NET.API;
 using TeleBufet.NET.API.Database;
@@ -36,8 +37,11 @@ namespace TeleBufet.NET.Server
                     IpAddress = IPAddress.ToString()
                 };
 
-                await ServerLogger.LogAsync<NormalPrefix>($"Packet recieved from {ipAddress.AddressFamily}... sending packet to client", TimeFormat.Half);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(responseDatagram));
+                //var testIPAddress = IPAddress.Parse()
+                var currentIPAddress = ((IPEndPoint)ipAddress);
+
+                await ServerLogger.LogAsync<NormalPrefix>($"Packet recieved from {newDatagram}... sending packet to client", TimeFormat.Half);
+                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, currentIPAddress), DatagramHelper.WriteDatagram(responseDatagram));
             }
 
             if (datagram is AuthentificateAccountPacket newAuthenticationDatagram) 
@@ -241,6 +245,16 @@ namespace TeleBufet.NET.Server
                     newTables.Add(products.Span[i]);
             }
             return newTables.ToArray();
+        }
+
+        protected override async Task<ClientDatagram> StartRecievingAsync()
+        {
+            Memory<byte> datagramMemory = new byte[4096];
+            EndPoint currentEndPoint = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
+            var dataTask = await ServerSocket.ReceiveFromAsync(datagramMemory, SocketFlags.None, currentEndPoint);
+
+            SocketReceiveFromResult result = dataTask;
+            return new ClientDatagram() { Client = (IPEndPoint)result.RemoteEndPoint, Datagram = datagramMemory.Span.ToArray() };
         }
     } 
 }
