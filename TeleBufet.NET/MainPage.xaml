@@ -17,23 +17,21 @@
                WidthRequest="254"
                Margin="0,80,0,0"
                HeightRequest="254"/>
-            <Label Text="TeleBufet"
+        <Label Text="TeleBufet"
                TextColor="White"
                FontSize="64"
                FontAutoScalingEnabled="True"
                HorizontalTextAlignment="Center"
                HorizontalOptions="Center"
                Margin="0,-50,0,-10"
-               FontAttributes="Bold">
-            </Label>
-            <Label Text="Rezervacni system v .NET 6"
+               FontAttributes="Bold"/>
+        <Label Text="Rezervacni system v .NET 6"
                HorizontalTextAlignment="Center"
                Margin="0,0,0,-10"
                HorizontalOptions="Center"
                TextColor="#c7dd89"
                FontSize="16"
                FontAutoScalingEnabled="True"
-               FontAttributes="Bold">
-            </Label>
+               FontAttributes="Bold"/>
     </StackLayout>
 </ContentPage>

@@ -5,7 +5,7 @@
              Title="LoginPage"
              BackgroundColor="Transparent">
     <Grid Margin="0,550,0,-20">
-        <Frame BackgroundColor="White" CornerRadius="35" HasShadow="True" />
+        <Frame BackgroundColor="White" CornerRadius="35" HasShadow="True"/>
         <Frame
             BackgroundColor="White"
             VerticalOptions="Start"
@@ -13,17 +13,16 @@
             Margin="0, 25, 0, 0"
             HasShadow="True">
             <StackLayout Orientation="Vertical" HorizontalOptions="Start">
-                <Label Text="Getting started" FontSize="Large" Padding="0,0,0,5"></Label>
-                <Label Text="Login with Teleinformatika account" FontSize="Small" Padding="0,0,0,2" TextColor="Gray"></Label>
-                    <HorizontalStackLayout Padding="10,20,0,0">
-                        <Image Source="microsoft_logo.png" WidthRequest="50" HeightRequest="50"/>
-                        <Button BackgroundColor="White"
+                <Label Text="Getting started" FontSize="Large" Padding="0,0,0,5"/>
+                <Label Text="Login with Teleinformatika account" FontSize="Small" Padding="0,0,0,2" TextColor="Gray"/>
+                <HorizontalStackLayout Padding="10,20,0,0">
+                    <Image Source="microsoft_logo.png" WidthRequest="50" HeightRequest="50"/>
+                    <Button BackgroundColor="White"
                             x:Name="LoginButton"
                             Text="Sign in with Microsoft"
                             FontAttributes="Bold"
-                            Clicked="OnLogin">
-                        </Button>
-                    </HorizontalStackLayout>
+                            Clicked="OnLogin"/>
+                </HorizontalStackLayout>
             </StackLayout>
         </Frame>
     </Grid>

@@ -8,27 +8,22 @@
             Text="Upss !"
             FontSize="48"
             HorizontalOptions="Center"
-            HorizontalTextAlignment="Center">
-        </Label>
+            HorizontalTextAlignment="Center"/>
         <Label
-            Text="Můžeme vám nabídnou tolik produktů kolik máte karmy.">
-        </Label>
+            Text="Můžeme vám nabídnou tolik produktů kolik máte karmy."/>
         <HorizontalStackLayout>
             <Label
                 Text="A to je "
-                FontSize="16">
-            </Label>
+                FontSize="16"/>
             <Label
                 Text="0"
                 VerticalOptions="Start"
                 VerticalTextAlignment="Start"
                 FontAttributes="Bold"
-                FontSize="32">
-            </Label>
+                FontSize="32"/>
             <Label
                 Text="."
-                FontSize="16">
-            </Label>
+                FontSize="16"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

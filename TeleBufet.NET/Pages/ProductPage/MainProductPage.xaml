@@ -9,7 +9,6 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="85"></RowDefinition>
         </Grid.RowDefinitions>
-            
         <Frame Grid.Row="0"
                BackgroundColor="White">
             <ScrollView
@@ -31,21 +30,19 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         RefreshColor="{DynamicResource PrimaryColor}">
-                        <ScrollView
-                            x:Name="scrollViewHolder"
-                            Grid.Row="0"
-                            >
-                            <Label
-                                x:Name="karmaCounter"
-                                FontSize="42"
-                                TextColor="White"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                VerticalTextAlignment="Center"
-                                FontFamily="SourceCodePro">
-                            </Label>
-                        </ScrollView>
+                            <ScrollView
+                                x:Name="scrollViewHolder"
+                                Grid.Row="0">
+                                    <Label
+                                        x:Name="karmaCounter"
+                                        FontSize="42"
+                                        TextColor="White"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        VerticalTextAlignment="Center"
+                                        FontFamily="SourceCodePro"/>
+                            </ScrollView>
                     </RefreshView>
                     </Frame>
                     <ScrollView
@@ -54,8 +51,7 @@
                         HeightRequest="60">
                             <HorizontalStackLayout
                                 x:Name="categoryStackLayout"
-                                Spacing="15">
-                            </HorizontalStackLayout>
+                                Spacing="15"/>
                     </ScrollView>
                     <FlexLayout
                         Wrap="Wrap"
@@ -64,45 +60,41 @@
                         AlignContent="Center"
                         AlignItems="Center"
                         Grid.Row="2"
-                        x:Name="collection">
-                    </FlexLayout>
+                        x:Name="collection"/>
                     </Grid>
             </ScrollView>
         </Frame>
         <StackLayout
             Grid.Row="2"
             Orientation="Horizontal">
-            <ImageButton 
-                x:Name="Tickets"
-                HorizontalOptions="EndAndExpand"
-                Source="ticket_icon.png"
-                Aspect="AspectFit"
-                CornerRadius="10"
-                HeightRequest="40"
-                Margin="5,5,5,0"
-                BackgroundColor="#87be56">
-            </ImageButton>
+                <ImageButton 
+                    x:Name="Tickets"
+                    HorizontalOptions="EndAndExpand"
+                    Source="ticket_icon.png"
+                    Aspect="AspectFit"
+                    CornerRadius="10"
+                    HeightRequest="40"
+                    Margin="5,5,5,0"
+                    BackgroundColor="#87be56"/>
             <Grid
                 VerticalOptions="Center"
                 HorizontalOptions="StartAndExpand">
-            <Label
-                x:Name="productCountLabel"
-                ZIndex="1"
-                TextColor="White"
-                FontSize="16"
-                HorizontalOptions="Center"
-                Margin="60,10,0,0">
-            </Label>
-            <ImageButton 
-                x:Name="ShoppingCart"
-                HorizontalOptions="EndAndExpand"
-                Source="cart_icon.png"
-                Aspect="AspectFit"
-                CornerRadius="10"
-                HeightRequest="40"
-                Margin="5,5,5,0"
-                BackgroundColor="#87be56">
-            </ImageButton>
+                    <Label
+                        x:Name="productCountLabel"
+                        ZIndex="1"
+                        TextColor="White"
+                        FontSize="16"
+                        HorizontalOptions="Center"
+                        Margin="60,10,0,0"/>
+                    <ImageButton 
+                        x:Name="ShoppingCart"
+                        HorizontalOptions="EndAndExpand"
+                        Source="cart_icon.png"
+                        Aspect="AspectFit"
+                        CornerRadius="10"
+                        HeightRequest="40"
+                        Margin="5,5,5,0"
+                        BackgroundColor="#87be56"/>
             </Grid>
         </StackLayout>
     </Grid>

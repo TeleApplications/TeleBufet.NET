@@ -11,85 +11,77 @@
             CornerRadius="35"
             Grid.Row="1"
             HorizontalOptions="StartAndExpand">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20*"></RowDefinition>
-                    <RowDefinition Height="160*"></RowDefinition>
-                    <RowDefinition Height="20"></RowDefinition>
-                    <RowDefinition Height="140*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Label
-                    Text="Kosik"
-                    FontSize="32"
-                    TextColor="Black"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center">
-                </Label>
-            <ScrollView
-                    Grid.Row="1">
-                    <StackLayout
-                    x:Name="orderLayout"
-                    Grid.Row="2">
-                </StackLayout>
-            </ScrollView>
-                    <Frame
-                    Grid.Row="3"
-                    BackgroundColor="White"
-                        HorizontalOptions="FillAndExpand"
-                        CornerRadius="5">
-                        <VerticalStackLayout>
-                    <Label 
-                        Text="Přestávka"
-                        FontSize="16"
-                        TextColor="Black"
-                        HorizontalTextAlignment="Center"
-                        HorizontalOptions="Start">
-                    </Label>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20*"></RowDefinition>
+                        <RowDefinition Height="160*"></RowDefinition>
+                        <RowDefinition Height="20"></RowDefinition>
+                        <RowDefinition Height="140*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                        <Label
+                            Text="Kosik"
+                            FontSize="32"
+                            TextColor="Black"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"/>
+                        <ScrollView
+                            Grid.Row="1">
+                                <StackLayout
+                                    x:Name="orderLayout"
+                                    Grid.Row="2"/>
+                        </ScrollView>
                         <Frame
-                            x:Name="indicatorLayout"
-                            HorizontalOptions="StartAndExpand"
-                            WidthRequest="10"
-                            BackgroundColor="Transparent">
+                            Grid.Row="3"
+                            BackgroundColor="White"
+                            HorizontalOptions="FillAndExpand"
+                            CornerRadius="5">
+                                <VerticalStackLayout>
+                                    <Label 
+                                        Text="Přestávka"
+                                        FontSize="16"
+                                        TextColor="Black"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Start"/>
+                                    <Frame
+                                        x:Name="indicatorLayout"
+                                        HorizontalOptions="StartAndExpand"
+                                        WidthRequest="10"
+                                        BackgroundColor="Transparent"/>
+                                    <HorizontalStackLayout
+                                        x:Name="breaksLayout"
+                                        HorizontalOptions="Center"
+                                        HeightRequest="60"/>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Margin="15,0,15,10">
+                                            <Label 
+                                                Text="Total"
+                                                FontSize="18"
+                                                TextColor="Black"
+                                                FontAttributes="Bold"
+                                                HorizontalTextAlignment="Center"
+                                                HorizontalOptions="Start"/>
+                                            <Label 
+                                                x:Name="finalPrice"
+                                                FontSize="16"
+                                                TextColor="Black"
+                                                HorizontalTextAlignment="End"
+                                                HorizontalOptions="EndAndExpand"/>
+                                    </StackLayout>
+                                    <Button
+                                        x:Name="REZERVOVAT"
+                                        BackgroundColor="#87be56"
+                                        Text="Reservate"
+                                        FontSize="18"
+                                        TextColor="White"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="EndAndExpand"
+                                        CornerRadius="30"
+                                        HeightRequest="65"
+                                        Clicked="ReservateProducts"/>
+                                </VerticalStackLayout>
                         </Frame>
-                    <HorizontalStackLayout
-                        x:Name="breaksLayout"
-                        HorizontalOptions="Center"
-                        HeightRequest="60">
-                    </HorizontalStackLayout>
-                            <StackLayout
-                            Orientation="Horizontal"
-                            Margin="15,0,15,10">
-                                <Label 
-                                Text="Total"
-                                FontSize="18"
-                                TextColor="Black"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                HorizontalOptions="Start">
-                            </Label>
-                            <Label 
-                                x:Name="finalPrice"
-                                FontSize="16"
-                                TextColor="Black"
-                                HorizontalTextAlignment="End"
-                                HorizontalOptions="EndAndExpand">
-                            </Label>
-                        </StackLayout>
-                    <Button
-                        x:Name="REZERVOVAT"
-                        BackgroundColor="#87be56"
-                        Text="Reservate"
-                        FontSize="18"
-                        TextColor="White"
-                        HorizontalOptions="FillAndExpand"
-                        VerticalOptions="EndAndExpand"
-                        CornerRadius="30"
-                        HeightRequest="65"
-                        Clicked="ReservateProducts">
-                    </Button>
-                </VerticalStackLayout>
-                </Frame>
-            </Grid>
+                </Grid>
         </Frame>
     </ContentPage.Content>
 </ContentPage>

@@ -9,17 +9,16 @@
             Margin="0,100,0,0"
             BackgroundColor="White"
             CornerRadius="35">
-            <ScrollView>
-                <VerticalStackLayout
-                    x:Name="ticketLayout">
-                        <Label
-                            Text="Probihajici rezervace"
-                            FontSize="32"
-                            TextColor="Black"
-                            HorizontalOptions="Center">
-                        </Label>
-                </VerticalStackLayout>
-            </ScrollView>
+                <ScrollView>
+                    <VerticalStackLayout
+                        x:Name="ticketLayout">
+                            <Label
+                                Text="Probihajici rezervace"
+                                FontSize="32"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </ScrollView>
         </Frame>
     </ContentPage.Content>
 </ContentPage>
