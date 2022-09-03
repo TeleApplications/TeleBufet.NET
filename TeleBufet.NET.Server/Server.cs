@@ -7,7 +7,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using TeleBufet.NET.API;
 using TeleBufet.NET.API.Database;
-using TeleBufet.NET.API.Database.Interfaces;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Interfaces;
 using TeleBufet.NET.API.Packets;
@@ -16,16 +15,19 @@ using TeleBufet.NET.API.Packets.ServerSide;
 
 namespace TeleBufet.NET.Server
 {
-    internal sealed class Server : ServerManager
+    internal sealed class Server : SocketServer
     {
+        public override Socket CurrentSocket => new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        public override int PortNumber => 1111;
+
+        protected override int bufferSize => 128000;
+
         private IdentificatorGenerator identificatorGenerator = new();
         private static readonly MethodInfo changeType = typeof(GenericType).GetMethod(nameof(GenericType.ReType));
 
-
-        public override int PortNumber => 1111;
-
-        public Server(string name, IPAddress address) : base(name, address)
+        public Server(IPAddress address) : base(address)
         {
+            CurrentSocket.Bind(EndPoint);
         }
 
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
@@ -41,7 +43,7 @@ namespace TeleBufet.NET.Server
                 var currentIPAddress = ((IPEndPoint)ipAddress);
 
                 await ServerLogger.LogAsync<NormalPrefix>($"Packet recieved from {newDatagram}... sending packet to client", TimeFormat.Half);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, currentIPAddress), DatagramHelper.WriteDatagram(responseDatagram));
+                await SendToDatagramAsync(responseDatagram, ipAddress);
             }
 
             if (datagram is AuthentificateAccountPacket newAuthenticationDatagram) 
@@ -69,7 +71,8 @@ namespace TeleBufet.NET.Server
                         Indetificator = currentUser.Id,
                         Karma = currentUser.Karma
                     };
-                    await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(accountInformationPacket));
+
+                    await SendToDatagramAsync(accountInformationPacket, ipAddress);
                 }
             }
             
@@ -96,7 +99,7 @@ namespace TeleBufet.NET.Server
                 }
                 uncachedTables.TableType = tableType;
                 var data = DatagramHelper.WriteDatagram(uncachedTables);
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), data);
+                await SendToDatagramAsync(uncachedTables, ipAddress);
 
                 await ServerLogger.LogAsync<WarningPrefix>($"In caching process was found {uncachedTables.TableHolders.Length} old datas of type {tableName}", TimeFormat.Half);
             }
@@ -112,7 +115,7 @@ namespace TeleBufet.NET.Server
                     ProductsInfromations = properTables.ToArray()
                 };
 
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(informationPacket));
+                await SendToDatagramAsync(informationPacket, ipAddress);
             }
 
             if (datagram is OrderTransmitionPacket orderPacket) 
@@ -142,7 +145,8 @@ namespace TeleBufet.NET.Server
                         await ReservateProductAsync(userId, productAmount, currentTable, orderPacket);
                     }
                 }
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await this.ServerSocket.SendToAsync(data, System.Net.Sockets.SocketFlags.None, ipAddress), DatagramHelper.WriteDatagram(orderPacket));
+
+                await SendToDatagramAsync(orderPacket, ipAddress);
             }
         }
 
@@ -245,16 +249,6 @@ namespace TeleBufet.NET.Server
                     newTables.Add(products.Span[i]);
             }
             return newTables.ToArray();
-        }
-
-        protected override async Task<ClientDatagram> StartRecievingAsync()
-        {
-            Memory<byte> datagramMemory = new byte[4096];
-            EndPoint currentEndPoint = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
-            var dataTask = await ServerSocket.ReceiveFromAsync(datagramMemory, SocketFlags.None, currentEndPoint);
-
-            SocketReceiveFromResult result = dataTask;
-            return new ClientDatagram() { Client = (IPEndPoint)result.RemoteEndPoint, Datagram = datagramMemory.Span.ToArray() };
         }
     } 
 }

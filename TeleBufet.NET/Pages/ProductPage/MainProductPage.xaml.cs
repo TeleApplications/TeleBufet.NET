@@ -1,4 +1,3 @@
-using DatagramsNet.Datagram;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets.ClientSide;
 using TeleBufet.NET.CacheManager;
@@ -47,7 +46,7 @@ public partial class MainProductPage : ContentPage
 		{
 			ProductInformationTables = informationTableCacheManager.Deserialize()
 		};
-		_ = DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+		_ = ExtendedClient.StaticHolder.SendDatagramAsync(updatePacketRequest);
 		var conditionResult = Task.Run(async() => await ConditionTask.WaitUntil(new Func<bool>(() => TableCacheBuilder.LastTable != typeof(ProductInformationTable)), 10));
 
 		if (conditionResult.Result) 
@@ -85,8 +84,8 @@ public partial class MainProductPage : ContentPage
 		};
 		var updateAccountRequest = new RequestAccountInformationPacket();
 
-		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updateAccountRequest));
-		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(updatePacketRequest));
+		_ = ExtendedClient.StaticHolder.SendDatagramAsync(updateAccountRequest);
+		_ = ExtendedClient.StaticHolder.SendDatagramAsync(updatePacketRequest);
 
 		using var newInformationTableCacheManager = new TableCacheHelper<ProductInformationTable>();
 

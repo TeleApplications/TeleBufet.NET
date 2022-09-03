@@ -1,5 +1,4 @@
 using DatagramsNet;
-using DatagramsNet.Datagram;
 using Microsoft.Maui.Controls.Shapes;
 using TeleBufet.NET.API.Database.Tables;
 using TeleBufet.NET.API.Packets;
@@ -127,7 +126,7 @@ public partial class CartPage : ContentPage
 			ReservationTimeId = currentBreak
 		};
 
-		await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(orderPacket));
+		_ = ExtendedClient.StaticHolder.SendDatagramAsync(orderPacket);
 	}
 
 	private double ComputeFinalPrice(ProductHolder[] products) 

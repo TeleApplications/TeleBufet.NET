@@ -10,7 +10,7 @@ namespace TeleBufet.NET.Server
         public static void Main() 
         {
             Console.WriteLine("Please enter valid ip address: ");
-            server = new(nameof(Server), IPAddress.Parse(Console.ReadLine()));
+            server = new(IPAddress.Parse(Console.ReadLine()));
             Task.Run(() => server.StartServerAsync());
             ReaderManager.StartReading();
         }

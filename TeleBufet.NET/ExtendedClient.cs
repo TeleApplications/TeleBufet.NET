@@ -15,22 +15,30 @@ using TeleBufet.NET.Pages.ProductPage;
 
 namespace TeleBufet.NET
 {
-    internal sealed class ExtendedClient : ServerManager
+    internal sealed class ExtendedClient : SocketServer
     {
-        public override int PortNumber => 1111;
+        public override int PortNumber => 0;
+        public override Socket CurrentSocket { get; set; } = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        private static ExtendedClient staticHolder;
+        private readonly int serverPort = 1111;
+        protected override int bufferSize => 128000;
+
+        public IPEndPoint DestinationEndPoint { get; }
+
+        public static ExtendedClient StaticHolder { get; private set; }
 
         private static readonly MethodInfo createConnectioKeys = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.GetCacheConnectionKeys));
         private static readonly MethodInfo createCacheTables = typeof(TableCacheBuilder).GetMethod(nameof(TableCacheBuilder.CacheTables));
         private static readonly MethodInfo read = typeof(BinaryHelper).GetMethod(nameof(BinaryHelper.Read));
         private static readonly MethodInfo create = typeof(ExtendedClient).GetMethod(nameof(ExtendedClient.CreateTables));
 
-        public ExtendedClient(string name, IPAddress clientAddress) : base(name, IPAddress.Any)
+        public ExtendedClient(IPAddress clientAddress) : base(IPAddress.Any)
         {
-            this.ServerSocket.Connect((EndPoint)new IPEndPoint(clientAddress, PortNumber));
-            this.UdpReciever = new UdpReciever(ServerSocket);
-            staticHolder = this;
+            DestinationEndPoint = new IPEndPoint(clientAddress, serverPort);
+
+            CurrentSocket.Bind(EndPoint);
+            CurrentSocket.Connect(DestinationEndPoint);
+            StaticHolder = this;
         }
 
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
@@ -128,23 +136,9 @@ namespace TeleBufet.NET
 
                 cacheTable.CacheTables = ((ReadOnlyMemory<CacheConnection>)connectionKeys.Invoke(null, Array.Empty<object>())).ToArray();
                 cacheTable.TableType = cacheFiles[i].GetType();
-                await DatagramHelper.SendDatagramAsync(async (byte[] data) => await SendDataAsync(data), DatagramHelper.WriteDatagram(cacheTable));
+
+                await StaticHolder.SendDatagramAsync(cacheTable);
             }
-        }
-
-        protected override async Task<ClientDatagram> StartRecievingAsync()
-        {
-            Memory<byte> datagramMemory = new byte[4096];
-            EndPoint currentEndPoint = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
-            var dataTask = await ServerSocket.ReceiveFromAsync(datagramMemory, SocketFlags.None, currentEndPoint);
-
-            SocketReceiveFromResult result = dataTask;
-            return new ClientDatagram() { Client = (IPEndPoint)result.RemoteEndPoint, Datagram = datagramMemory.Span.ToArray() };
-        }
-
-        public static async Task SendDataAsync(byte[] data) 
-        {
-            await staticHolder.ServerSocket.SendAsync(data, SocketFlags.None);
         }
     }
 }

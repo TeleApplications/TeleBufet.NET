@@ -40,8 +40,8 @@ public partial class LoginPage : ContentPage
 		{
 			await broadcastFinder.ResponseClient.CloseConnectionAsync();
 
-			client = new ExtendedClient("TestClient", AddressClient.NewIPAddress);
-			Task.Run(async() => await client.StartServerAsync());
+			client = new ExtendedClient(AddressClient.NewIPAddress);
+			await client.StartServerAsync();
 		}
 		else
 			Device.BeginInvokeOnMainThread(async () => await App.Current.MainPage.DisplayAlert("Error", "Server was no found", "Close"));
@@ -54,7 +54,7 @@ public partial class LoginPage : ContentPage
 		{
 			var account = new NormalAccount() {Username = authentificateResult.Account.Username, Token = authentificateResult.IdToken};
 			var authenticatePacket = new AuthentificateAccountPacket() { Account = account };
-            await DatagramHelper.SendDatagramAsync(async (byte[] data) => await ExtendedClient.SendDataAsync(data), DatagramHelper.WriteDatagram(authenticatePacket));
+			await client.SendToDatagramAsync(authenticatePacket, client.DestinationEndPoint);
 
             await ExtendedClient.RequestCacheTablesPacketAsync(new ProductTable(), new CategoryTable(), new ImageTable());
 			ContentPage nextPage = new();
