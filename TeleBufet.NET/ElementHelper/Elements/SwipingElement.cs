@@ -13,8 +13,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
                new SwipeGestureRecognizer() { Direction = SwipeDirection.Right, Threshold = 30 }
             );
 
-        private static readonly Vector2 ticketDefaultPosition = Vector2.Zero;
-        private static readonly Vector2 ticketDestinationPosition = new(600, 0);
+        private static readonly Vector2 ticketDefaultPosition = new(0, 25);
+        private static readonly Vector2 ticketDestinationPosition = new(625, 25);
 
         private Color baseColor = Color.FromRgb(241, 226, 126);
         private Vector2 ticketPosition;
@@ -23,16 +23,15 @@ namespace TeleBufet.NET.ElementHelper.Elements
         public SwipeDirection CurrentSwipeDirection { get; private set; }
         public int CurrentTicketIndex { get; private set; }
 
-        public Grid SwipeZone { get; private set; } = new Grid()
+        public Frame SwipeZone { get; private set; } = new Frame()
         {
-            VerticalOptions = LayoutOptions.Start,
-            HorizontalOptions = LayoutOptions.Center,
-            WidthRequest = 1200,
-            HeightRequest = 500 
+            BackgroundColor = Colors.Transparent,
+            BorderColor = Colors.Transparent,
+            VerticalOptions = LayoutOptions.FillAndExpand,
+            HorizontalOptions = LayoutOptions.FillAndExpand,
         };
 
-
-        public SwipingElement() 
+        public SwipingElement()
         {
             for (int i = 0; i < directions.Length; i++)
             {
@@ -74,7 +73,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 LayoutHandler.Children.Add(baseFrame);
             }
             CurrentTicketIndex = (LayoutHandler.Children.Count - 1);
-            SwipeZone.ZIndex = data.Length + 3;
+
+            SwipeZone.ZIndex = data.Length;
             LayoutHandler.Children.Add(SwipeZone);
 
             Task.Run(() => UpdateFrames());
