@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Numerics;
+using System.Reflection;
 using TeleBufet.NET.API.Database.Attributes;
 using TeleBufet.NET.API.Database.Interfaces;
 
@@ -75,6 +76,33 @@ namespace TeleBufet.NET.API.Database.QueryBuilder
                     tableInformation = tableInformations[i];
             }
             return tableInformation.Equals(default);
+        }
+
+        //This name is temporary
+        private bool TryGetTableInformationVectorized(out TableInfomation tableInfomation) 
+        {
+            var tablesId = GetTablesId(tableInformations.ToArray()).ToArray();
+
+            int handlerId = tableHandler.Id;
+            var vectorHolder = new Vector<int>(handlerId);
+
+            int vectorDifference = tableInformations.Count - Vector<int>.Count;
+            for (int i = 0; i < vectorDifference; i+= Vector<int>.Count)
+            {
+                var currentTable = new Vector<int>(tablesId, i);
+                Vector<int> equalValue = Vector.Equals<int>(vectorHolder, currentTable);
+            }
+
+            tableInfomation = new();
+            return false;
+        }
+
+        private static IEnumerable<int> GetTablesId(TableInfomation[] informations) 
+        {
+            for (int i = 0; i < informations.Length; i++)
+            {
+                yield return informations[i].Table.Id;
+            }
         }
     }
 }
