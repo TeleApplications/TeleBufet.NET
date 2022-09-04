@@ -81,10 +81,12 @@ namespace TeleBufet.NET.ElementHelper.Elements
             },
             new Label
             {
-                FontSize = 32,
+                FontSize = 64,
                 FontFamily = "SourceCodePro",
                 TextColor = Colors.Black,
-                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand,
                 Margin = new Thickness(0,5,0,0)
             },
         };
@@ -104,7 +106,7 @@ namespace TeleBufet.NET.ElementHelper.Elements
             priceLabel.Text += $"{CreateDots(dotsLength - priceLabel.Text.Length)}{data.FinalPrice} Kč";
             dateLabel.Text += $"{CreateDots(dotsLength - dateLabel.Text.Length)}{data.StringDateTime}";
             dotsLineLable.Text = $"{CreateDots(dotsLength)}";
-            identificatorLabel.Text = data.Key.ToString();
+            identificatorLabel.Text = data.Id.ToString();
 
             string stateText = data.IsExpired ? "Expired" : "Unexpired";
             statusLabel.Text += $"{CreateDots(dotsLength - statusLabel.Text.Length)}{stateText}";

@@ -1,5 +1,4 @@
 using TeleBufet.NET.CacheManager;
-using TeleBufet.NET.CacheManager.CacheDirectories;
 using TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache;
 using TeleBufet.NET.ElementHelper.Elements;
 
@@ -12,13 +11,15 @@ public partial class ReservationPage : ContentPage
 		InitializeComponent();
 		using var ticketCacheManager = new CacheHelper<TicketHolder>();
 		var tables = ticketCacheManager.Deserialize();
-		SetTickets(tables);
+
+		var currentTickets = TicketHolder.GetCurrentTickets(tables);
+		SetTickets(currentTickets);
 	}
 
-	private void SetTickets(TicketHolder[] tickets)
+	private void SetTickets(ReadOnlyMemory<TicketHolder> tickets)
 	{
 		var ticketSwipingElement = new SwipingElement();
-		ticketSwipingElement.Inicialize(tickets);
+		ticketSwipingElement.Inicialize(tickets.ToArray());
 
 		Device.BeginInvokeOnMainThread(() => ticketLayout.Children.Add(ticketSwipingElement.LayoutHandler));
 	}

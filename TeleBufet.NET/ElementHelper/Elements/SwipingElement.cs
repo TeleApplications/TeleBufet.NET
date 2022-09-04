@@ -47,9 +47,8 @@ namespace TeleBufet.NET.ElementHelper.Elements
 
         public override Grid LayoutHandler { get; set; } = new Grid()
         {
-            VerticalOptions = LayoutOptions.Start,
-            WidthRequest = 1200,
-            HeightRequest = 500,
+            VerticalOptions = LayoutOptions.FillAndExpand,
+            HorizontalOptions = LayoutOptions.FillAndExpand,
         };
 
         public override void Inicialize(TicketHolder[] data)
@@ -106,8 +105,11 @@ namespace TeleBufet.NET.ElementHelper.Elements
             {
                 int currentIndex = (CurrentTicketIndex - i) - 1;
                 var currentFrame = (LayoutHandler.Children[i] as Frame);
+
                 double scaleX = 1 - (((double)currentIndex) / 10);
+                double scaleY = 1 - (((double)currentIndex) / 20);
                 _ = currentFrame.ScaleXTo(scaleX);
+                _ = currentFrame.ScaleYTo(scaleY);
 
                 int frameYPosition = ((int)(ticketDefaultPosition.Y)) - (currentIndex * 20);
                 _ = currentFrame.TranslateTo(ticketDefaultPosition.X, frameYPosition);
@@ -136,7 +138,6 @@ namespace TeleBufet.NET.ElementHelper.Elements
                 TrySwitchValue(ref lastFrameZIndex, ref currentFrameZIndex);
                 await lastFrame.TranslateTo(ticketPosition.X, ticketPosition.Y);
             }
-
         }
 
         private bool TrySwitchValue(ref int valueOne, ref int valueTwo) 

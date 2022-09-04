@@ -73,7 +73,7 @@ namespace TeleBufet.NET.API.Database
             string queryString = updateQuery.CreateQuery();
             using (var databaseCommand = new MySqlCommand(queryString, mySqlConnection)) 
             {
-                databaseCommand.ExecuteScalar();
+                await databaseCommand.ExecuteScalarAsync();
                 databaseCommand.Dispose();
             }
             await mySqlConnection.CloseAsync();
@@ -87,7 +87,7 @@ namespace TeleBufet.NET.API.Database
             string queryString = deleteQuery.CreateQuery();
             using (var databaseCommand = new MySqlCommand(queryString, mySqlConnection)) 
             {
-                databaseCommand.ExecuteScalar();
+                await databaseCommand.ExecuteScalarAsync();
                 databaseCommand.Dispose();
             }
             await mySqlConnection.CloseAsync();

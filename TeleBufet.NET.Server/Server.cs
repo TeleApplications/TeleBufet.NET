@@ -17,7 +17,7 @@ namespace TeleBufet.NET.Server
 {
     internal sealed class Server : SocketServer
     {
-        public override Socket CurrentSocket => new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        public override Socket CurrentSocket { get; set; } = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         public override int PortNumber => 1111;
 
         protected override int bufferSize => 128000;
@@ -28,6 +28,7 @@ namespace TeleBufet.NET.Server
         public Server(IPAddress address) : base(address)
         {
             CurrentSocket.Bind(EndPoint);
+            SocketReciever = new SocketReciever(CurrentSocket, bufferSize);
         }
 
         public override async Task OnRecieveAsync(object datagram, EndPoint ipAddress)
@@ -125,7 +126,7 @@ namespace TeleBufet.NET.Server
 
                 int userId = orderPacket.Indetifactor;
                 orderPacket.Indetifactor = identificatorGenerator.GenerateId((byte)orderPacket.ReservationTimeId);
-                orderPacket.StringDateTime = DateTime.Now.ToShortDateString();
+                orderPacket.StringDateTime = DateTime.UtcNow.ToShortDateString();
 
                 var orders = orderPacket.Products.AsMemory();
 

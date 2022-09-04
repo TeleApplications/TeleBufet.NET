@@ -29,18 +29,35 @@ namespace TeleBufet.NET.CacheManager.CustomCacheHelper.ReservationsCache
             Key = reservationTime;
             FinalPrice = finalPrice;
             StringDateTime = dateTime;
-            var currentDateTime = DateTime.ParseExact(dateTime, "dd.mm.yyyy", CultureInfo.InvariantCulture);
+            var currentDateTime = DateTime.ParseExact(dateTime, "MM.dd.yyyy", CultureInfo.InvariantCulture);
             IsExpired = GetCurrentState(Key, currentDateTime);
+        }
+
+        public static ReadOnlyMemory<TicketHolder> GetCurrentTickets(TicketHolder[] tickets) 
+        {
+            Memory<TicketHolder> currentTickets = new TicketHolder[tickets.Length];
+            int index = 0;
+
+            for (int i = 0; i < tickets.Length; i++)
+            {
+                var currentTicket = tickets[i];
+                if (GetCurrentState(currentTicket.Key, DateTime.ParseExact(currentTicket.StringDateTime, "MM.dd.yyyy", CultureInfo.InvariantCulture))) 
+                {
+                    currentTickets.Span[i] = currentTicket;
+                    index++;
+                }
+            }
+            return currentTickets[0..(index)];
         }
 
         public static bool GetCurrentState(int schoolBreak, DateTime currentDateTime)
         {
             int start = (8 * 60);
 
-            var currentTime = DateTime.Now.TimeOfDay;
+            var currentTime = DateTime.UtcNow.TimeOfDay;
             var ticketTime = TimeSpan.FromMinutes(start + (schoolBreak * 60));
-            
-            return (currentTime < ticketTime) && currentDateTime.Date >= DateTime.Now.Date;
+
+            return (currentTime < ticketTime) && currentDateTime.Date >= DateTime.UtcNow.Date;
         }
     }
 }
